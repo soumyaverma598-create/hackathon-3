@@ -3,6 +3,9 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
+// Database connection
+require('./config/db');
+
 const authRoutes = require('./routes/authRoutes');
 const { verifyToken } = require('./middleware/authMiddleware');
 
@@ -16,6 +19,18 @@ app.use(express.json()); // Built-in parsing for incoming requests
 
 // Routes
 app.use('/api/auth', authRoutes);
+
+const applicationRoutes = require('./routes/applicationRoutes');
+app.use('/api/applications', applicationRoutes);
+
+const documentRoutes = require('./routes/documentRoutes');
+app.use('/api/documents', documentRoutes);
+
+const edsRoutes = require('./routes/edsRoutes');
+app.use('/api/eds', edsRoutes);
+
+const notificationRoutes = require('./routes/notificationRoutes');
+app.use('/api/notifications', notificationRoutes);
 
 // Example protected route requiring JWT
 app.get('/api/protected', verifyToken, (req, res) => {
