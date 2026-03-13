@@ -55,25 +55,36 @@ export default function Sidebar({ role }: { role: UserRole }) {
   const items = navMap[role] ?? [];
 
   return (
-    <aside className="w-56 min-h-screen flex flex-col" style={{ background: '#0f4a2a' }}>
+    <aside className="w-56 min-h-screen flex flex-col animate-fade-slide-left" style={{ background: '#0f4a2a' }}>
       <nav className="flex-1 py-4">
         <div className="px-4 mb-2">
           <p className="text-green-400 text-[10px] font-semibold uppercase tracking-widest">Navigation</p>
         </div>
         <ul className="space-y-0.5">
-          {items.map((item) => {
+          {items.map((item, idx) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + '?');
             return (
-              <li key={item.href}>
+              <li
+                key={item.href}
+                className="animate-fade-slide-left"
+                style={{ animationDelay: `${0.05 + idx * 0.06}s` }}
+              >
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-sm font-medium transition-all duration-150 ${
+                  className={`flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive
-                      ? 'bg-[#f7941d] text-white shadow-md'
-                      : 'text-green-200 hover:bg-white/10 hover:text-white'
+                      ? 'bg-[#f7941d] text-white shadow-md animate-border-glow'
+                      : 'text-green-200 hover:bg-white/10 hover:text-white hover:translate-x-1'
                   }`}
                 >
-                  <span className={isActive ? 'text-white' : 'text-green-400'}>{item.icon}</span>
+                  <span
+                    className={`transition-transform duration-200 ${
+                      isActive ? 'text-white scale-110' : 'text-green-400'
+                    } group-hover:scale-110`}
+                    style={isActive ? { filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.6))' } : undefined}
+                  >
+                    {item.icon}
+                  </span>
                   {item.label}
                 </Link>
               </li>
@@ -84,7 +95,12 @@ export default function Sidebar({ role }: { role: UserRole }) {
 
       {/* Footer */}
       <div className="px-4 py-3 border-t border-white/10">
-        <p className="text-green-500 text-[10px] text-center">PARIVESH 3.0 &copy; MoEFCC 2026</p>
+        <p
+          className="text-green-500 text-[10px] text-center"
+          style={{ animation: 'pulseSoft 4s ease-in-out infinite' }}
+        >
+          PARIVESH 3.0 &copy; MoEFCC 2026
+        </p>
       </div>
     </aside>
   );
