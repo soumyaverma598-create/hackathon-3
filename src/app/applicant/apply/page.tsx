@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { memo, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useWorkflowStore } from '@/store/workflowStore';
 import GovHeader from '@/components/GovHeader';
 import Sidebar from '@/components/Sidebar';
 import { WorkflowApplication, ProjectCategory } from '@/types/workflow';
-import { Send, ChevronRight } from 'lucide-react';
+import { Send } from 'lucide-react';
 
 const SECTORS = ['Cement', 'Mining', 'Power', 'Road / Highway', 'Thermal Power Plant', 'River Valley / Hydro Power', 'Chemical / Petrochemical', 'Iron & Steel', 'Port & Harbour', 'Tourism / Hospitality', 'Others'];
 const STATES = ['Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal', 'Delhi', 'Jammu & Kashmir', 'Ladakh'];
@@ -23,46 +23,73 @@ const INITIAL: Partial<FormData> = {
   projectCost: 0, projectArea: 0,
 };
 
+const inputCls =
+  'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c] transition-all';
+
+interface FieldProps {
+  label: string;
+  id: string;
+  children: ReactNode;
+}
+
+const Field = memo(function Field({ label, id, children }: FieldProps) {
+  return (
+    <div>
+      <label htmlFor={id} className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+});
+
 export default function ApplyPage() {
   const { user } = useAuthStore();
   const { createApp, isLoading, error } = useWorkflowStore();
   const router = useRouter();
   const [form, setForm] = useState<Partial<FormData>>({ ...INITIAL });
   const [success, setSuccess] = useState('');
+  const userFormInitialized = useRef(false);
 
   useEffect(() => {
     if (!user) { router.replace('/login'); return; }
-    if (user.email) setForm((f) => ({ ...f, proponentName: user.name, proponentEmail: user.email }));
-  }, [user]);
-
-  const set = (field: keyof FormData, value: string | number | ProjectCategory) =>
-    setForm((f) => ({ ...f, [field]: value }));
-
-  const handleSubmit = async (e: React.FormEvent, asDraft: boolean) => {
-    e.preventDefault();
-    try {
-      const app = await createApp({ ...form, proponentEmail: user?.email ?? '' });
-      if (!asDraft) {
-        const { updateStatus } = useWorkflowStore.getState();
-        await updateStatus(app.id, 'submitted');
-      }
-      setSuccess(asDraft ? 'Application saved as draft.' : 'Application submitted successfully!');
-      setTimeout(() => router.push('/applicant/dashboard'), 1500);
-    } catch {
-      // error shown from store
+    if (user.email && !userFormInitialized.current) {
+      setForm((f) => ({
+        ...f,
+        proponentEmail: user.email,
+        // Preserve manual edits instead of re-overwriting form values.
+        proponentName: f.proponentName?.trim() ? f.proponentName : user.name,
+      }));
+      userFormInitialized.current = true;
     }
-  };
+  }, [user, router]);
 
-  if (!user) return null;
-
-  const Field = ({ label, id, children }: { label: string; id: string; children: React.ReactNode }) => (
-    <div>
-      <label htmlFor={id} className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">{label}</label>
-      {children}
-    </div>
+  const setField = useCallback(
+    (field: keyof FormData, value: string | number | ProjectCategory) => {
+      setForm((f) => ({ ...f, [field]: value }));
+    },
+    []
   );
 
-  const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c] transition-all";
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent, asDraft: boolean) => {
+      e.preventDefault();
+      try {
+        const app = await createApp({ ...form, proponentEmail: user?.email ?? '' });
+        if (!asDraft) {
+          const { updateStatus } = useWorkflowStore.getState();
+          await updateStatus(app.id, 'submitted');
+        }
+        setSuccess(asDraft ? 'Application saved as draft.' : 'Application submitted successfully!');
+        setTimeout(() => router.push('/applicant/dashboard'), 1500);
+      } catch {
+        // error shown from store
+      }
+    },
+    [createApp, form, router, user?.email]
+  );
+
+  if (!user) return null;
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -88,27 +115,36 @@ export default function ApplyPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
                     <Field label="Project Name *" id="projectName">
-                      <input id="projectName" className={inputCls} value={form.projectName} onChange={(e) => set('projectName', e.target.value)} required placeholder="e.g. Cement Manufacturing Plant Phase II" />
+                      <input
+                        id="projectName"
+                        name="projectName"
+                        className={inputCls}
+                        value={form.projectName ?? ''}
+                        onChange={(e) => setField('projectName', e.target.value)}
+                        required
+                        autoComplete="off"
+                        placeholder="e.g. Cement Manufacturing Plant Phase II"
+                      />
                     </Field>
                   </div>
                   <Field label="Project Category *" id="projectCategory">
-                    <select id="projectCategory" className={inputCls} value={form.projectCategory} onChange={(e) => set('projectCategory', e.target.value as ProjectCategory)} required>
+                    <select id="projectCategory" className={inputCls} value={form.projectCategory} onChange={(e) => setField('projectCategory', e.target.value as ProjectCategory)} required>
                       <option value="A">Category A (Central Appraisal)</option>
                       <option value="B1">Category B1 (State EIA)</option>
                       <option value="B2">Category B2 (Deemed EC)</option>
                     </select>
                   </Field>
                   <Field label="Project Sector *" id="projectSector">
-                    <select id="projectSector" className={inputCls} value={form.projectSector} onChange={(e) => set('projectSector', e.target.value)} required>
+                    <select id="projectSector" className={inputCls} value={form.projectSector ?? ''} onChange={(e) => setField('projectSector', e.target.value)} required>
                       <option value="">Select Sector</option>
                       {SECTORS.map((s) => <option key={s}>{s}</option>)}
                     </select>
                   </Field>
                   <Field label="Project Cost (INR) *" id="projectCost">
-                    <input id="projectCost" type="number" className={inputCls} value={form.projectCost ?? ''} onChange={(e) => set('projectCost', Number(e.target.value))} required min={0} placeholder="e.g. 450000000" />
+                    <input id="projectCost" type="number" className={inputCls} value={form.projectCost ?? ''} onChange={(e) => setField('projectCost', Number(e.target.value))} required min={0} placeholder="e.g. 450000000" />
                   </Field>
                   <Field label="Project Area (hectares) *" id="projectArea">
-                    <input id="projectArea" type="number" className={inputCls} value={form.projectArea ?? ''} onChange={(e) => set('projectArea', Number(e.target.value))} required min={0} step="0.01" placeholder="e.g. 250" />
+                    <input id="projectArea" type="number" className={inputCls} value={form.projectArea ?? ''} onChange={(e) => setField('projectArea', Number(e.target.value))} required min={0} step="0.01" placeholder="e.g. 250" />
                   </Field>
                 </div>
               </div>
@@ -121,13 +157,13 @@ export default function ApplyPage() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Field label="State / UT *" id="stateUT">
-                    <select id="stateUT" className={inputCls} value={form.stateUT} onChange={(e) => set('stateUT', e.target.value)} required>
+                    <select id="stateUT" className={inputCls} value={form.stateUT ?? ''} onChange={(e) => setField('stateUT', e.target.value)} required>
                       <option value="">Select State/UT</option>
                       {STATES.map((s) => <option key={s}>{s}</option>)}
                     </select>
                   </Field>
                   <Field label="District *" id="district">
-                    <input id="district" className={inputCls} value={form.district} onChange={(e) => set('district', e.target.value)} required placeholder="e.g. Jodhpur" />
+                    <input id="district" className={inputCls} value={form.district ?? ''} onChange={(e) => setField('district', e.target.value)} required placeholder="e.g. Jodhpur" />
                   </Field>
                 </div>
               </div>
@@ -140,10 +176,10 @@ export default function ApplyPage() {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Field label="Proponent Name *" id="proponentName">
-                    <input id="proponentName" className={inputCls} value={form.proponentName} onChange={(e) => set('proponentName', e.target.value)} required placeholder="Full Name / Organisation" />
+                    <input id="proponentName" className={inputCls} value={form.proponentName ?? ''} onChange={(e) => setField('proponentName', e.target.value)} required placeholder="Full Name / Organisation" />
                   </Field>
                   <Field label="Mobile Number *" id="proponentPhone">
-                    <input id="proponentPhone" type="tel" className={inputCls} value={form.proponentPhone} onChange={(e) => set('proponentPhone', e.target.value)} required placeholder="10-digit mobile" pattern="[0-9]{10}" />
+                    <input id="proponentPhone" type="tel" className={inputCls} value={form.proponentPhone ?? ''} onChange={(e) => setField('proponentPhone', e.target.value)} required placeholder="10-digit mobile" pattern="[0-9]{10}" />
                   </Field>
                 </div>
               </div>

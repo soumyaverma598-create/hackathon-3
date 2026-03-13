@@ -179,3 +179,76 @@ body {
   transform: translateY(-3px);
   box-shadow: 0 8px 24px rgba(0,0,0,0.10);
 }
+
+/* Government UI motion: subtle, reliable, and accessible */
+@keyframes govEnterUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes govGlowSweep {
+  0% {
+    box-shadow: 0 0 0 0 rgba(26, 107, 60, 0.0);
+  }
+  50% {
+    box-shadow: 0 10px 26px -16px rgba(26, 107, 60, 0.30);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(26, 107, 60, 0.0);
+  }
+}
+
+@keyframes govNoticeFade {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-gov-enter {
+  animation: govEnterUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.gov-surface-hover {
+  position: relative;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gov-surface-hover:hover {
+  transform: translateY(-2px);
+  border-color: rgba(26, 107, 60, 0.22);
+  animation: govGlowSweep 1.8s ease-in-out;
+}
+
+.gov-notice {
+  animation: govNoticeFade 0.24s ease-out both;
+}
+
+.gov-action-btn {
+  position: relative;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.gov-action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px -12px rgba(20, 82, 46, 0.9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

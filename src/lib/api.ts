@@ -5,7 +5,7 @@
  * when Dev-2's backend at http://localhost:3002 is ready.
  */
 
-import { User } from '@/types/auth';
+import { AdminCreateUserInput, AdminUpdateUserInput, User } from '@/types/auth';
 import {
   WorkflowApplication,
   WorkflowStatus,
@@ -13,6 +13,11 @@ import {
   GistContent,
   Notification,
 } from '@/types/workflow';
+import {
+  AdminSettings,
+  AdminSettingsSection,
+  AdminSettingsSections,
+} from '@/types/settings';
 import * as mock from './mockApi';
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -99,6 +104,36 @@ export async function getCurrentUser(): Promise<User> {
     return fromMock(mock.mockGetCurrentUser(token));
   }
   return apiFetch<User>('/auth/me');
+}
+
+export async function fetchUsers(): Promise<User[]> {
+  if (USE_MOCK) {
+    return fromMock(mock.mockFetchUsers());
+  }
+  return apiFetch<User[]>('/users');
+}
+
+export async function createUser(payload: AdminCreateUserInput): Promise<User> {
+  if (USE_MOCK) {
+    return fromMock(mock.mockCreateUser(payload));
+  }
+  return apiFetch<User>('/users', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function updateUser(
+  userId: string,
+  payload: AdminUpdateUserInput
+): Promise<User> {
+  if (USE_MOCK) {
+    return fromMock(mock.mockUpdateUser(userId, payload));
+  }
+  return apiFetch<User>(`/users/${userId}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  });
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -400,5 +435,47 @@ export async function markAllNotificationsRead(
   return apiFetch<{ count: number }>('/notifications/read-all', {
     method: 'PUT',
     body: JSON.stringify({ userId }),
+  });
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// ADMIN SETTINGS
+// ──────────────────────────────────────────────────────────────────────────────
+
+async function internalApiFetch<T>(
+  path: string,
+  options?: RequestInit
+): Promise<T> {
+  const res = await fetch(path, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || `HTTP ${res.status}`);
+  }
+
+  const json = await res.json();
+  if (json && typeof json === 'object' && 'data' in json) {
+    return json.data as T;
+  }
+  return json as T;
+}
+
+export async function fetchAdminSettings(): Promise<AdminSettings> {
+  return internalApiFetch<AdminSettings>('/api/admin/settings');
+}
+
+export async function updateAdminSettingsSection<T extends AdminSettingsSection>(
+  section: T,
+  payload: Partial<AdminSettingsSections[T]>
+): Promise<AdminSettingsSections[T]> {
+  return internalApiFetch<AdminSettingsSections[T]>(`/api/admin/settings/${section}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
   });
 }

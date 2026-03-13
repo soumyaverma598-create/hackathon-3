@@ -8,7 +8,9 @@ import SplashOverlay from '@/components/SplashOverlay';
 
 const ROLE_HINTS = [
   { email: 'admin@moef.gov.in', password: 'admin123', role: 'Admin' },
+  { email: 'admin.ops@moef.gov.in', password: 'adminops123', role: 'Admin (Operations)' },
   { email: 'proponent@company.com', password: 'proponent123', role: 'Applicant' },
+  { email: 'applicant2@company.com', password: 'applicant123', role: 'Applicant (Alt)' },
   { email: 'scrutiny@moef.gov.in', password: 'scrutiny123', role: 'Scrutiny' },
   { email: 'mom@moef.gov.in', password: 'mom123', role: 'MoM Secretary' },
 ];

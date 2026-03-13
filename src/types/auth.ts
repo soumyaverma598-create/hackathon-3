@@ -9,3 +9,23 @@ export interface User {
   designation: string;
   isActive: boolean;
 }
+
+export interface AdminCreateUserInput {
+  name: string;
+  email: string;
+  role: UserRole;
+  department: string;
+  designation: string;
+  isActive: boolean;
+  password: string;
+}
+
+export interface AdminUpdateUserInput {
+  name?: string;
+  email?: string;
+  role?: UserRole;
+  department?: string;
+  designation?: string;
+  isActive?: boolean;
+  password?: string;
+}

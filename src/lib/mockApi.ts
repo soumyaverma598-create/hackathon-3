@@ -10,7 +10,7 @@ import {
   MOCK_APPLICATIONS,
   MOCK_NOTIFICATIONS,
 } from './mockData';
-import { User } from '@/types/auth';
+import { AdminCreateUserInput, AdminUpdateUserInput, User } from '@/types/auth';
 import {
   WorkflowApplication,
   WorkflowStatus,
@@ -21,6 +21,7 @@ import {
 
 // Mutable in-memory state
 let users = [...MOCK_USERS];
+let passwords = { ...MOCK_PASSWORDS };
 let applications = [...MOCK_APPLICATIONS];
 let notifications = [...MOCK_NOTIFICATIONS];
 
@@ -36,7 +37,7 @@ export async function mockLoginUser(
 ): Promise<ApiResponse<{ token: string; user: User }>> {
   await delay();
   const user = users.find((u) => u.email === email);
-  if (!user || MOCK_PASSWORDS[email] !== password) {
+  if (!user || passwords[email] !== password) {
     return { success: false, error: 'Invalid email or password.' };
   }
   // Mock JWT — base64 encoded user id
@@ -56,6 +57,82 @@ export async function mockGetCurrentUser(token: string): Promise<ApiResponse<Use
   } catch {
     return { success: false, error: 'Invalid token.' };
   }
+}
+
+// ─── Admin User Management ───────────────────────────────────────────────────
+
+export async function mockFetchUsers(): Promise<ApiResponse<User[]>> {
+  await delay();
+  return { success: true, data: [...users] };
+}
+
+export async function mockCreateUser(
+  payload: AdminCreateUserInput
+): Promise<ApiResponse<User>> {
+  await delay();
+
+  const email = payload.email.trim().toLowerCase();
+  if (users.some((u) => u.email.toLowerCase() === email)) {
+    return { success: false, error: 'A user with this email already exists.' };
+  }
+
+  const id = `u${Date.now()}`;
+  const newUser: User = {
+    id,
+    name: payload.name.trim(),
+    email,
+    role: payload.role,
+    department: payload.department.trim(),
+    designation: payload.designation.trim(),
+    isActive: payload.isActive,
+  };
+
+  users = [...users, newUser];
+  passwords[email] = payload.password;
+  return { success: true, data: newUser };
+}
+
+export async function mockUpdateUser(
+  userId: string,
+  payload: AdminUpdateUserInput
+): Promise<ApiResponse<User>> {
+  await delay();
+
+  const existingIndex = users.findIndex((u) => u.id === userId);
+  if (existingIndex === -1) {
+    return { success: false, error: 'User not found.' };
+  }
+
+  const existing = users[existingIndex];
+  const targetEmail = (payload.email ?? existing.email).trim().toLowerCase();
+  const emailTaken = users.some(
+    (u) => u.id !== userId && u.email.toLowerCase() === targetEmail
+  );
+  if (emailTaken) {
+    return { success: false, error: 'Another user already uses this email.' };
+  }
+
+  const updated: User = {
+    ...existing,
+    ...payload,
+    email: targetEmail,
+    name: payload.name?.trim() ?? existing.name,
+    department: payload.department?.trim() ?? existing.department,
+    designation: payload.designation?.trim() ?? existing.designation,
+  };
+
+  users = users.map((u) => (u.id === userId ? updated : u));
+
+  if (targetEmail !== existing.email) {
+    passwords[targetEmail] = passwords[existing.email] ?? 'changeme123';
+    delete passwords[existing.email];
+  }
+
+  if (payload.password && payload.password.trim().length > 0) {
+    passwords[targetEmail] = payload.password;
+  }
+
+  return { success: true, data: updated };
 }
 
 // ─── Applications ────────────────────────────────────────────────────────────
