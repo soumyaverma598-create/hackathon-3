@@ -97,6 +97,33 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ─── Splash screen keyframes ─────────────────────────────── */
+
+/* Logo: blur-to-sharp + scale entrance */
+@keyframes splashLogoIn {
+  0%   { opacity: 0; transform: scale(0.7); filter: blur(12px); }
+  60%  { opacity: 1; transform: scale(1.05); filter: blur(0px); }
+  100% { opacity: 1; transform: scale(1);    filter: blur(0px); }
+}
+
+/* Title text: slide up + fade */
+@keyframes splashTitleIn {
+  from { opacity: 0; transform: translateY(28px); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0px); }
+}
+
+/* Shimmer sweep across title */
+@keyframes splashShimmer {
+  0%   { left: -40%; }
+  100% { left: 140%; }
+}
+
+/* Curtain lift: scale up + fade out */
+@keyframes splashCurtainLift {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.08); }
+}
+
 /* ─── Utility classes ──────────────────────────────────────── */
 
 .animate-leaf-float {

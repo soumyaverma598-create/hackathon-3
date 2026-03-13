@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { Eye, EyeOff, LogIn, Shield, Leaf } from 'lucide-react';
+import SplashOverlay from '@/components/SplashOverlay';
 
 const ROLE_HINTS = [
   { email: 'admin@moef.gov.in', password: 'admin123', role: 'Admin' },
@@ -28,10 +29,20 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+  const [splashDone, setSplashDone] = useState(false);
   const { login, user, isLoading, error, clearError } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => { setMounted(true); }, []);
+
+  const handleSplashFinished = useCallback(() => {
+    setShowSplash(false);
+    setSplashDone(true);
+  }, []);
+
+  // Extra delay offset for login animations while splash is playing
+  const d = splashDone ? 0 : 3.5;
 
   // Redirect if already logged in
   useEffect(() => {
@@ -71,6 +82,8 @@ export default function LoginPage() {
   };
 
   return (
+    <>
+    {showSplash && <SplashOverlay onFinished={handleSplashFinished} />}
     <div className="min-h-screen flex" style={{ background: 'linear-gradient(135deg, #0f4a2a 0%, #1a6b3c 50%, #0d3d24 100%)' }}>
       {/* Left branding panel */}
       <div className="hidden lg:flex flex-col justify-center items-center w-1/2 p-12 relative overflow-hidden">
@@ -102,7 +115,7 @@ export default function LoginPage() {
           {/* Logo with pulse + slow-spin on the spokes */}
           <div
             className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl animate-pulse-soft"
-            style={{ animationDelay: '0s' }}
+            style={{ animationDelay: `${d + 0}s` }}
           >
             <svg className="w-20 h-20" viewBox="0 0 64 64" fill="none" suppressHydrationWarning>
               <circle cx="32" cy="32" r="30" fill="#fff" stroke="#1a6b3c" strokeWidth="2"/>
@@ -129,25 +142,25 @@ export default function LoginPage() {
 
           <h1
             className="text-white text-4xl font-extrabold mb-2 tracking-wide animate-fade-slide-up"
-            style={{ animationDelay: '0.1s' }}
+            style={{ animationDelay: `${d + 0.1}s` }}
           >
             PARIVESH 3.0
           </h1>
           <p
             className="text-green-200 text-lg font-medium mb-1 animate-fade-slide-up"
-            style={{ animationDelay: '0.2s' }}
+            style={{ animationDelay: `${d + 0.2}s` }}
           >
             पर्यावरण/ ENVIRONMENT
           </p>
           <p
             className="text-green-300 text-sm mb-6 animate-fade-slide-up"
-            style={{ animationDelay: '0.28s' }}
+            style={{ animationDelay: `${d + 0.28}s` }}
           >
             Environmental Clearance Portal
           </p>
           <p
             className="text-green-200 text-xs max-w-xs leading-relaxed animate-fade-slide-up text-center mx-auto"
-            style={{ animationDelay: '0.34s' }}
+            style={{ animationDelay: `${d + 0.34}s` }}
           >
             Ministry of Environment, Forest and Climate Change<br />
             Government of India
@@ -155,7 +168,7 @@ export default function LoginPage() {
 
           <div
             className="mt-8 bg-white/10 rounded-xl p-4 backdrop-blur-sm border border-white/20 animate-fade-slide-up mx-auto max-w-xs text-center"
-            style={{ animationDelay: '0.44s' }}
+            style={{ animationDelay: `${d + 0.44}s` }}
           >
             <p className="text-white text-xs font-semibold mb-2 flex items-center justify-center gap-1">
               <Shield
@@ -178,7 +191,7 @@ export default function LoginPage() {
           {/* Card with entrance animation */}
           <div
             className="bg-white rounded-2xl shadow-2xl overflow-hidden animate-fade-slide-up"
-            style={{ animationDelay: '0.05s' }}
+            style={{ animationDelay: `${d + 0.05}s` }}
           >
             {/* Top shimmer accent bar */}
             <div
@@ -194,7 +207,7 @@ export default function LoginPage() {
               {/* Mobile title */}
               <div
                 className="lg:hidden text-center mb-6 animate-fade-slide-up"
-                style={{ animationDelay: '0.1s' }}
+                style={{ animationDelay: `${d + 0.1}s` }}
               >
                 <h1 className="text-2xl font-extrabold text-[#1a6b3c]">PARIVESH 3.0</h1>
                 <p className="text-gray-500 text-sm">Environmental Clearance Portal</p>
@@ -202,13 +215,13 @@ export default function LoginPage() {
 
               <h2
                 className="text-xl font-bold text-gray-800 mb-1 animate-fade-slide-up"
-                style={{ animationDelay: '0.12s' }}
+                style={{ animationDelay: `${d + 0.12}s` }}
               >
                 Sign in to your account
               </h2>
               <p
                 className="text-gray-400 text-sm mb-6 animate-fade-slide-up"
-                style={{ animationDelay: '0.18s' }}
+                style={{ animationDelay: `${d + 0.18}s` }}
               >
                 Use your MoEFCC credentials to continue
               </p>
@@ -222,7 +235,7 @@ export default function LoginPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div
                   className="animate-fade-slide-up"
-                  style={{ animationDelay: '0.22s' }}
+                  style={{ animationDelay: `${d + 0.22}s` }}
                 >
                   <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
                     Email / User ID
@@ -240,7 +253,7 @@ export default function LoginPage() {
 
                 <div
                   className="animate-fade-slide-up"
-                  style={{ animationDelay: '0.28s' }}
+                  style={{ animationDelay: `${d + 0.28}s` }}
                 >
                   <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
                     Password
@@ -272,7 +285,7 @@ export default function LoginPage() {
                   className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-semibold text-sm text-white transition-all disabled:opacity-60 disabled:cursor-not-allowed hover:scale-[1.02] hover:shadow-lg active:scale-[0.99] animate-fade-slide-up"
                   style={{
                     background: isLoading ? '#6b7280' : 'linear-gradient(135deg, #1a6b3c, #256b45)',
-                    animationDelay: '0.34s',
+                    animationDelay: `${d + 0.34}s`,
                   }}
                 >
                   {isLoading ? (
@@ -294,7 +307,7 @@ export default function LoginPage() {
               {/* Demo credentials */}
               <div
                 className="mt-6 border-t border-gray-100 pt-5 animate-fade-slide-up"
-                style={{ animationDelay: '0.42s' }}
+                style={{ animationDelay: `${d + 0.42}s` }}
               >
                 <p className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3 text-center">
                   Demo Credentials
@@ -305,7 +318,7 @@ export default function LoginPage() {
                       key={hint.email}
                       onClick={() => fillDemo(hint)}
                       className="text-left bg-gray-50 hover:bg-green-50 border border-gray-100 hover:border-[#1a6b3c]/30 rounded-lg px-4 py-3 transition-all group hover:scale-[1.03] hover:shadow-sm animate-fade-slide-up"
-                      style={{ animationDelay: `${0.48 + idx * 0.06}s` }}
+                      style={{ animationDelay: `${d + 0.48 + idx * 0.06}s` }}
                     >
                       <p className="text-sm font-bold text-[#1a6b3c] group-hover:text-[#0f4a2a]">{hint.role}</p>
                       <p className="text-xs text-gray-400 truncate mt-0.5">{hint.email}</p>
@@ -318,12 +331,13 @@ export default function LoginPage() {
 
           <p
             className="text-center text-green-200 text-[11px] mt-4 animate-fade-slide-up"
-            style={{ animationDelay: '0.72s' }}
+            style={{ animationDelay: `${d + 0.72}s` }}
           >
             &copy; 2026 MoEFCC, Government of India. All rights reserved.
           </p>
         </div>
       </div>
     </div>
+    </>
   );
 }
