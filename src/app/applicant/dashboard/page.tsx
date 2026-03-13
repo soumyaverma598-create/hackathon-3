@@ -44,14 +44,14 @@ export default function ApplicantDashboard() {
         <Sidebar role="applicant" />
         <main className="flex-1 p-6 overflow-auto">
           <div className="max-w-5xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6 animate-fade-slide-left" style={{ animationDelay: '0.05s' }}>
               <div>
                 <h2 className="text-2xl font-bold text-gray-800">My Applications</h2>
                 <p className="text-gray-500 text-sm mt-0.5">Track your Environmental Clearance applications</p>
               </div>
               <Link
                 href="/applicant/apply"
-                className="flex items-center gap-2 text-sm font-semibold text-white px-4 py-2.5 rounded-lg shadow transition-all hover:opacity-90"
+                className="flex items-center gap-2 text-sm font-semibold text-white px-4 py-2.5 rounded-lg shadow transition-all hover:scale-105 hover:shadow-lg active:scale-95"
                 style={{ background: 'linear-gradient(135deg, #1a6b3c, #256b45)' }}
               >
                 <FilePlus size={16} /> New Application
@@ -65,12 +65,12 @@ export default function ApplicantDashboard() {
                 { label: 'Active', value: stats.active, icon: <TrendingUp size={20} />, color: 'text-orange-600', bg: 'bg-orange-50' },
                 { label: 'EC Granted', value: stats.granted, icon: <FilePlus size={20} />, color: 'text-green-600', bg: 'bg-green-50' },
                 { label: 'Draft', value: stats.pending, icon: <Clock size={20} />, color: 'text-gray-600', bg: 'bg-gray-50' },
-              ].map((stat) => (
-                <div key={stat.label} className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
-                  <div className={`w-9 h-9 ${stat.bg} ${stat.color} rounded-lg flex items-center justify-center mb-2`}>
+              ].map((stat, idx) => (
+                <div key={stat.label} className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm card-hover animate-fade-slide-up" style={{ animationDelay: `${0.1 + idx * 0.08}s` }}>
+                  <div className={`w-9 h-9 ${stat.bg} ${stat.color} rounded-lg flex items-center justify-center mb-2 transition-transform duration-300 hover:scale-110`}>
                     {stat.icon}
                   </div>
-                  <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
+                  <p className="text-2xl font-bold text-gray-800 animate-count-fade" style={{ animationDelay: `${0.2 + idx * 0.08}s` }}>{stat.value}</p>
                   <p className="text-xs text-gray-400 mt-0.5">{stat.label}</p>
                 </div>
               ))}
@@ -93,8 +93,8 @@ export default function ApplicantDashboard() {
               />
             ) : (
               <div className="space-y-3">
-                {applications.map((app) => (
-                  <div key={app.id} className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow">
+                {applications.map((app, idx) => (
+                  <div key={app.id} className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm card-hover animate-fade-slide-up" style={{ animationDelay: `${0.38 + idx * 0.06}s` }}>
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
