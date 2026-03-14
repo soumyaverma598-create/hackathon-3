@@ -23,8 +23,7 @@ import * as mock from './mockApi';
 // ──────────────────────────────────────────────────────────────────────────────
 // Feature flag — use real backend; set NEXT_PUBLIC_USE_MOCK=true for mock
 // ──────────────────────────────────────────────────────────────────────────────
-export const USE_MOCK =
-  process.env.NEXT_PUBLIC_USE_MOCK === 'true';
+export const USE_MOCK = false;
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';

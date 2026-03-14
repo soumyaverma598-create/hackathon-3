@@ -1,5 +1,14 @@
 const express = require('express');
-const { getAll, getById, create, updateStatus } = require('../controllers/applicationController');
+const router = express.Router();
+
+const {
+  getAll,
+  getById,
+  create,
+  updateStatus,
+  submitApplication,
+} = require('../controllers/applicationController');
+
 const { verifyToken } = require('../middleware/authMiddleware');
 const { uploadMiddleware, uploadDoc, getByApplicationId } = require('../controllers/documentController');
 const { submitPayment } = require('../controllers/paymentController');
@@ -7,33 +16,32 @@ const { getByApplicationId: getEDS, create: createEDS, update: updateEDS } = req
 const { generate: generateGist, getByApplicationId: getGist } = require('../controllers/gistController');
 const { get: getMom, update: updateMom, generateDoc, finalize, downloadCertificate } = require('../controllers/momController');
 
-const router = express.Router();
-
 router.use(verifyToken);
 
-router.get('/', getAll);
-router.post('/', create);
+router.get('/',    getAll);
+router.post('/',   create);
 router.get('/:id', getById);
-router.put('/:id/status', updateStatus);
+router.put('/:id/status',  updateStatus);
+router.patch('/:id/submit', submitApplication);  // ← new
 
 router.post('/:id/documents', uploadMiddleware, uploadDoc);
-router.get('/:id/documents', getByApplicationId);
+router.get('/:id/documents',  getByApplicationId);
 
 router.post('/:id/payment', submitPayment);
 
-router.get('/:id/eds', getEDS);
-router.post('/:id/eds', createEDS);
-router.put('/:id/eds/:queryId', updateEDS);
+router.get('/:id/eds',              getEDS);
+router.post('/:id/eds',             createEDS);
+router.put('/:id/eds/:queryId',     updateEDS);
 router.put('/:id/eds/:queryId/close', (req, res, next) => {
   req.body = { ...req.body, status: 'closed' };
   return updateEDS(req, res, next);
 });
 
-router.get('/:id/gist', getGist);
+router.get('/:id/gist',  getGist);
 router.post('/:id/gist', generateGist);
 
-router.get('/:id/mom', getMom);
-router.put('/:id/mom', updateMom);
+router.get('/:id/mom',           getMom);
+router.put('/:id/mom',           updateMom);
 router.post('/:id/mom/generate', generateDoc);
 router.post('/:id/mom/finalize', finalize);
 
