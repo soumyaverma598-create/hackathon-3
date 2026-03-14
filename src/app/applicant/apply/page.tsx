@@ -3,8 +3,15 @@
 import { memo, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
+import { useLanguageStore } from '@/store/languageStore';
 import { useWorkflowStore } from '@/store/workflowStore';
 import PageShell from '@/components/PageShell';
+import ApplicationTypeDropdown, { ApplicationType } from '@/components/ApplicationTypeDropdown';
+import SandChecklist from '@/components/SandChecklist';
+import LimestoneChecklist from '@/components/LimestoneChecklist';
+import BricksChecklist from '@/components/BricksChecklist';
+import InfrastructureChecklist from '@/components/InfrastructureChecklist';
+import { getApplicationText } from '@/lib/translations';
 import { WorkflowApplication, ProjectCategory } from '@/types/workflow';
 import { Send } from 'lucide-react';
 
@@ -61,17 +68,82 @@ const Field = memo(function Field({ label, id, children }: FieldProps) {
 export default function ApplyPage() {
   const { user } = useAuthStore();
   const { createApp, isLoading, error } = useWorkflowStore();
+  const { language } = useLanguageStore();
   const router = useRouter();
   const [form, setForm] = useState<Partial<FormData>>({ ...INITIAL });
   const [success, setSuccess] = useState('');
   const [docChecks, setDocChecks] = useState<Record<string, boolean>>({});
+  const [selectedApplicationType, setSelectedApplicationType] = useState<ApplicationType | null>(null);
+  const [sandDocChecks, setSandDocChecks] = useState<Record<string, boolean>>({});
+  const [limestoneDocChecks, setLimestoneDocChecks] = useState<Record<string, boolean>>({});
+  const [bricksDocChecks, setBricksDocChecks] = useState<Record<string, boolean>>({});
+  const [infrastructureDocChecks, setInfrastructureDocChecks] = useState<Record<string, boolean>>({});
   const userFormInitialized = useRef(false);
 
   const toggleDoc = useCallback((id: string) => {
     setDocChecks(prev => ({ ...prev, [id]: !prev[id] }));
   }, []);
 
-  const allMandatoryChecked = REQUIRED_DOCS.filter(d => d.required).every(d => docChecks[d.id]);
+  const toggleSandDoc = useCallback((id: string) => {
+    setSandDocChecks(prev => ({ ...prev, [id]: !prev[id] }));
+  }, []);
+
+  const toggleLimestoneDoc = useCallback((id: string) => {
+    setLimestoneDocChecks(prev => ({ ...prev, [id]: !prev[id] }));
+  }, []);
+
+  const toggleBricksDoc = useCallback((id: string) => {
+    setBricksDocChecks(prev => ({ ...prev, [id]: !prev[id] }));
+  }, []);
+
+  const toggleInfrastructureDoc = useCallback((id: string) => {
+    setInfrastructureDocChecks(prev => ({ ...prev, [id]: !prev[id] }));
+  }, []);
+
+  // Check mandatory docs from required list
+  const mandatoryDocsChecked = REQUIRED_DOCS.filter(d => d.required).every(d => docChecks[d.id]);
+
+  // Check SAND docs if SAND application type is selected
+  const allSandDocsChecked = selectedApplicationType === 'sand' 
+    ? [
+        'processingFees', 'prefeasibility', 'emp', 'form1', 'dsr', 'landDocs', 'loi', 'noc',
+        'certificate200', 'certificate500', 'markedDelimited', 'miningPlan', 'approvedMiningPlan',
+        'forestNoc', 'kml', 'cerConsent', 'affidavits', 'gist'
+      ].every(id => sandDocChecks[id])
+    : true;
+
+  // Check LIMESTONE docs if LIMESTONE application type is selected
+  const allLimestoneDocsChecked = selectedApplicationType === 'limestone'
+    ? [
+        'processingFees', 'prefeasibility', 'emp', 'form1', 'dsr', 'landDocs', 'consent', 'loi', 'leaseDeed',
+        'previousEC', 'ecCompliance', 'productionData', 'gram', 'certificate200', 'certificate500', 'planApproval',
+        'approvedPlan', 'forestNoc', 'treePlantation', 'waterNoc', 'cteCto', 'geoPhotographs', 'boundaryStrip',
+        'droneVideo', 'kml', 'ccr', 'cemp', 'cerConsent', 'affidavits', 'eiaHearing', 'gist'
+      ].every(id => limestoneDocChecks[id])
+    : true;
+
+  // Check BRICKS docs if BRICKS application type is selected
+  const allBricksDocsChecked = selectedApplicationType === 'bricks'
+    ? [
+        'processingFees', 'prefeasibility', 'emp', 'form1', 'dsr', 'landDocs', 'consent', 'loi', 'leaseDeed',
+        'previousEC', 'ecCompliance', 'productionData', 'gram', 'panchayat', 'certificate200', 'certificate500',
+        'planApproval', 'approvedPlan', 'forestNoc', 'treePlantation', 'waterNoc', 'cteCto', 'geoPhotographs',
+        'boundaryStrip', 'droneVideo', 'kml', 'ccr', 'cemp', 'cerConsent', 'affidavits', 'eiaHearing', 'gist'
+      ].every(id => bricksDocChecks[id])
+    : true;
+
+  // Check INFRASTRUCTURE docs if INFRASTRUCTURE application type is selected
+  const allInfrastructureDocsChecked = selectedApplicationType === 'infrastructure'
+    ? [
+        'processingFees', 'prefeasibility', 'emp', 'form1', 'landDocs', 'previousEC', 'ecCompliance', 'partnership',
+        'conceptual', 'approvedLayout', 'landUseZoning', 'builtUpArea', 'buildingPermission', 'waterPermission',
+        'stp', 'wasteManagement', 'solarEnergy', 'greenBelt', 'empCost', 'nbwl', 'fireNoc', 'aviationNoc',
+        'wildlifeManagement', 'cteCto', 'geoPhotographs', 'kml', 'cerConsent', 'affidavits', 'eiaHearing', 'gist'
+      ].every(id => infrastructureDocChecks[id])
+    : true;
+
+  // Final validation: mandatory docs + application-specific checks
+  const allMandatoryChecked = mandatoryDocsChecked && allSandDocsChecked && allLimestoneDocsChecked && allBricksDocsChecked && allInfrastructureDocsChecked;
 
   useEffect(() => {
     if (!user) { router.replace('/login'); return; }
@@ -123,6 +195,83 @@ export default function ApplyPage() {
             )}
 
             <form onSubmit={(e) => handleSubmit(e, false)} className="space-y-6">
+              {/* Application Type Selection */}
+              <div className="glass-card-strong p-6">
+                <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
+                  <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">0</span>
+                  {getApplicationText('selectApplicationType', language)}
+                </h3>
+                <Field label={getApplicationText('selectApplicationType', language) + ' *'} id="applicationType">
+                  <ApplicationTypeDropdown
+                    value={selectedApplicationType}
+                    onChange={(type) => {
+                      setSelectedApplicationType(type);
+                      // Reset checklists when changing application type
+                      setSandDocChecks({});
+                      setLimestoneDocChecks({});
+                      setBricksDocChecks({});
+                      setInfrastructureDocChecks({});
+                    }}
+                  />
+                </Field>
+              </div>
+
+              {/* SAND Mining Checklist - shown when SAND is selected */}
+              {selectedApplicationType === 'sand' && (
+                <div className="glass-card-strong p-6">
+                  <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
+                    <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">*</span>
+                    {getApplicationText('sandChecklist', language)}
+                  </h3>
+                  <SandChecklist
+                    checkedItems={sandDocChecks}
+                    onToggle={toggleSandDoc}
+                  />
+                </div>
+              )}
+
+              {/* LIMESTONE Mining Checklist - shown when LIMESTONE is selected */}
+              {selectedApplicationType === 'limestone' && (
+                <div className="glass-card-strong p-6">
+                  <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
+                    <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">*</span>
+                    {getApplicationText('limestoneChecklist', language)}
+                  </h3>
+                  <LimestoneChecklist
+                    checkedItems={limestoneDocChecks}
+                    onToggle={toggleLimestoneDoc}
+                  />
+                </div>
+              )}
+
+              {/* BRICKS Manufacturing Checklist - shown when BRICKS is selected */}
+              {selectedApplicationType === 'bricks' && (
+                <div className="glass-card-strong p-6">
+                  <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
+                    <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">*</span>
+                    {getApplicationText('bricksChecklist', language)}
+                  </h3>
+                  <BricksChecklist
+                    checkedItems={bricksDocChecks}
+                    onToggle={toggleBricksDoc}
+                  />
+                </div>
+              )}
+
+              {/* INFRASTRUCTURE Development Checklist - shown when INFRASTRUCTURE is selected */}
+              {selectedApplicationType === 'infrastructure' && (
+                <div className="glass-card-strong p-6">
+                  <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
+                    <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">*</span>
+                    {getApplicationText('infrastructureChecklist', language)}
+                  </h3>
+                  <InfrastructureChecklist
+                    checkedItems={infrastructureDocChecks}
+                    onToggle={toggleInfrastructureDoc}
+                  />
+                </div>
+              )}
+
               {/* Project Details */}
               <div className="glass-card-strong p-6">
                 <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
@@ -169,7 +318,7 @@ export default function ApplyPage() {
               {/* Location */}
               <div className="glass-card-strong p-6">
                 <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">2</span>
+                  <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">3</span>
                   Project Location
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -188,7 +337,7 @@ export default function ApplyPage() {
               {/* Proponent Info */}
               <div className="glass-card-strong p-6">
                 <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">3</span>
+                  <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">4</span>
                   Proponent / Applicant Details
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -204,7 +353,7 @@ export default function ApplyPage() {
               {/* Required Documents Checklist */}
               <div className="glass-card-strong p-6">
                 <h3 className="font-semibold text-gray-700 mb-1 pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">4</span>
+                  <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">5</span>
                   Required Documents Checklist
                 </h3>
                 <p className="text-xs text-gray-400 mb-4">Confirm that the following documents are ready. All mandatory items must be acknowledged before submission.</p>
@@ -282,7 +431,7 @@ export default function ApplyPage() {
                 <button
                   type="submit"
                   disabled={isLoading || !allMandatoryChecked}
-                  title={!allMandatoryChecked ? 'Acknowledge all mandatory documents first' : ''}
+                  title={!allMandatoryChecked ? (selectedApplicationType === 'sand' ? 'Acknowledge all mandatory documents and complete SAND checklist first' : selectedApplicationType === 'limestone' ? 'Acknowledge all mandatory documents and complete LIMESTONE checklist first' : selectedApplicationType === 'bricks' ? 'Acknowledge all mandatory documents and complete BRICKS checklist first' : selectedApplicationType === 'infrastructure' ? 'Acknowledge all mandatory documents and complete INFRASTRUCTURE checklist first' : 'Acknowledge all mandatory documents first') : ''}
                   className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}
                 >

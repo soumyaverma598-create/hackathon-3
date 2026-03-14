@@ -2,17 +2,12 @@
 
 import { Bell, LogOut, ChevronDown, Shield } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { useLanguageStore } from '@/store/languageStore';
 import { useNotificationStore } from '@/store/notificationStore';
 import { useState, useRef, useEffect } from 'react';
 import { UserRole } from '@/types/auth';
 import { useRouter } from 'next/navigation';
-
-const roleLabels: Record<UserRole, string> = {
-  admin: 'System Admin',
-  applicant: 'Proponent',
-  scrutiny: 'Scrutiny Officer',
-  mom: 'MoM Secretary',
-};
+import { getRoleText, getHeaderText, getCommonText } from '@/lib/translations';
 
 const roleBadgeColors: Record<UserRole, string> = {
   admin: 'bg-red-600/80',
@@ -30,6 +25,7 @@ const QUICK_SWITCH_CREDENTIALS = [
 
 export default function GovHeader() {
   const { user, logout, login } = useAuthStore();
+  const { language } = useLanguageStore();
   const { notifications, markAllRead } = useNotificationStore();
   const [showNotifs, setShowNotifs] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -165,19 +161,19 @@ export default function GovHeader() {
                 {showNotifs && (
                   <div className="absolute right-0 top-12 w-80 glass-card-strong rounded-xl shadow-2xl z-[140] animate-slide-down overflow-hidden">
                     <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100/50">
-                      <span className="font-semibold text-gray-800 text-sm">Notifications</span>
+                      <span className="font-semibold text-gray-800 text-sm">{getHeaderText('notifications', language)}</span>
                       {unread > 0 && (
                         <button
                           onClick={() => { markAllRead(user.id); setShowNotifs(false); }}
                           className="text-xs text-[#164e63] hover:underline transition-colors font-medium"
                         >
-                          Mark all read
+                          {getHeaderText('markAllRead', language)}
                         </button>
                       )}
                     </div>
                     <div className="max-h-72 overflow-y-auto">
                       {notifications.length === 0 ? (
-                        <p className="px-4 py-6 text-center text-gray-400 text-sm">No notifications</p>
+                        <p className="px-4 py-6 text-center text-gray-400 text-sm">{getHeaderText('noNotifications', language)}</p>
                       ) : (
                         notifications.map((n, idx) => (
                           <div
@@ -211,7 +207,7 @@ export default function GovHeader() {
                     <p className="text-cyan-200/60 text-xs">{user.designation}</p>
                   </div>
                   <span className={`${roleBadgeColors[user.role]} backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 transition-all hover:scale-105 shadow-sm`}>
-                    {roleLabels[user.role]}
+                    {getRoleText(user.role as any, language)}
                   </span>
                   <ChevronDown className={`text-cyan-200/75 w-4 h-4 transition-transform duration-300 ${showProfileMenu ? 'rotate-180' : ''}`} />
                 </button>
@@ -225,16 +221,16 @@ export default function GovHeader() {
 
                     <div className="px-3.5 py-2.5 border-b border-[#164e63]/10 bg-[#f3f9fd]">
                       <div className="px-2 py-1.5 space-y-1.5">
-                        <p className="text-[0.7rem] uppercase tracking-[0.08em] font-semibold text-[#476b80]">Current Credentials</p>
-                        <p className="ui-kv-row"><span className="ui-kv-label">Email:</span><span className="ui-kv-value break-all">{user.email}</span></p>
-                        <p className="ui-kv-row"><span className="ui-kv-label">Department:</span><span className="ui-kv-value">{user.department}</span></p>
-                        <p className="ui-kv-row"><span className="ui-kv-label">Role:</span><span className="ui-kv-value">{roleLabels[user.role]}</span></p>
+                        <p className="text-[0.7rem] uppercase tracking-[0.08em] font-semibold text-[#476b80]">{getCommonText('currentCredentials', language)}</p>
+                        <p className="ui-kv-row"><span className="ui-kv-label">{getCommonText('email', language)}:</span><span className="ui-kv-value break-all">{user.email}</span></p>
+                        <p className="ui-kv-row"><span className="ui-kv-label">{getCommonText('department', language)}:</span><span className="ui-kv-value">{user.department}</span></p>
+                        <p className="ui-kv-row"><span className="ui-kv-label">{getCommonText('role', language)}:</span><span className="ui-kv-value">{getRoleText(user.role as any, language)}</span></p>
                       </div>
                     </div>
 
                     <div className="px-3.5 py-2.5 bg-[#ecf5fb]">
                       <div className="px-2 py-1.5">
-                        <p className="text-[0.7rem] uppercase tracking-[0.08em] font-semibold text-[#476b80] mb-1.5">Quick Switch Credentials</p>
+                        <p className="text-[0.7rem] uppercase tracking-[0.08em] font-semibold text-[#476b80] mb-1.5">{getCommonText('quickSwitchCredentials', language)}</p>
                         <div className="space-y-1.5">
                           {QUICK_SWITCH_CREDENTIALS.map((item) => (
                             <div
@@ -254,16 +250,16 @@ export default function GovHeader() {
                                 type="button"
                                 onClick={() => handleCopyEmail(item.email)}
                                 className="text-[0.8rem] font-semibold px-2.5 py-1 rounded-md border border-[#164e63]/16 text-[#355e75] hover:text-[#0f3650] hover:border-[#164e63]/35 hover:bg-white transition-colors"
-                                title="Copy email"
+                                title={getCommonText('copy', language)}
                               >
-                                {copiedEmail === item.email ? 'Copied' : 'Copy'}
+                                {copiedEmail === item.email ? getCommonText('copied', language) : getCommonText('copy', language)}
                               </button>
                             </div>
                           ))}
                         </div>
                       </div>
                       {switchingTo && (
-                        <p className="text-[0.7rem] font-semibold text-[#164e63] mt-1.5">Switching account...</p>
+                        <p className="text-[0.7rem] font-semibold text-[#164e63] mt-1.5">{getHeaderText('switchingTo', language)}...</p>
                       )}
                     </div>
                   </div>
@@ -273,11 +269,11 @@ export default function GovHeader() {
               {/* Logout */}
               <button
                 onClick={() => logout()}
-                title="Logout"
+                title={getHeaderText('notifications', language)}
                 className="flex items-center gap-1.5 bg-white/16 hover:bg-white/30 text-white/90 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 border border-white/24 hover:border-white/36 hover:scale-105"
               >
                 <LogOut className="w-4 h-4" />
-                <span className="hidden sm:inline text-xs">Logout</span>
+                <span className="hidden sm:inline text-xs">{getCommonText('logout', language)}</span>
               </button>
             </div>
           )}
