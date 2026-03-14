@@ -542,3 +542,30 @@ export async function pushAdminAlert(
     body: JSON.stringify({ title, message }),
   });
 }
+
+// Payment APIs
+export const createPaymentOrder = (applicationId: string, amount: number) =>
+  apiFetch<{ orderId: string; amount: number; currency: string; keyId: string }>('/api/payment/create-order', {
+    method: 'POST',
+    body: JSON.stringify({ applicationId, amount }),
+  });
+
+export const verifyPayment = (data: {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+  application_id: string;
+}) =>
+  apiFetch<{ message: string; paymentId: string; applicationId: string }>('/api/payment/verify', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+
+export const getPaymentStatus = (applicationId: string) =>
+  apiFetch<{ 
+    status: string; 
+    amount: number; 
+    date: string; 
+    transactionId: string; 
+    orderId: string; 
+  }>(`/api/payment/status/${applicationId}`);
