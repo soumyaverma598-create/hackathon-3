@@ -81,7 +81,7 @@ export default function ScrutinyDashboard() {
       {/* Applications table */}
       {isLoading ? <SkeletonLoader variant="table" /> :
         error ? <ErrorMessage message={error} onRetry={fetchAll} /> :
-        applications.length === 0 ? <EmptyState title="No applications" message="No applications to review." /> : (
+        applications.length === 0 ? <EmptyState title={getUiText('noApplicationsTitle', language)} message={getUiText('noApplicationsToReview', language)} /> : (
         <motion.div
           className="glass-card-strong overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
@@ -89,17 +89,17 @@ export default function ScrutinyDashboard() {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <div className="px-5 py-4 ui-section-strip">
-            <h3 className="font-semibold text-gray-700 text-sm">Application Queue</h3>
+            <h3 className="font-semibold text-gray-700 text-sm">{getUiText('applicationQueueTitle', language)}</h3>
           </div>
           <table className="w-full">
             <thead className="ui-table-head">
               <tr>
-                <th className="text-left px-5 py-3 ui-col-a">App No.</th>
-                <th className="text-left px-5 py-3 ui-col-b">Project</th>
-                <th className="text-left px-5 py-3 ui-col-a">Category</th>
-                <th className="text-left px-5 py-3 ui-col-b">Status</th>
-                <th className="text-left px-5 py-3 ui-col-a">EDS Open</th>
-                <th className="text-left px-5 py-3 ui-col-b">Action</th>
+                <th className="text-left px-5 py-3 ui-col-a">{getUiText('appNumberLabel', language)}</th>
+                <th className="text-left px-5 py-3 ui-col-b">{getUiText('projectLabel', language)}</th>
+                <th className="text-left px-5 py-3 ui-col-a">{getUiText('categoryLabel', language)}</th>
+                <th className="text-left px-5 py-3 ui-col-b">{getUiText('statusLabel', language)}</th>
+                <th className="text-left px-5 py-3 ui-col-a">{getUiText('edsOpenTableLabel', language)}</th>
+                <th className="text-left px-5 py-3 ui-col-b">{getUiText('actionLabel', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50/50 text-sm">
@@ -123,12 +123,12 @@ export default function ScrutinyDashboard() {
                   <td className="px-5 py-3 text-center ui-col-a">
                     {a.edsQueries.filter((q) => q.status === 'open').length > 0 ? (
                       <span className="text-xs font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-lg">
-                        {a.edsQueries.filter((q) => q.status === 'open').length} open
+                        {a.edsQueries.filter((q) => q.status === 'open').length} {getUiText('openEdsLabel', language)}
                       </span>
                     ) : <span className="text-gray-300">—</span>}
                   </td>
                   <td className="px-5 py-3 ui-col-b">
-                    <Link href={`/scrutiny/review?id=${a.id}`} className="text-xs font-semibold text-[#164e63] hover:underline">Review →</Link>
+                    <Link href={`/scrutiny/review?id=${a.id}`} className="text-xs font-semibold text-[#164e63] hover:underline">{getUiText('reviewLabel', language)} →</Link>
                   </td>
                 </motion.tr>
               ))}

@@ -9,7 +9,7 @@ import StatusBadge from '@/components/StatusBadge';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import ErrorMessage from '@/components/ErrorMessage';
 import EmptyState from '@/components/EmptyState';
-import { getDashboardText, getRoleText, getCommonText } from '@/lib/translations';
+import { getDashboardText, getRoleText, getCommonText, getUiText } from '@/lib/translations';
 import { MOCK_USERS } from '@/lib/mockData';
 import { Users, Database, ShieldCheck, FileStack } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -115,7 +115,7 @@ export default function AdminDashboard() {
                 <td className="px-5 py-3 text-gray-400 text-xs max-w-40 truncate ui-col-b">{u.department}</td>
                 <td className="px-5 py-3 ui-col-a">
                   <span className={`text-xs font-semibold px-2 py-0.5 rounded-lg ${u.isActive ? 'bg-cyan-100/80 text-cyan-700' : 'bg-red-100/80 text-red-600'}`}>
-                    {u.isActive ? 'Active' : 'Inactive'}
+                    {u.isActive ? getUiText('activeLabel', language) : getUiText('inactiveLabel', language)}
                   </span>
                 </td>
               </motion.tr>
@@ -133,19 +133,19 @@ export default function AdminDashboard() {
       >
         <div className="px-5 py-4 ui-section-strip-muted flex items-center gap-2">
           <FileStack size={16} className="text-[#164e63]" />
-          <h3 className="font-semibold text-gray-700 text-sm">All Applications</h3>
+          <h3 className="font-semibold text-gray-700 text-sm">{getUiText('allApplicationsTitle', language)}</h3>
         </div>
         {isLoading ? <div className="p-4"><SkeletonLoader variant="table" /></div> :
           error ? <div className="p-4"><ErrorMessage message={error} /></div> :
-          applications.length === 0 ? <EmptyState title="No applications" message="No applications submitted yet." /> : (
+          applications.length === 0 ? <EmptyState title={getUiText('noApplicationsTitle', language)} message={getUiText('noApplicationsToReview', language)} /> : (
           <table className="w-full">
             <thead className="ui-table-head">
               <tr>
-                <th className="text-left px-5 py-3 ui-col-a">App No.</th>
-                <th className="text-left px-5 py-3 ui-col-b">Project</th>
-                <th className="text-left px-5 py-3 ui-col-a">Proponent</th>
-                <th className="text-left px-5 py-3 ui-col-b">Status</th>
-                <th className="text-left px-5 py-3 ui-col-a">Category</th>
+                <th className="text-left px-5 py-3 ui-col-a">{getUiText('appNumberLabel', language)}</th>
+                <th className="text-left px-5 py-3 ui-col-b">{getUiText('projectLabel', language)}</th>
+                <th className="text-left px-5 py-3 ui-col-a">{getUiText('proponentLabel', language)}</th>
+                <th className="text-left px-5 py-3 ui-col-b">{getUiText('statusLabel', language)}</th>
+                <th className="text-left px-5 py-3 ui-col-a">{getUiText('categoryLabel', language)}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50/50 text-sm">

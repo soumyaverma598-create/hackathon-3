@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import type { Language } from '@/lib/translations';
 import {
   AssistantMessage,
+  LiveUserContext,
   buildAssistantSystemPrompt,
   getAssistantFallbackReply,
 } from '@/lib/siteAssistant';
@@ -12,13 +13,17 @@ interface ChatbotRequestBody {
   messages?: AssistantMessage[];
   language?: Language;
   pathname?: string;
+  context?: LiveUserContext;
 }
+
+type ChatFallbackReason = 'missing_api_key' | 'rate_limited' | 'upstream_error';
 
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => null)) as ChatbotRequestBody | null;
   const messages = sanitizeMessages(body?.messages ?? []);
   const language = body?.language ?? 'en';
   const pathname = body?.pathname ?? '/';
+  const context = body?.context;
 
   if (messages.length === 0) {
     return NextResponse.json(
@@ -42,6 +47,7 @@ export async function POST(request: NextRequest) {
       data: {
         reply: getAssistantFallbackReply(latestUserMessage.content, language),
         mode: 'fallback',
+        reason: 'missing_api_key' satisfies ChatFallbackReason,
       },
     });
   }
@@ -55,7 +61,7 @@ export async function POST(request: NextRequest) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          contents: buildGeminiContents(messages, language, pathname),
+          contents: buildGeminiContents(messages, language, pathname, context),
           generationConfig: {
             temperature: 0.35,
             topP: 0.9,
@@ -84,12 +90,15 @@ export async function POST(request: NextRequest) {
         mode: 'gemini',
       },
     });
-  } catch {
+  } catch (error) {
+    const reason = getFallbackReason(error);
+
     return NextResponse.json({
       success: true,
       data: {
         reply: getAssistantFallbackReply(latestUserMessage.content, language),
         mode: 'fallback',
+        reason,
       },
     });
   }
@@ -113,12 +122,13 @@ function sanitizeMessages(messages: AssistantMessage[]) {
 function buildGeminiContents(
   messages: AssistantMessage[],
   language: Language,
-  pathname: string
+  pathname: string,
+  context?: LiveUserContext,
 ) {
   return [
     {
       role: 'user',
-      parts: [{ text: buildAssistantSystemPrompt(language, pathname) }],
+      parts: [{ text: buildAssistantSystemPrompt(language, pathname, context) }],
     },
     {
       role: 'model',
@@ -136,6 +146,16 @@ function extractReply(payload: GeminiResponse) {
     ?.map((part) => part.text ?? '')
     .join('')
     .trim();
+}
+
+function getFallbackReason(error: unknown): ChatFallbackReason {
+  const message = error instanceof Error ? error.message : String(error ?? '');
+
+  if (message.includes('429')) {
+    return 'rate_limited';
+  }
+
+  return 'upstream_error';
 }
 
 interface GeminiResponse {
