@@ -13,6 +13,7 @@ import Link from 'next/link';
 import { ClipboardList, AlertTriangle, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getUiText } from '@/lib/translations';
+import { formatAppId } from '@/lib/utils';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -111,7 +112,7 @@ export default function ScrutinyDashboard() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.35 + idx * 0.04 }}
                 >
-                  <td className="px-5 py-3 font-mono text-xs text-gray-500 ui-col-a">{a.applicationNumber}</td>
+                  <td className="px-5 py-3 font-mono text-xs text-gray-500 ui-col-a">{formatAppId(a.applicationNumber)}</td>
                   <td className="px-5 py-3 font-medium text-gray-800 max-w-48 ui-col-b">
                     <p className="truncate">{a.projectName}</p>
                     <p className="text-xs text-gray-400">{a.stateUT}</p>

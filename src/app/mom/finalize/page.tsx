@@ -13,6 +13,7 @@ import StatusBadge from '@/components/StatusBadge';
 import { getMom, editMom, generateMomDoc, finalizeMom, downloadCertificate } from '@/lib/api';
 import { useLanguageStore } from '@/store/languageStore';
 import { formatUiText, getUiText } from '@/lib/translations';
+import { formatAppId } from '@/lib/utils';
 import { CheckCircle, FileDown, ScrollText, Stamp } from 'lucide-react';
 
 function MomFinalizePageContent() {
@@ -111,7 +112,7 @@ function MomFinalizePageContent() {
               <label className="ui-label">{getUiText('selectApplicationLabel', language)}</label>
               <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63]" value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)}>
                 <option value="">{getUiText('selectApplicationPromptSimple', language)}</option>
-                {eligible.map((a) => <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>)}
+                {eligible.map((a) => <option key={a.id} value={a.id}>{formatAppId(a.applicationNumber)} — {a.projectName}</option>)}
               </select>
             </div>
 
@@ -140,7 +141,7 @@ function MomFinalizePageContent() {
                 <div className="flex items-center justify-between bg-white border border-gray-100 rounded-xl shadow-sm px-5 py-3">
                   <div>
                     <p className="font-semibold text-gray-800">{selectedApp.projectName}</p>
-                    <p className="text-xs text-gray-400">{selectedApp.applicationNumber} &bull; {selectedApp.stateUT} &bull; Cat {selectedApp.projectCategory}</p>
+                    <p className="text-xs text-gray-400">{formatAppId(selectedApp.applicationNumber)} &bull; {selectedApp.stateUT} &bull; Cat {selectedApp.projectCategory}</p>
                   </div>
                   <StatusBadge status={selectedApp.status} />
                 </div>

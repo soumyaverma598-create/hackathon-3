@@ -14,6 +14,7 @@ import { getEDSQueries, respondToEDS } from '@/lib/api';
 import { EDSQuery } from '@/types/workflow';
 import { useLanguageStore } from '@/store/languageStore';
 import { formatUiText, getUiText } from '@/lib/translations';
+import { formatAppId } from '@/lib/utils';
 import { MessageSquare, Send, ChevronDown, ChevronUp } from 'lucide-react';
 
 function ApplicantEDSPageContent() {
@@ -95,7 +96,7 @@ function ApplicantEDSPageContent() {
               >
                 <option value="">{getUiText('selectApplicationPrompt', language)}</option>
                 {applications.map((a) => (
-                  <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>
+                  <option key={a.id} value={a.id}>{formatAppId(a.applicationNumber)} — {a.projectName}</option>
                 ))}
               </select>
             </div>

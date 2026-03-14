@@ -12,6 +12,7 @@ import { generateGist, getGist } from '@/lib/api';
 import { GistContent } from '@/types/workflow';
 import { useLanguageStore } from '@/store/languageStore';
 import { formatUiText, getUiText } from '@/lib/translations';
+import { formatAppId } from '@/lib/utils';
 import { Sparkles, Edit3, CheckCircle, BookOpen } from 'lucide-react';
 
 const GistField = ({
@@ -110,7 +111,7 @@ function GistPageContent() {
                 value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)}
               >
                 <option value="">{getUiText('selectReferredApplicationPrompt', language)}</option>
-                {referred.map((a) => <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>)}
+                {referred.map((a) => <option key={a.id} value={a.id}>{formatAppId(a.applicationNumber)} — {a.projectName}</option>)}
               </select>
             </div>
 

@@ -13,6 +13,7 @@ import WorkflowProgress from '@/components/WorkflowProgress';
 import { WorkflowStatus } from '@/types/workflow';
 import { useLanguageStore } from '@/store/languageStore';
 import { getUiText } from '@/lib/translations';
+import { formatAppId } from '@/lib/utils';
 import { ChevronLeft, CheckCircle, AlertTriangle, FileText } from 'lucide-react';
 import Link from 'next/link';
 
@@ -76,7 +77,7 @@ function ScrutinyReviewPageContent() {
                 <div className="glass-card-strong p-5">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <p className="font-mono text-xs text-gray-400">{app.applicationNumber}</p>
+                      <p className="font-mono text-xs text-gray-400">{formatAppId(app.applicationNumber)}</p>
                       <h3 className="text-lg font-bold text-gray-800 mt-0.5">{app.projectName}</h3>
                     </div>
                     <StatusBadge status={app.status} />

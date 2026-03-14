@@ -114,22 +114,26 @@ const create = async (req, res) => {
       return res.status(400).json({ success: false, error: 'Proponent email required' });
     }
 
-    const year = new Date().getFullYear();
-    const prefix = `MoEFCC/EC/${year}/`;
-    const maxRes = await pool.query(
-      `SELECT COALESCE(MAX(CAST(SUBSTRING(application_number FROM '([0-9]+)$') AS INTEGER)), 0) + 1 AS next_num FROM applications WHERE application_number LIKE $1`,
-      [prefix + '%']
-    );
-    const nextNum = parseInt(maxRes.rows[0]?.next_num || '1', 10);
-    const applicationNumber = `${prefix}${String(nextNum).padStart(5, '0')}`;
+    // Generate professional application ID
+    function generateAppId(category, sequenceNumber) {
+      const now = new Date();
+      const year = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
+      const financialYear = `${year}-${String(year + 1).slice(2)}`;
+      const cat = category?.toLowerCase().includes('a') ? 'CAT-A' : 'CAT-B';
+      const seq = String(sequenceNumber).padStart(4, '0');
+      return `EC/${financialYear}/${cat}/${seq}`;
+    }
 
-    const id = 'app' + Date.now();
+    // Get sequence number
+    const countResult = await pool.query('SELECT COUNT(*) FROM applications');
+    const seq = parseInt(countResult.rows[0].count) + 1;
+    const id = generateAppId(projectCategory, seq);
     await pool.query(
       `INSERT INTO applications (id, application_number, project_name, proponent_name, proponent_email, proponent_phone, project_category, project_sector, state_ut, district, project_cost, project_area, status, payment_status, created_at, updated_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, 'draft', 'pending', NOW(), NOW())`,
       [
         id,
-        applicationNumber,
+        id, // Use the same professional ID for both id and application_number
         (projectName || '').trim(),
         name,
         email,

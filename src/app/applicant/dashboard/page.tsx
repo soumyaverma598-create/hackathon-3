@@ -13,6 +13,7 @@ import Link from 'next/link';
 import { FilePlus, FolderOpen, TrendingUp, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { formatUiText, getUiText } from '@/lib/translations';
+import { formatAppId } from '@/lib/utils';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -125,7 +126,7 @@ export default function ApplicantDashboard() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-1">
-                    <span className="text-xs font-mono text-gray-400">{app.applicationNumber}</span>
+                    <span className="text-xs font-mono text-gray-400">{formatAppId(app.applicationNumber)}</span>
                     <span className="text-xs text-gray-300">|</span>
                     <span className="text-xs font-semibold text-[#25c9d0]">{app.projectCategory} Category</span>
                   </div>

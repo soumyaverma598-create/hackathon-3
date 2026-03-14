@@ -12,6 +12,7 @@ import { Upload, FileText, Trash2, CheckCircle } from 'lucide-react';
 import { uploadDocuments } from '@/lib/api';
 import { useLanguageStore } from '@/store/languageStore';
 import { formatUiText, getUiText } from '@/lib/translations';
+import { formatAppId } from '@/lib/utils';
 
 function DocumentsPageContent() {
   const { user } = useAuthStore();
@@ -74,7 +75,7 @@ function DocumentsPageContent() {
                   >
                     <option value="">{getUiText('selectApplicationPrompt', language)}</option>
                     {applications.map((a) => (
-                      <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>
+                      <option key={a.id} value={a.id}>{formatAppId(a.applicationNumber)} — {a.projectName}</option>
                     ))}
                   </select>
                 </div>

@@ -10,6 +10,7 @@ import ErrorMessage from '@/components/ErrorMessage';
 import { submitPayment } from '@/lib/api';
 import { useLanguageStore } from '@/store/languageStore';
 import { formatUiText, getUiText } from '@/lib/translations';
+import { formatAppId } from '@/lib/utils';
 import { CreditCard, CheckCircle, IndianRupee } from 'lucide-react';
 
 export default function PaymentPage() {
@@ -86,7 +87,7 @@ export default function PaymentPage() {
                       <select className={inputCls} value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)} required>
                         <option value="">{getUiText('selectPendingPaymentPrompt', language)}</option>
                         {pendingApps.map((a) => (
-                          <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>
+                          <option key={a.id} value={a.id}>{formatAppId(a.applicationNumber)} — {a.projectName}</option>
                         ))}
                       </select>
                     </div>
@@ -127,7 +128,7 @@ export default function PaymentPage() {
                       {paidApps.map((a) => (
                         <div key={a.id} className="flex items-center justify-between py-3">
                           <div>
-                            <p className="text-sm font-medium text-gray-700">{a.applicationNumber}</p>
+                            <p className="text-sm font-medium text-gray-700">{formatAppId(a.applicationNumber)}</p>
                             <p className="text-xs text-gray-400">{a.paymentTransactionId ?? '—'}</p>
                           </div>
                           <div className="text-right">

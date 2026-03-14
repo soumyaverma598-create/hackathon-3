@@ -13,6 +13,7 @@ import Link from 'next/link';
 import { Calendar, CheckCircle, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { getUiText } from '@/lib/translations';
+import { formatAppId } from '@/lib/utils';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -104,7 +105,7 @@ export default function MomDashboard() {
                     <Link href={`/mom/gist?id=${a.id}`} className="flex items-center gap-4 px-5 py-3.5 hover:bg-[#164e63]/3 transition-colors block">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-gray-800 truncate">{a.projectName}</p>
-                        <p className="text-xs text-gray-400">{a.applicationNumber} &bull; {a.stateUT} &bull; Cat {a.projectCategory}</p>
+                        <p className="text-xs text-gray-400">{formatAppId(a.applicationNumber)} &bull; {a.stateUT} &bull; Cat {a.projectCategory}</p>
                         {a.meetingDate && <p className="text-xs text-purple-600 font-semibold mt-0.5">EAC Meeting: {new Date(a.meetingDate).toLocaleDateString('en-IN')} &bull; {a.meetingNumber}</p>}
                       </div>
                       <div className="flex items-center gap-3">
@@ -135,7 +136,7 @@ export default function MomDashboard() {
                     <Link href={`/mom/finalize?id=${a.id}`} className="flex items-center gap-4 px-5 py-3.5 hover:bg-[#164e63]/3 transition-colors block">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-gray-800 truncate">{a.projectName}</p>
-                        <p className="text-xs text-gray-400">{a.applicationNumber}</p>
+                        <p className="text-xs text-gray-400">{formatAppId(a.applicationNumber)}</p>
                       </div>
                       <div className="flex items-center gap-3">
                         <StatusBadge status={a.status} />

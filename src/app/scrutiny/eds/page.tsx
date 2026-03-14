@@ -13,6 +13,7 @@ import { getEDSQueries, raiseEDSQuery, closeEDSQuery } from '@/lib/api';
 import { EDSQuery } from '@/types/workflow';
 import { useLanguageStore } from '@/store/languageStore';
 import { formatUiText, getUiText } from '@/lib/translations';
+import { formatAppId } from '@/lib/utils';
 import { Plus, CheckCheck, ChevronDown, ChevronUp, MessageSquareWarning } from 'lucide-react';
 
 const EDS_CHECKLIST_ITEMS = [
@@ -220,7 +221,7 @@ function ScrutinyEDSPageContent() {
               <label className="ui-label">{getUiText('selectApplicationLabel', language)}</label>
               <select className={inputCls} value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)}>
                 <option value="">{getUiText('selectApplicationPromptSimple', language)}</option>
-                {applications.map((a) => <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>)}
+                {applications.map((a) => <option key={a.id} value={a.id}>{formatAppId(a.applicationNumber)} — {a.projectName}</option>)}
               </select>
             </div>
 

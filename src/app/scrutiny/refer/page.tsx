@@ -11,6 +11,7 @@ import ErrorMessage from '@/components/ErrorMessage';
 import StatusBadge from '@/components/StatusBadge';
 import { useLanguageStore } from '@/store/languageStore';
 import { getUiText } from '@/lib/translations';
+import { formatAppId } from '@/lib/utils';
 import { Send, CheckCircle } from 'lucide-react';
 
 function ScrutinyReferPageContent() {
@@ -65,7 +66,7 @@ function ScrutinyReferPageContent() {
                       <label className="ui-label">{getUiText('applicationToRefer', language)}</label>
                       <select className={inputCls} value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)} required>
                         <option value="">{getUiText('selectApplicationPromptSimple', language)}</option>
-                        {eligible.map((a) => <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>)}
+                        {eligible.map((a) => <option key={a.id} value={a.id}>{formatAppId(a.applicationNumber)} — {a.projectName}</option>)}
                       </select>
                     </div>
 
@@ -115,7 +116,7 @@ function ScrutinyReferPageContent() {
                         <div key={a.id} className="flex items-center justify-between py-2.5">
                           <div>
                             <p className="text-sm font-medium text-gray-700 truncate max-w-xs">{a.projectName}</p>
-                            <p className="text-xs text-gray-400 font-mono">{a.applicationNumber}</p>
+                            <p className="text-xs text-gray-400 font-mono">{formatAppId(a.applicationNumber)}</p>
                           </div>
                           <StatusBadge status={a.status} />
                         </div>
