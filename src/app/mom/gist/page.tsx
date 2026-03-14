@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useWorkflowStore } from '@/store/workflowStore';
@@ -11,6 +11,39 @@ import ErrorMessage from '@/components/ErrorMessage';
 import { generateGist, getGist } from '@/lib/api';
 import { GistContent } from '@/types/workflow';
 import { Sparkles, Edit3, CheckCircle, BookOpen } from 'lucide-react';
+
+// GistField component moved outside to prevent re-renders
+const GistField = ({ 
+  label, 
+  field, 
+  rows = 3, 
+  value, 
+  editMode, 
+  onChange 
+}: { 
+  label: string; 
+  field: keyof GistContent; 
+  rows?: number; 
+  value: string; 
+  editMode: boolean; 
+  onChange: (field: keyof GistContent, value: string) => void;
+}) => {
+  return (
+    <div>
+      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{label}</label>
+      {editMode ? (
+        <textarea 
+          rows={rows} 
+          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c] resize-none" 
+          value={value ?? ''} 
+          onChange={(e) => onChange(field, e.target.value)} 
+        />
+      ) : (
+        <p className="text-sm text-gray-700 leading-relaxed bg-gray-50 rounded-lg p-3">{value}</p>
+      )}
+    </div>
+  );
+};
 
 export default function GistPage() {
   const { user } = useAuthStore();
@@ -49,20 +82,9 @@ export default function GistPage() {
   if (!user) return null;
 
   const referred = applications.filter((a) => ['referred', 'mom_draft'].includes(a.status));
-  const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c] resize-none";
 
-  const GistField = ({ label, field, rows = 3 }: { label: string; field: keyof GistContent; rows?: number }) => {
-    const value = (editMode ? (edited[field] ?? gist?.[field]) : gist?.[field]) as string;
-    return (
-      <div>
-        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{label}</label>
-        {editMode ? (
-          <textarea rows={rows} className={inputCls} value={value ?? ''} onChange={(e) => setEdited((ed) => ({ ...ed, [field]: e.target.value }))} />
-        ) : (
-          <p className="text-sm text-gray-700 leading-relaxed bg-gray-50 rounded-lg p-3">{value}</p>
-        )}
-      </div>
-    );
+  const handleFieldChange = (field: keyof GistContent, value: string) => {
+    setEdited((ed) => ({ ...ed, [field]: value }));
   };
 
   return (
@@ -137,11 +159,46 @@ export default function GistPage() {
 
                 <p className="text-xs text-gray-400">Generated: {new Date(gist.generatedAt).toLocaleString('en-IN')}</p>
 
-                <GistField label="Project Background" field="projectBackground" rows={3} />
-                <GistField label="Proposal Details" field="proposalDetails" rows={3} />
-                <GistField label="Environmental Impact" field="environmentalImpact" rows={4} />
-                <GistField label="Mitigation Measures" field="mitigationMeasures" rows={4} />
-                <GistField label="Recommendation" field="recommendation" rows={2} />
+                <GistField 
+                  label="Project Background" 
+                  field="projectBackground" 
+                  rows={3} 
+                  value={(edited.projectBackground ?? gist?.projectBackground) || ''} 
+                  editMode={editMode} 
+                  onChange={handleFieldChange} 
+                />
+                <GistField 
+                  label="Proposal Details" 
+                  field="proposalDetails" 
+                  rows={3} 
+                  value={(edited.proposalDetails ?? gist?.proposalDetails) || ''} 
+                  editMode={editMode} 
+                  onChange={handleFieldChange} 
+                />
+                <GistField 
+                  label="Environmental Impact" 
+                  field="environmentalImpact" 
+                  rows={4} 
+                  value={(edited.environmentalImpact ?? gist?.environmentalImpact) || ''} 
+                  editMode={editMode} 
+                  onChange={handleFieldChange} 
+                />
+                <GistField 
+                  label="Mitigation Measures" 
+                  field="mitigationMeasures" 
+                  rows={4} 
+                  value={(edited.mitigationMeasures ?? gist?.mitigationMeasures) || ''} 
+                  editMode={editMode} 
+                  onChange={handleFieldChange} 
+                />
+                <GistField 
+                  label="Recommendation" 
+                  field="recommendation" 
+                  rows={2} 
+                  value={(edited.recommendation ?? gist?.recommendation) || ''} 
+                  editMode={editMode} 
+                  onChange={handleFieldChange} 
+                />
               </div>
             )}
           </div>

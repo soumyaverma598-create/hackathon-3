@@ -56,8 +56,20 @@ export default function MomFinalizePage() {
   const doGenerate = async () => {
     setLoading(true); setErr(''); setSuccess('');
     try {
-      await generateMomDoc(selectedAppId);
-      setSuccess('MoM document generated and ready for download.');
+      const result = await generateMomDoc(selectedAppId);
+      if (result.url) {
+        // Create a temporary link and trigger download
+        const a = document.createElement('a');
+        a.href = result.url;
+        a.download = `MoM_${selectedAppId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(result.url);
+        setSuccess('MoM document downloaded successfully.');
+      } else {
+        setSuccess('MoM document generated and ready for download.');
+      }
     } catch (e) { setErr(e instanceof Error ? e.message : 'Generation failed.'); }
     finally { setLoading(false); }
   };

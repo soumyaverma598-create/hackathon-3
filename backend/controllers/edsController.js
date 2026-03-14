@@ -69,7 +69,7 @@ const update = async (req, res) => {
     const params = [];
     let idx = 1;
     if (response != null) {
-      updates.push(`response = $${idx}, responded_at = NOW()`);
+      updates.push(`response = $${idx}, responded_at = NOW(), status = 'responded'`);
       params.push(response);
       idx++;
     }

@@ -50,6 +50,10 @@ export default function ApplicantEDSPage() {
       setQueries((qs) => qs.map((q) => (q.id === queryId ? updated : q)));
       setSuccessMsg((s) => ({ ...s, [queryId]: 'Response submitted successfully!' }));
       setResponses((r) => ({ ...r, [queryId]: '' }));
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMsg((s) => ({ ...s, [queryId]: '' }));
+      }, 3000);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Submission failed.');
     } finally {
@@ -136,10 +140,10 @@ export default function ApplicantEDSPage() {
                            <p className="text-sm text-green-600 font-semibold mb-3">{successMsg[q.id]}</p>
                          )}
 
-                         {q.status !== 'closed' && (
+                         {q.status === 'open' && (
                            <div>
                              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                               {q.status === 'responded' ? 'Update Response' : 'Submit Response'}
+                               Submit Response
                              </label>
                              <textarea
                                rows={4}

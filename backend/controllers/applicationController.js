@@ -189,4 +189,38 @@ const updateStatus = async (req, res) => {
   }
 };
 
-module.exports = { getAll, getById, create, updateStatus };
+const submitApplication = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      `UPDATE applications
+       SET status = 'submitted',
+           submitted_at = NOW(),
+           updated_at = NOW()
+       WHERE id = $1
+       RETURNING id, status`,
+      [id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: 'Application not found'
+      });
+    }
+    res.json({
+      success: true,
+      data: {
+        id: result.rows[0].id,
+        status: result.rows[0].status
+      }
+    });
+  } catch (err) {
+    console.error('submitApplication error:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to submit application'
+    });
+  }
+};
+
+module.exports = { getAll, getById, create, updateStatus, submitApplication };

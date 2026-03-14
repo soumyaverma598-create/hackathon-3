@@ -69,7 +69,7 @@ export default function MomDashboard() {
                     </div>
                     <div className="divide-y divide-gray-50">
                       {referred.map((a) => (
-                        <div key={a.id} className="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors">
+                        <Link key={a.id} href={`/mom/gist?id=${a.id}`} className="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors block">
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-gray-800 truncate">{a.projectName}</p>
                             <p className="text-xs text-gray-400">{a.applicationNumber} &bull; {a.stateUT} &bull; Cat {a.projectCategory}</p>
@@ -77,9 +77,9 @@ export default function MomDashboard() {
                           </div>
                           <div className="flex items-center gap-3">
                             <StatusBadge status={a.status} />
-                            <Link href={`/mom/gist?id=${a.id}`} className="text-xs font-semibold text-[#1a6b3c] hover:underline whitespace-nowrap">Generate Gist →</Link>
+                            <span className="text-xs font-semibold text-[#1a6b3c] hover:underline whitespace-nowrap">Generate Gist →</span>
                           </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   </div>
@@ -93,16 +93,16 @@ export default function MomDashboard() {
                     </div>
                     <div className="divide-y divide-gray-50">
                       {momDraft.map((a) => (
-                        <div key={a.id} className="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors">
+                        <Link key={a.id} href={`/mom/finalize?id=${a.id}`} className="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors block">
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-gray-800 truncate">{a.projectName}</p>
                             <p className="text-xs text-gray-400">{a.applicationNumber}</p>
                           </div>
                           <div className="flex items-center gap-3">
                             <StatusBadge status={a.status} />
-                            <Link href={`/mom/finalize?id=${a.id}`} className="text-xs font-semibold text-indigo-600 hover:underline whitespace-nowrap">Finalize →</Link>
+                            <span className="text-xs font-semibold text-indigo-600 hover:underline whitespace-nowrap">Finalize →</span>
                           </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   </div>
