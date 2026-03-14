@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Settings, ShieldCheck, Bell, Database, ChevronRight } from 'lucide-react';
+import PageShell from '@/components/PageShell';
 import { useAuthStore } from '@/store/authStore';
 import { useAdminSettingsStore } from '@/store/adminSettingsStore';
 
@@ -67,7 +68,7 @@ export default function AdminSettingsPage() {
   ] as const;
 
   return (
-    <>
+    <PageShell role="admin">
             <h2 className="page-heading animate-gov-enter">Settings</h2>
             <p className="page-subheading mb-6 animate-gov-enter" style={{ animationDelay: '0.05s' }}>Configure admin preferences for PARIVESH 3.0.</p>
 
@@ -111,6 +112,6 @@ export default function AdminSettingsPage() {
             {isLoading && !settings ? (
               <div className="mt-4 text-sm text-gray-500 animate-gov-enter" style={{ animationDelay: '0.2s' }}>Loading settings...</div>
             ) : null}
-    </>
+    </PageShell>
   );
 }

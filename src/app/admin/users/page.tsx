@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import PageShell from '@/components/PageShell';
 import { useAuthStore } from '@/store/authStore';
 import { approveRestrictedAccess, createUser, fetchUsers, updateUser } from '@/lib/api';
 import { AdminCreateUserInput, AdminUpdateUserInput, User, UserRole } from '@/types/auth';
@@ -217,7 +218,7 @@ export default function AdminUsersPage() {
   };
 
   return (
-    <>
+    <PageShell role="admin">
             <h2 className="page-heading">User Management</h2>
             <p className="page-subheading mb-6">Manage all registered users in PARIVESH 3.0.</p>
 
@@ -492,6 +493,6 @@ export default function AdminUsersPage() {
                 </tbody>
               </table>
             </div>
-    </>
+    </PageShell>
   );
 }

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Bell, Database, Settings, ShieldCheck } from 'lucide-react';
+import PageShell from '@/components/PageShell';
 import { useAuthStore } from '@/store/authStore';
 import { useAdminSettingsStore } from '@/store/adminSettingsStore';
 import { AdminSettingsSection } from '@/types/settings';
@@ -116,7 +117,7 @@ export default function AdminSettingsDetailPage() {
   };
 
   return (
-    <>
+    <PageShell role="admin">
           <div className="space-y-6">
             <Link
               href="/admin/settings"
@@ -363,6 +364,6 @@ export default function AdminSettingsDetailPage() {
               )}
             </section>
           </div>
-    </>
+    </PageShell>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { useWorkflowStore } from '@/store/workflowStore';
+import PageShell from '@/components/PageShell';
 import StatusBadge from '@/components/StatusBadge';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import ErrorMessage from '@/components/ErrorMessage';
@@ -43,7 +44,7 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <>
+    <PageShell role="admin">
       {/* Page heading */}
       <motion.div
         className="mb-8"
@@ -166,6 +167,6 @@ export default function AdminDashboard() {
           </table>
         )}
       </motion.div>
-    </>
+    </PageShell>
   );
 }
