@@ -395,6 +395,13 @@ textarea:focus-visible {
   margin-top: 0.25rem;
 }
 
+.route-transition-shell {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  contain: layout paint;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

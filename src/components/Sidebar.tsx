@@ -56,7 +56,7 @@ export default function Sidebar({ role }: { role: UserRole }) {
 
   return (
     <aside
-      className="w-64 md:w-68 shrink-0 pl-4 pr-2 py-4 animate-fade-slide-left"
+      className="w-64 md:w-68 shrink-0 pl-4 pr-2 py-4"
       style={{
         minHeight: 'calc(100vh - 84px)',
       }}
@@ -69,17 +69,13 @@ export default function Sidebar({ role }: { role: UserRole }) {
           <p className="text-cyan-200/75 text-[10px] font-semibold uppercase tracking-[0.24em]">Navigation</p>
         </div>
         <ul className="space-y-1 px-2">
-          {items.map((item, idx) => {
+          {items.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + '?');
             return (
-              <li
-                key={item.href}
-                className="animate-fade-slide-left"
-                style={{ animationDelay: `${0.05 + idx * 0.06}s` }}
-              >
+              <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-250 ${
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                     isActive
                       ? 'text-white shadow-lg'
                       : 'text-cyan-100/80 hover:bg-white/22 hover:text-white hover:translate-x-0.5'

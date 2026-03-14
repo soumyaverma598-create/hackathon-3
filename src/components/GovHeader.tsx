@@ -93,7 +93,7 @@ export default function GovHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-[120] px-4 pt-4 animate-fade-slide-up">
+    <header className="sticky top-0 z-[120] px-4 pt-4">
       <div
         className="glass-dark rounded-2xl border shadow-[0_16px_40px_rgba(4,18,34,0.35)] overflow-visible"
         style={{
