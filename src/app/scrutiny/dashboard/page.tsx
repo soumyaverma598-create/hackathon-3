@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
+import { useLanguageStore } from '@/store/languageStore';
 import { useWorkflowStore } from '@/store/workflowStore';
 import PageShell from '@/components/PageShell';
 import StatusBadge from '@/components/StatusBadge';
@@ -11,6 +12,7 @@ import EmptyState from '@/components/EmptyState';
 import Link from 'next/link';
 import { ClipboardList, AlertTriangle, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { getUiText } from '@/lib/translations';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -24,6 +26,7 @@ const itemVariants = {
 
 export default function ScrutinyDashboard() {
   const { user } = useAuthStore();
+  const { language } = useLanguageStore();
   const { applications, fetchAll, isLoading, error } = useWorkflowStore();
 
   useEffect(() => {
@@ -39,9 +42,9 @@ export default function ScrutinyDashboard() {
   const pending = applications.filter((a) => a.status === 'submitted');
 
   const statCards = [
-    { label: 'Pending Review', value: pending.length, icon: <Clock size={20} />, gradient: 'from-blue-500 to-indigo-600' },
-    { label: 'Open EDS', value: edsOpen.length, icon: <AlertTriangle size={20} />, gradient: 'from-sky-500 to-cyan-600' },
-    { label: 'Active Cases', value: active.length, icon: <ClipboardList size={20} />, gradient: 'from-purple-500 to-violet-600' },
+    { label: getUiText('pendingReviewLabel', language), value: pending.length, icon: <Clock size={20} />, gradient: 'from-blue-500 to-indigo-600' },
+    { label: getUiText('openEdsLabel', language), value: edsOpen.length, icon: <AlertTriangle size={20} />, gradient: 'from-sky-500 to-cyan-600' },
+    { label: getUiText('activeCasesLabel', language), value: active.length, icon: <ClipboardList size={20} />, gradient: 'from-purple-500 to-violet-600' },
   ];
 
   return (
@@ -53,8 +56,8 @@ export default function ScrutinyDashboard() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="page-heading">Scrutiny Dashboard</h2>
-        <p className="page-subheading">Review and process Environmental Clearance applications</p>
+        <h2 className="page-heading">{getUiText('scrutinyDashboardHeading', language)}</h2>
+        <p className="page-subheading">{getUiText('scrutinyDashboardSubheading', language)}</p>
       </motion.div>
 
       {/* Stats */}

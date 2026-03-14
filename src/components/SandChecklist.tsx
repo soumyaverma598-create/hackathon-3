@@ -1,7 +1,7 @@
 'use client';
 
 import { useLanguageStore } from '@/store/languageStore';
-import { getApplicationText, translations, Language } from '@/lib/translations';
+import { getApplicationText, getSandDocumentLabel, getUiText, translations, Language } from '@/lib/translations';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { memo } from 'react';
 
@@ -51,8 +51,8 @@ const SandChecklist = memo(function SandChecklist({ checkedItems, onToggle }: Sa
         <h3 className="font-semibold text-gray-800 text-base flex items-center gap-2">
           📋 {getApplicationText('sandChecklist', language)}
         </h3>
-        <p className="text-xs text-gray-500 mt-1.5">
-          {checkedCount} / {SAND_DOCUMENTS.length} {language === 'en' ? 'documents checked' : 'दस्तावेज़ जांचे गए'}
+        <p className="text-xs text-gray-500 mt-1.5"> 
+          {checkedCount} / {SAND_DOCUMENTS.length} {getUiText('documentsChecked', language)}
         </p>
       </div>
 
@@ -77,7 +77,7 @@ const SandChecklist = memo(function SandChecklist({ checkedItems, onToggle }: Sa
         {SAND_DOCUMENTS.map((doc, idx) => {
           const isChecked = checkedItems[doc.id] || false;
           const labelKey = doc.labelKey as keyof typeof translations.en.application.sandDocuments;
-          const docLabel = translations[language].application.sandDocuments[labelKey];
+          const docLabel = getSandDocumentLabel(labelKey, language);
 
           return (
             <div
@@ -107,7 +107,7 @@ const SandChecklist = memo(function SandChecklist({ checkedItems, onToggle }: Sa
       {/* Completion Message */}
       {allChecked && (
         <div className="px-5 py-3.5 bg-green-50 border-t border-green-200 text-green-800 text-sm font-medium flex items-center gap-2">
-          ✓ {language === 'en' ? 'All documents verified! Ready to submit.' : 'सभी दस्तावेज़ सत्यापित! जमा करने के लिए तैयार।'}
+          ✓ {getUiText('allDocumentsVerified', language)}
         </div>
       )}
     </div>

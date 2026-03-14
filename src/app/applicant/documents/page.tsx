@@ -10,10 +10,13 @@ import SkeletonLoader from '@/components/SkeletonLoader';
 import ErrorMessage from '@/components/ErrorMessage';
 import { Upload, FileText, Trash2, CheckCircle } from 'lucide-react';
 import { uploadDocuments } from '@/lib/api';
+import { useLanguageStore } from '@/store/languageStore';
+import { formatUiText, getUiText } from '@/lib/translations';
 
 function DocumentsPageContent() {
   const { user } = useAuthStore();
   const { applications, isLoading, error, fetchByProponent, fetchAll } = useWorkflowStore();
+  const { language } = useLanguageStore();
   const router = useRouter();
   const params = useSearchParams();
   const [selectedAppId, setSelectedAppId] = useState(params.get('id') ?? '');
@@ -33,35 +36,43 @@ function DocumentsPageContent() {
     setUploading(true); setUploadError(''); setUploadSuccess('');
     try {
       await uploadDocuments(selectedAppId, fd);
-      setUploadSuccess(`${e.target.files.length} file(s) uploaded successfully.`);
+      setUploadSuccess(formatUiText('filesUploadedSuccess', language, { count: e.target.files.length }));
       fetchByProponent(user?.email ?? '');
     } catch (err) {
-      setUploadError(err instanceof Error ? err.message : 'Upload failed.');
+      setUploadError(err instanceof Error ? err.message : getUiText('uploadFailed', language));
     } finally {
       setUploading(false);
     }
   };
 
   if (!user) return null;
+  const localeMap = {
+    en: 'en-IN',
+    hi: 'hi-IN',
+    mr: 'mr-IN',
+    bn: 'bn-IN',
+    kn: 'kn-IN',
+  } as const;
+  const locale = localeMap[language] ?? 'en-IN';
 
   const selectedApp = applications.find((a) => a.id === selectedAppId);
 
   return (
     <PageShell role="applicant">
-            <h2 className="page-heading">Upload Documents</h2>
-            <p className="page-subheading mb-6">Upload EIA report, site plan, ToR, and other supporting documents</p>
+          <h2 className="page-heading">{getUiText('uploadDocumentsHeading', language)}</h2>
+          <p className="page-subheading mb-6">{getUiText('uploadDocumentsSubheading', language)}</p>
 
             {isLoading ? <SkeletonLoader /> : error ? <ErrorMessage message={error} /> : (
               <div className="space-y-4">
                 {/* Select Application */}
                 <div className="glass-card-strong p-4">
-                  <label className="ui-label">Select Application</label>
+                  <label className="ui-label">{getUiText('selectApplicationLabel', language)}</label>
                   <select
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63]"
                     value={selectedAppId}
                     onChange={(e) => { setSelectedAppId(e.target.value); setUploadSuccess(''); setUploadError(''); }}
                   >
-                    <option value="">-- Select an application --</option>
+                    <option value="">{getUiText('selectApplicationPrompt', language)}</option>
                     {applications.map((a) => (
                       <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>
                     ))}
@@ -71,7 +82,7 @@ function DocumentsPageContent() {
                 {/* Upload zone */}
                 {selectedAppId && (
                   <div className="glass-card-strong p-6">
-                    <h3 className="font-semibold text-gray-700 mb-4">Upload Files</h3>
+                    <h3 className="font-semibold text-gray-700 mb-4">{getUiText('uploadFilesTitle', language)}</h3>
 
                     {uploadSuccess && (
                       <div className="mb-4 flex items-center gap-2 bg-cyan-50 border border-cyan-200 text-cyan-700 rounded-lg px-4 py-3 text-sm">
@@ -83,9 +94,9 @@ function DocumentsPageContent() {
                     <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-10 cursor-pointer transition-all ${uploading ? 'border-gray-200 bg-gray-50' : 'border-[#164e63]/40 hover:border-[#164e63] hover:bg-cyan-50'}`}>
                       <Upload size={32} className={uploading ? 'text-gray-300' : 'text-[#164e63]'} />
                       <p className="mt-3 text-sm font-semibold text-gray-600">
-                        {uploading ? 'Uploading…' : 'Click to upload or drag & drop'}
+                        {uploading ? getUiText('uploading', language) : getUiText('clickToUploadOrDragDrop', language)}
                       </p>
-                      <p className="text-xs text-gray-400 mt-1">PDF, DOC, DOCX, JPG, PNG — Max 25 MB each</p>
+                      <p className="text-xs text-gray-400 mt-1">{getUiText('fileTypesHint', language)}</p>
                       <input
                         type="file"
                         multiple
@@ -99,14 +110,14 @@ function DocumentsPageContent() {
                     {/* Existing docs */}
                     {selectedApp && selectedApp.documents.length > 0 && (
                       <div className="mt-6">
-                        <h4 className="ui-section-title-text mb-3">Uploaded Documents ({selectedApp.documents.length})</h4>
+                        <h4 className="ui-section-title-text mb-3">{getUiText('uploadedDocumentsTitle', language)} ({selectedApp.documents.length})</h4>
                         <div className="space-y-2">
                           {selectedApp.documents.map((doc) => (
                             <div key={doc.id} className="flex items-center gap-3 bg-gray-50 rounded-lg px-3 py-2.5 border border-gray-100">
                               <FileText size={16} className="text-[#164e63] flex-shrink-0" />
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-gray-700 truncate">{doc.name}</p>
-                                <p className="text-xs text-gray-400">{(doc.size / 1024 / 1024).toFixed(2)} MB &bull; {new Date(doc.uploadedAt).toLocaleDateString('en-IN')}</p>
+                                <p className="text-xs text-gray-400">{(doc.size / 1024 / 1024).toFixed(2)} MB &bull; {new Date(doc.uploadedAt).toLocaleDateString(locale)}</p>
                               </div>
                               <button className="text-gray-300 hover:text-red-400 transition-colors p-1">
                                 <Trash2 size={14} />

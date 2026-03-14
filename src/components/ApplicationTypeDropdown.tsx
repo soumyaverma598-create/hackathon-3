@@ -1,7 +1,7 @@
 'use client';
 
 import { useLanguageStore } from '@/store/languageStore';
-import { getApplicationText } from '@/lib/translations';
+import { getApplicationText, getUiText } from '@/lib/translations';
 import { ChevronDown } from 'lucide-react';
 import { memo } from 'react';
 
@@ -34,7 +34,7 @@ const ApplicationTypeDropdown = memo(function ApplicationTypeDropdown({ value, o
   const { language } = useLanguageStore();
 
   const typeLabel = (type: ApplicationType): string => {
-    if (!type) return language === 'en' ? 'Select Application Type' : 'आवेदन प्रकार चुनें';
+    if (!type) return getUiText('selectApplicationTypeFallback', language);
     const typeMap = getApplicationTextForType(language);
     return typeMap[type as AppTypeLabel] || type;
   };
@@ -51,7 +51,7 @@ const ApplicationTypeDropdown = memo(function ApplicationTypeDropdown({ value, o
           onChange={(e) => onChange(e.target.value as ApplicationType)}
           className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] focus:border-transparent transition-all appearance-none bg-white pr-10"
         >
-          <option value="">{language === 'en' ? 'Choose an application type...' : 'एक आवेदन प्रकार चुनें...'}</option>
+          <option value="">{getUiText('chooseApplicationType', language)}</option>
           {APPLICATION_TYPES.map((type) => (
             <option key={type.value} value={type.value}>
               {typeLabel(type.value)}

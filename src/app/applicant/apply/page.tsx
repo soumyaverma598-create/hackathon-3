@@ -11,7 +11,7 @@ import SandChecklist from '@/components/SandChecklist';
 import LimestoneChecklist from '@/components/LimestoneChecklist';
 import BricksChecklist from '@/components/BricksChecklist';
 import InfrastructureChecklist from '@/components/InfrastructureChecklist';
-import { getApplicationText } from '@/lib/translations';
+import { getApplicationText, getUiText } from '@/lib/translations';
 import { WorkflowApplication, ProjectCategory } from '@/types/workflow';
 import { Send } from 'lucide-react';
 
@@ -73,7 +73,7 @@ export default function ApplyPage() {
   const [form, setForm] = useState<Partial<FormData>>({ ...INITIAL });
   const [success, setSuccess] = useState('');
   const [docChecks, setDocChecks] = useState<Record<string, boolean>>({});
-  const [selectedApplicationType, setSelectedApplicationType] = useState<ApplicationType | null>(null);
+  const [selectedApplicationType, setSelectedApplicationType] = useState<ApplicationType>('');
   const [sandDocChecks, setSandDocChecks] = useState<Record<string, boolean>>({});
   const [limestoneDocChecks, setLimestoneDocChecks] = useState<Record<string, boolean>>({});
   const [bricksDocChecks, setBricksDocChecks] = useState<Record<string, boolean>>({});
@@ -174,7 +174,7 @@ export default function ApplyPage() {
           const { updateStatus } = useWorkflowStore.getState();
           await updateStatus(app.id, 'submitted');
         }
-        setSuccess(asDraft ? 'Application saved as draft.' : 'Application submitted successfully!');
+        setSuccess(asDraft ? getUiText('saveAsDraft', language) : getUiText('submitApplicationButton', language));
         setTimeout(() => router.push('/applicant/dashboard'), 1500);
       } catch {
         // error shown from store
@@ -187,8 +187,8 @@ export default function ApplyPage() {
 
   return (
     <PageShell role="applicant">
-            <h2 className="page-heading">New Application</h2>
-            <p className="page-subheading mb-6">Fill in all details for Environmental Clearance under EIA Notification, 2006</p>
+            <h2 className="page-heading">{getUiText('navNewApplication', language)}</h2>
+            <p className="page-subheading mb-6">{getUiText('applyPageSubheading', language)}</p>
 
             {success && (
               <div className="mb-4 bg-cyan-50 border border-cyan-200 text-cyan-700 rounded-lg px-4 py-3 text-sm font-semibold">{success}</div>
@@ -276,11 +276,11 @@ export default function ApplyPage() {
               <div className="glass-card-strong p-6">
                 <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
                   <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">1</span>
-                  Project Details
+                  {getUiText('projectDetailsHeading', language)}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
-                    <Field label="Project Name *" id="projectName">
+                    <Field label={`${getUiText('projectNameLabel', language)} *`} id="projectName">
                       <input
                         id="projectName"
                         name="projectName"
@@ -293,23 +293,23 @@ export default function ApplyPage() {
                       />
                     </Field>
                   </div>
-                  <Field label="Project Category *" id="projectCategory">
+                  <Field label={`${getUiText('projectCategoryLabel', language)} *`} id="projectCategory">
                     <select id="projectCategory" className={inputCls} value={form.projectCategory} onChange={(e) => setField('projectCategory', e.target.value as ProjectCategory)} required>
-                      <option value="A">Category A (Central Appraisal)</option>
-                      <option value="B1">Category B1 (State EIA)</option>
-                      <option value="B2">Category B2 (Deemed EC)</option>
+                      <option value="A">{getUiText('categoryAOption', language)}</option>
+                      <option value="B1">{getUiText('categoryB1Option', language)}</option>
+                      <option value="B2">{getUiText('categoryB2Option', language)}</option>
                     </select>
                   </Field>
-                  <Field label="Project Sector *" id="projectSector">
+                  <Field label={`${getUiText('projectSectorLabel', language)} *`} id="projectSector">
                     <select id="projectSector" className={inputCls} value={form.projectSector ?? ''} onChange={(e) => setField('projectSector', e.target.value)} required>
-                      <option value="">Select Sector</option>
+                      <option value="">{getUiText('selectSectorPrompt', language)}</option>
                       {SECTORS.map((s) => <option key={s}>{s}</option>)}
                     </select>
                   </Field>
-                  <Field label="Project Cost (INR) *" id="projectCost">
+                  <Field label={`${getUiText('projectCostLabel', language)} *`} id="projectCost">
                     <input id="projectCost" type="number" className={inputCls} value={form.projectCost ?? ''} onChange={(e) => setField('projectCost', Number(e.target.value))} required min={0} placeholder="e.g. 450000000" />
                   </Field>
-                  <Field label="Project Area (hectares) *" id="projectArea">
+                  <Field label={`${getUiText('projectAreaLabel', language)} *`} id="projectArea">
                     <input id="projectArea" type="number" className={inputCls} value={form.projectArea ?? ''} onChange={(e) => setField('projectArea', Number(e.target.value))} required min={0} step="0.01" placeholder="e.g. 250" />
                   </Field>
                 </div>
@@ -319,16 +319,16 @@ export default function ApplyPage() {
               <div className="glass-card-strong p-6">
                 <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
                   <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">3</span>
-                  Project Location
+                  {getUiText('projectLocationHeading', language)}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Field label="State / UT *" id="stateUT">
+                  <Field label={`${getUiText('stateUtLabel', language)} *`} id="stateUT">
                     <select id="stateUT" className={inputCls} value={form.stateUT ?? ''} onChange={(e) => setField('stateUT', e.target.value)} required>
-                      <option value="">Select State/UT</option>
+                      <option value="">{getUiText('selectStatePrompt', language)}</option>
                       {STATES.map((s) => <option key={s}>{s}</option>)}
                     </select>
                   </Field>
-                  <Field label="District *" id="district">
+                  <Field label={`${getUiText('districtLabel', language)} *`} id="district">
                     <input id="district" className={inputCls} value={form.district ?? ''} onChange={(e) => setField('district', e.target.value)} required placeholder="e.g. Jodhpur" />
                   </Field>
                 </div>
@@ -338,13 +338,13 @@ export default function ApplyPage() {
               <div className="glass-card-strong p-6">
                 <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
                   <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">4</span>
-                  Proponent / Applicant Details
+                  {getUiText('proponentDetailsHeading', language)}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Field label="Proponent Name *" id="proponentName">
+                  <Field label={`${getUiText('proponentNameLabel', language)} *`} id="proponentName">
                     <input id="proponentName" className={inputCls} value={form.proponentName ?? ''} onChange={(e) => setField('proponentName', e.target.value)} required placeholder="Full Name / Organisation" />
                   </Field>
-                  <Field label="Mobile Number *" id="proponentPhone">
+                  <Field label={`${getUiText('mobileNumberLabel', language)} *`} id="proponentPhone">
                     <input id="proponentPhone" type="tel" className={inputCls} value={form.proponentPhone ?? ''} onChange={(e) => setField('proponentPhone', e.target.value)} required placeholder="10-digit mobile" pattern="[0-9]{10}" />
                   </Field>
                 </div>
@@ -354,11 +354,11 @@ export default function ApplyPage() {
               <div className="glass-card-strong p-6">
                 <h3 className="font-semibold text-gray-700 mb-1 pb-2 border-b border-gray-100 flex items-center gap-2">
                   <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">5</span>
-                  Required Documents Checklist
+                  {getUiText('requiredDocumentsChecklist', language)}
                 </h3>
-                <p className="text-xs text-gray-400 mb-4">Confirm that the following documents are ready. All mandatory items must be acknowledged before submission.</p>
+                <p className="text-xs text-gray-400 mb-4">{getUiText('confirmedDocsReady', language)}</p>
 
-                <p className="ui-section-title-text mb-2">Mandatory Documents</p>
+                <p className="ui-section-title-text mb-2">{getUiText('mandatoryDocumentsLabel', language)}</p>
                 <div className="space-y-2 mb-5">
                   {REQUIRED_DOCS.filter(d => d.required).map(doc => (
                     <label
@@ -383,7 +383,7 @@ export default function ApplyPage() {
                   ))}
                 </div>
 
-                <p className="ui-section-title-text mb-2">Conditional / Optional Documents</p>
+                <p className="ui-section-title-text mb-2">{getUiText('optionalDocumentsLabel', language)}</p>
                 <div className="space-y-2">
                   {REQUIRED_DOCS.filter(d => !d.required).map(doc => (
                     <label
@@ -410,7 +410,7 @@ export default function ApplyPage() {
 
                 {!allMandatoryChecked && (
                   <p className="mt-4 text-xs text-cyan-700 bg-cyan-50 border border-cyan-200 rounded-lg px-3 py-2">
-                    ⚠ Please acknowledge all <strong>mandatory documents</strong> before submitting the application.
+                    ⚠ {getUiText('acknowledgeMandatoryDocs', language)}
                   </p>
                 )}
               </div>
@@ -426,7 +426,7 @@ export default function ApplyPage() {
                   disabled={isLoading}
                   className="px-5 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50"
                 >
-                  Save as Draft
+                  {getUiText('saveAsDraft', language)}
                 </button>
                 <button
                   type="submit"
@@ -435,7 +435,7 @@ export default function ApplyPage() {
                   className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}
                 >
-                  {isLoading ? 'Submitting…' : <><Send size={15} /> Submit Application</>}
+                  {isLoading ? getUiText('submittingLabel', language) : <><Send size={15} /> {getUiText('submitApplicationButton', language)}</>}
                 </button>
               </div>
             </form>

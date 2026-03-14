@@ -22,6 +22,14 @@ A fully functional Environmental Clearance workflow portal built for a hackathon
    cp .env.example .env
    ```
 
+## Portal Assistant
+
+The frontend includes a floating portal assistant in the bottom-right corner.
+
+- It guides users through the website, including proponent proposal steps, documents, EDS, payment, and status tracking.
+- For live AI answers, add `GEMINI_API_KEY` in the root `.env.local` file.
+- If no Gemini key is configured, the assistant falls back to built-in website guidance.
+
 3. Fill in your PostgreSQL credentials in `backend/.env`:
    - `DB_PASSWORD`: Your PostgreSQL password
    - `JWT_SECRET`: Your preferred JWT secret

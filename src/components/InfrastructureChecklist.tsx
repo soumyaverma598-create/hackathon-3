@@ -1,7 +1,7 @@
 'use client';
 
 import { useLanguageStore } from '@/store/languageStore';
-import { getApplicationText, translations, Language } from '@/lib/translations';
+import { getApplicationText, getInfrastructureDocumentLabel, getUiText, translations, Language } from '@/lib/translations';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { memo } from 'react';
 
@@ -64,7 +64,7 @@ const InfrastructureChecklist = memo(function InfrastructureChecklist({ checkedI
           📋 {getApplicationText('infrastructureChecklist', language)}
         </h3>
         <p className="text-xs text-gray-500 mt-1.5">
-          {checkedCount} / {INFRASTRUCTURE_DOCUMENTS.length} {language === 'en' ? 'documents checked' : 'दस्तावेज़ जांचे गए'}
+          {checkedCount} / {INFRASTRUCTURE_DOCUMENTS.length} {getUiText('documentsChecked', language)}
         </p>
       </div>
 
@@ -89,7 +89,7 @@ const InfrastructureChecklist = memo(function InfrastructureChecklist({ checkedI
         {INFRASTRUCTURE_DOCUMENTS.map((doc, idx) => {
           const isChecked = checkedItems[doc.id] || false;
           const labelKey = doc.labelKey as keyof typeof translations.en.application.infrastructureDocuments;
-          const docLabel = translations[language].application.infrastructureDocuments[labelKey];
+          const docLabel = getInfrastructureDocumentLabel(labelKey, language);
 
           return (
             <div
@@ -119,7 +119,7 @@ const InfrastructureChecklist = memo(function InfrastructureChecklist({ checkedI
       {/* Completion Message */}
       {allChecked && (
         <div className="px-5 py-3.5 bg-green-50 border-t border-green-200 text-green-800 text-sm font-medium flex items-center gap-2">
-          ✓ {language === 'en' ? 'All documents verified! Ready to submit.' : 'सभी दस्तावेज़ सत्यापित! जमा करने के लिए तैयार।'}
+          ✓ {getUiText('allDocumentsVerified', language)}
         </div>
       )}
     </div>

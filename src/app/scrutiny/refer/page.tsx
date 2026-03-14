@@ -9,11 +9,14 @@ import PageShell from '@/components/PageShell';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import ErrorMessage from '@/components/ErrorMessage';
 import StatusBadge from '@/components/StatusBadge';
+import { useLanguageStore } from '@/store/languageStore';
+import { getUiText } from '@/lib/translations';
 import { Send, CheckCircle } from 'lucide-react';
 
 function ScrutinyReferPageContent() {
   const { user } = useAuthStore();
   const { applications, fetchAll, updateStatus, isLoading, error } = useWorkflowStore();
+  const { language } = useLanguageStore();
   const router = useRouter();
   const params = useSearchParams();
   const [selectedAppId, setSelectedAppId] = useState(params.get('id') ?? '');
@@ -33,7 +36,7 @@ function ScrutinyReferPageContent() {
     if (!selectedAppId) return;
     setSubmitting(true); setSuccess('');
     await updateStatus(selectedAppId, 'referred', remarks);
-    setSuccess('Application successfully referred to EAC. Meeting details recorded.');
+    setSuccess(getUiText('referredSuccess', language));
     setSubmitting(false);
   };
 
@@ -45,8 +48,8 @@ function ScrutinyReferPageContent() {
 
   return (
     <PageShell role="scrutiny">
-            <h2 className="page-heading">Refer to EAC</h2>
-            <p className="page-subheading mb-6">Refer application to Expert Appraisal Committee for technical assessment</p>
+            <h2 className="page-heading">{getUiText('referPageHeading', language)}</h2>
+            <p className="page-subheading mb-6">{getUiText('referPageSubheading', language)}</p>
 
             {isLoading ? <SkeletonLoader /> : error ? <ErrorMessage message={error} /> : (
               <div className="space-y-4">
@@ -59,9 +62,9 @@ function ScrutinyReferPageContent() {
                 <div className="glass-card-strong p-5">
                   <form onSubmit={handleRefer} className="space-y-4">
                     <div>
-                      <label className="ui-label">Application to Refer *</label>
+                      <label className="ui-label">{getUiText('applicationToRefer', language)}</label>
                       <select className={inputCls} value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)} required>
-                        <option value="">-- Select application --</option>
+                        <option value="">{getUiText('selectApplicationPromptSimple', language)}</option>
                         {eligible.map((a) => <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>)}
                       </select>
                     </div>
@@ -78,18 +81,18 @@ function ScrutinyReferPageContent() {
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="ui-label">EAC Meeting Date</label>
+                        <label className="ui-label">{getUiText('eacMeetingDate', language)}</label>
                         <input type="date" className={inputCls} value={meetingDate} onChange={(e) => setMeetingDate(e.target.value)} />
                       </div>
                       <div>
-                        <label className="ui-label">Meeting Number</label>
+                        <label className="ui-label">{getUiText('meetingNumber', language)}</label>
                         <input className={inputCls} value={meetingNumber} onChange={(e) => setMeetingNumber(e.target.value)} placeholder="e.g. EAC-2026-03/07" />
                       </div>
                     </div>
 
                     <div>
-                      <label className="ui-label">Referral Remarks</label>
-                      <textarea rows={4} className={`${inputCls} resize-none`} value={remarks} onChange={(e) => setRemarks(e.target.value)} placeholder="Summarise scrutiny findings and reasons for referral..." />
+                      <label className="ui-label">{getUiText('referralRemarks', language)}</label>
+                      <textarea rows={4} className={`${inputCls} resize-none`} value={remarks} onChange={(e) => setRemarks(e.target.value)} placeholder={getUiText('referralRemarksPlaceholder', language)} />
                     </div>
 
                     <button
@@ -98,7 +101,7 @@ function ScrutinyReferPageContent() {
                       className="w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold text-white disabled:opacity-50 transition-all"
                       style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)' }}
                     >
-                      <Send size={15} /> {submitting ? 'Referring…' : 'Refer to EAC'}
+                      <Send size={15} /> {submitting ? getUiText('referring', language) : getUiText('referToEacButton', language)}
                     </button>
                   </form>
                 </div>
@@ -106,7 +109,7 @@ function ScrutinyReferPageContent() {
                 {/* Already referred */}
                 {applications.filter((a) => a.status === 'referred').length > 0 && (
                   <div className="glass-card-strong p-4">
-                    <h4 className="ui-section-title-text mb-3">Previously Referred</h4>
+                    <h4 className="ui-section-title-text mb-3">{getUiText('previouslyReferred', language)}</h4>
                     <div className="divide-y divide-gray-50">
                       {applications.filter((a) => a.status === 'referred').map((a) => (
                         <div key={a.id} className="flex items-center justify-between py-2.5">
