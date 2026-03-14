@@ -11,12 +11,15 @@ import ErrorMessage from '@/components/ErrorMessage';
 import StatusBadge from '@/components/StatusBadge';
 import WorkflowProgress from '@/components/WorkflowProgress';
 import { WorkflowStatus } from '@/types/workflow';
+import { useLanguageStore } from '@/store/languageStore';
+import { getUiText } from '@/lib/translations';
 import { ChevronLeft, CheckCircle, AlertTriangle, FileText } from 'lucide-react';
 import Link from 'next/link';
 
 function ScrutinyReviewPageContent() {
   const { user } = useAuthStore();
   const { currentApplication: app, fetchById, updateStatus, isLoading, error } = useWorkflowStore();
+  const { language } = useLanguageStore();
   const router = useRouter();
   const params = useSearchParams();
   const id = params.get('id');
@@ -39,6 +42,14 @@ function ScrutinyReviewPageContent() {
   };
 
   if (!user) return null;
+  const localeMap = {
+    en: 'en-IN',
+    hi: 'hi-IN',
+    mr: 'mr-IN',
+    bn: 'bn-IN',
+    kn: 'kn-IN',
+  } as const;
+  const locale = localeMap[language] ?? 'en-IN';
 
   return (
     <PageShell role="scrutiny">
@@ -46,7 +57,7 @@ function ScrutinyReviewPageContent() {
               <Link href="/scrutiny/dashboard" className="text-gray-400 hover:text-[#164e63] transition-colors">
                 <ChevronLeft size={20} />
               </Link>
-              <h2 className="page-heading" style={{marginBottom:0}}>Application Review</h2>
+              <h2 className="page-heading" style={{marginBottom:0}}>{getUiText('scrutinyReviewHeading', language)}</h2>
             </div>
 
             {isLoading && !app ? <SkeletonLoader variant="detail" /> :
@@ -83,7 +94,7 @@ function ScrutinyReviewPageContent() {
                       { label: 'Project Cost', value: `₹${(app.projectCost / 10_000_000).toFixed(2)} Cr` },
                       { label: 'Project Area', value: `${app.projectArea} ha` },
                       { label: 'Payment', value: app.paymentStatus },
-                      { label: 'Submitted', value: app.submittedAt ? new Date(app.submittedAt).toLocaleDateString('en-IN') : '—' },
+                      { label: 'Submitted', value: app.submittedAt ? new Date(app.submittedAt).toLocaleDateString(locale) : '—' },
                       { label: 'Documents', value: `${app.documents.length} uploaded` },
                     ].map((f) => (
                       <div key={f.label} className="bg-gray-50 rounded-lg px-3 py-2.5">
@@ -95,7 +106,7 @@ function ScrutinyReviewPageContent() {
 
                   {app.documents.length > 0 && (
                     <div className="mt-4 pt-4 border-t border-gray-100">
-                      <p className="ui-section-title-text mb-2">Uploaded Documents</p>
+                      <p className="ui-section-title-text mb-2">{getUiText('uploadedDocumentsTitle', language)}</p>
                       <div className="space-y-1.5">
                         {app.documents.map((d) => (
                           <div key={d.id} className="flex items-center gap-2 text-xs text-gray-600">
@@ -110,7 +121,7 @@ function ScrutinyReviewPageContent() {
 
                   {app.edsQueries.length > 0 && (
                     <div className="mt-4 pt-4 border-t border-gray-100">
-                      <p className="ui-section-title-text mb-2">EDS Queries ({app.edsQueries.length})</p>
+                      <p className="ui-section-title-text mb-2">{getUiText('edsQueriesHeading', language)} ({app.edsQueries.length})</p>
                       <div className="space-y-1.5">
                         {app.edsQueries.map((q) => (
                           <div key={q.id} className="flex items-center gap-2 text-xs">
@@ -128,13 +139,13 @@ function ScrutinyReviewPageContent() {
 
                 {/* Actions */}
                 <div className="glass-card-strong p-5">
-                  <h4 className="font-semibold text-gray-700 mb-3">Scrutiny Actions</h4>
+                  <h4 className="font-semibold text-gray-700 mb-3">{getUiText('scrutinyActionsTitle', language)}</h4>
                   <div className="mb-3">
-                    <label className="ui-label">Remarks</label>
+                    <label className="ui-label">{getUiText('remarksLabel', language)}</label>
                     <textarea
                       rows={3}
                       className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] resize-none"
-                      placeholder="Add review remarks (optional for most actions)..."
+                      placeholder={getUiText('remarksPlaceholder', language)}
                       value={remarks}
                       onChange={(e) => setRemarks(e.target.value)}
                     />
@@ -146,17 +157,17 @@ function ScrutinyReviewPageContent() {
                         disabled={actionLoading}
                         className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 transition-colors"
                       >
-                        Take Up for Scrutiny
+                        {getUiText('takeUpForScrutiny', language)}
                       </button>
                     )}
                     <Link href={`/scrutiny/eds?id=${app.id}`}>
                       <button className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-sky-500 hover:bg-sky-600 transition-colors">
-                        Raise EDS Query
+                        {getUiText('raiseEdsQueryLabel', language)}
                       </button>
                     </Link>
                     <Link href={`/scrutiny/refer?id=${app.id}`}>
                       <button className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 transition-colors">
-                        Refer to EAC
+                        {getUiText('referToEacLabel', language)}
                       </button>
                     </Link>
                   </div>

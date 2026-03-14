@@ -1,14 +1,16 @@
 import { WorkflowStatus } from '@/types/workflow';
 import { Check } from 'lucide-react';
+import { useLanguageStore } from '@/store/languageStore';
+import { getUiText } from '@/lib/translations';
 
-const STAGES: { status: WorkflowStatus; label: string }[] = [
-  { status: 'draft', label: 'Draft' },
-  { status: 'submitted', label: 'Submitted' },
-  { status: 'under_scrutiny', label: 'Scrutiny' },
-  { status: 'eds_raised', label: 'EDS' },
-  { status: 'referred', label: 'EAC Referred' },
-  { status: 'mom_draft', label: 'MoM Draft' },
-  { status: 'finalized', label: 'EC Granted' },
+const STAGES: { status: WorkflowStatus; labelKey: Parameters<typeof getUiText>[0] }[] = [
+  { status: 'draft', labelKey: 'stageDraft' },
+  { status: 'submitted', labelKey: 'stageSubmitted' },
+  { status: 'under_scrutiny', labelKey: 'stageScrutiny' },
+  { status: 'eds_raised', labelKey: 'stageEds' },
+  { status: 'referred', labelKey: 'stageEacReferred' },
+  { status: 'mom_draft', labelKey: 'stageMomDraft' },
+  { status: 'finalized', labelKey: 'stageEcGranted' },
 ];
 
 const ORDER: WorkflowStatus[] = STAGES.map((s) => s.status);
@@ -18,12 +20,13 @@ interface WorkflowProgressProps {
 }
 
 export default function WorkflowProgress({ currentStatus }: WorkflowProgressProps) {
+  const { language } = useLanguageStore();
   const currentIdx = ORDER.indexOf(currentStatus);
 
   return (
     <div className="ui-section-block rounded-xl p-4 shadow-sm">
       <p className="ui-eyebrow mb-3">
-        Workflow Progress
+        {getUiText('workflowProgress', language)}
       </p>
       <div className="flex items-center">
         {STAGES.map((stage, idx) => {
@@ -55,7 +58,7 @@ export default function WorkflowProgress({ currentStatus }: WorkflowProgressProp
                       : 'text-[#7b95a5]'
                   }`}
                 >
-                  {stage.label}
+                  {getUiText(stage.labelKey, language)}
                 </span>
               </div>
 

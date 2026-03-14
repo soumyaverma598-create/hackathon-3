@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
+import { useLanguageStore } from '@/store/languageStore';
 import { useWorkflowStore } from '@/store/workflowStore';
 import PageShell from '@/components/PageShell';
 import StatusBadge from '@/components/StatusBadge';
@@ -11,6 +12,7 @@ import EmptyState from '@/components/EmptyState';
 import Link from 'next/link';
 import { Calendar, CheckCircle, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { getUiText } from '@/lib/translations';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -24,6 +26,7 @@ const itemVariants = {
 
 export default function MomDashboard() {
   const { user } = useAuthStore();
+  const { language } = useLanguageStore();
   const { applications, fetchAll, isLoading, error } = useWorkflowStore();
 
   useEffect(() => {
@@ -39,9 +42,9 @@ export default function MomDashboard() {
   const finalized = applications.filter((a) => a.status === 'finalized');
 
   const statCards = [
-    { label: 'Pending EAC Appraisal', value: referred.length, icon: <Calendar size={20} />, gradient: 'from-purple-500 to-violet-600' },
-    { label: 'MoM In Draft', value: momDraft.length, icon: <BookOpen size={20} />, gradient: 'from-indigo-500 to-blue-600' },
-    { label: 'EC Granted', value: finalized.length, icon: <CheckCircle size={20} />, gradient: 'from-cyan-500 to-teal-600' },
+    { label: getUiText('pendingEacAppraisalLabel', language), value: referred.length, icon: <Calendar size={20} />, gradient: 'from-purple-500 to-violet-600' },
+    { label: getUiText('momInDraftLabel', language), value: momDraft.length, icon: <BookOpen size={20} />, gradient: 'from-indigo-500 to-blue-600' },
+    { label: getUiText('ecGrantedLabel', language), value: finalized.length, icon: <CheckCircle size={20} />, gradient: 'from-cyan-500 to-teal-600' },
   ];
 
   return (
@@ -53,8 +56,8 @@ export default function MomDashboard() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="page-heading">MoM Secretariat Dashboard</h2>
-        <p className="page-subheading">Manage appraisal minutes and issue Environmental Clearance certificates</p>
+        <h2 className="page-heading">{getUiText('momDashboardHeading', language)}</h2>
+        <p className="page-subheading">{getUiText('momDashboardSubheading', language)}</p>
       </motion.div>
 
       {/* Stats */}

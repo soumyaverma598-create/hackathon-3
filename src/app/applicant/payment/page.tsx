@@ -8,11 +8,14 @@ import PageShell from '@/components/PageShell';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import ErrorMessage from '@/components/ErrorMessage';
 import { submitPayment } from '@/lib/api';
+import { useLanguageStore } from '@/store/languageStore';
+import { formatUiText, getUiText } from '@/lib/translations';
 import { CreditCard, CheckCircle, IndianRupee } from 'lucide-react';
 
 export default function PaymentPage() {
   const { user } = useAuthStore();
   const { applications, isLoading, error, fetchByProponent } = useWorkflowStore();
+  const { language } = useLanguageStore();
   const router = useRouter();
   const [selectedAppId, setSelectedAppId] = useState('');
   const [txnId, setTxnId] = useState('');
@@ -32,10 +35,10 @@ export default function PaymentPage() {
     setSubmitting(true); setPayError(''); setSuccess('');
     try {
       await submitPayment(selectedAppId, { amount: Number(amount), transactionId: txnId });
-      setSuccess('Payment recorded successfully! Status updated to Paid.');
+      setSuccess(getUiText('paymentRecordedSuccess', language));
       fetchByProponent(user?.email ?? '');
     } catch (err) {
-      setPayError(err instanceof Error ? err.message : 'Payment failed.');
+      setPayError(err instanceof Error ? err.message : getUiText('paymentFailed', language));
     } finally {
       setSubmitting(false);
     }
@@ -46,20 +49,28 @@ export default function PaymentPage() {
   const pendingApps = applications.filter((a) => a.paymentStatus === 'pending');
   const paidApps = applications.filter((a) => a.paymentStatus !== 'pending');
   const selectedApp = applications.find((a) => a.id === selectedAppId);
+  const localeMap = {
+    en: 'en-IN',
+    hi: 'hi-IN',
+    mr: 'mr-IN',
+    bn: 'bn-IN',
+    kn: 'kn-IN',
+  } as const;
+  const locale = localeMap[language] ?? 'en-IN';
 
   const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] transition-all";
 
   return (
     <PageShell role="applicant">
-            <h2 className="page-heading">Fee Payment</h2>
-            <p className="page-subheading mb-6">Submit payment for Environmental Clearance application processing fee</p>
+          <h2 className="page-heading">{getUiText('feePaymentHeading', language)}</h2>
+          <p className="page-subheading mb-6">{getUiText('feePaymentSubheading', language)}</p>
 
             {isLoading ? <SkeletonLoader /> : error ? <ErrorMessage message={error} /> : (
               <div className="space-y-4">
                 {/* Payment form */}
                 <div className="glass-card-strong p-6">
                   <h3 className="font-semibold text-gray-700 mb-4 flex items-center gap-2">
-                    <CreditCard size={18} className="text-[#164e63]" /> Submit Payment Details
+                    <CreditCard size={18} className="text-[#164e63]" /> {getUiText('submitPaymentDetails', language)}
                   </h3>
 
                   {success && (
@@ -71,9 +82,9 @@ export default function PaymentPage() {
 
                   <form onSubmit={handlePay} className="space-y-4">
                     <div>
-                      <label className="ui-label">Application *</label>
+                      <label className="ui-label">{getUiText('applicationRequiredLabel', language)}</label>
                       <select className={inputCls} value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)} required>
-                        <option value="">-- Select application with pending payment --</option>
+                        <option value="">{getUiText('selectPendingPaymentPrompt', language)}</option>
                         {pendingApps.map((a) => (
                           <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>
                         ))}
@@ -82,18 +93,18 @@ export default function PaymentPage() {
 
                     {selectedApp && (
                       <div className="bg-[#164e63]/5 rounded-lg p-3 text-sm text-gray-600 border border-[#164e63]/10">
-                        <p className="font-semibold text-[#164e63] mb-1 flex items-center gap-1"><IndianRupee size={14} /> Prescribed Fee</p>
-                        <p>Category {selectedApp.projectCategory} — Approx. ₹{selectedApp.projectCategory === 'A' ? '1,00,000' : selectedApp.projectCategory === 'B1' ? '50,000' : '25,000'}</p>
-                        <p className="text-xs text-gray-400 mt-1">Pay via NEFT/RTGS/DD in favour of &quot;MoEFCC Fee Account&quot;</p>
+                        <p className="font-semibold text-[#164e63] mb-1 flex items-center gap-1"><IndianRupee size={14} /> {getUiText('prescribedFee', language)}</p>
+                        <p>{formatUiText('categoryApproxFee', language, { category: selectedApp.projectCategory, amount: selectedApp.projectCategory === 'A' ? '1,00,000' : selectedApp.projectCategory === 'B1' ? '50,000' : '25,000' })}</p>
+                        <p className="text-xs text-gray-400 mt-1">{getUiText('paymentInstruction', language)}</p>
                       </div>
                     )}
 
                     <div>
-                      <label className="ui-label">Amount Paid (₹) *</label>
+                      <label className="ui-label">{getUiText('amountPaidLabel', language)}</label>
                       <input type="number" className={inputCls} value={amount} onChange={(e) => setAmount(e.target.value)} required min={1} placeholder="e.g. 100000" />
                     </div>
                     <div>
-                      <label className="ui-label">Transaction ID / DD Number *</label>
+                      <label className="ui-label">{getUiText('transactionIdLabel', language)}</label>
                       <input className={inputCls} value={txnId} onChange={(e) => setTxnId(e.target.value)} required placeholder="e.g. TXN2026031201" />
                     </div>
 
@@ -103,7 +114,7 @@ export default function PaymentPage() {
                       className="w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-50"
                       style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}
                     >
-                      <CreditCard size={16} /> {submitting ? 'Recording Payment…' : 'Submit Payment'}
+                      <CreditCard size={16} /> {submitting ? getUiText('recordingPayment', language) : getUiText('submitPayment', language)}
                     </button>
                   </form>
                 </div>
@@ -111,7 +122,7 @@ export default function PaymentPage() {
                 {/* Paid history */}
                 {paidApps.length > 0 && (
                   <div className="glass-card-strong p-4">
-                    <h4 className="ui-section-title-text mb-3">Payment History</h4>
+                    <h4 className="ui-section-title-text mb-3">{getUiText('paymentHistory', language)}</h4>
                     <div className="divide-y divide-gray-50">
                       {paidApps.map((a) => (
                         <div key={a.id} className="flex items-center justify-between py-3">
@@ -120,7 +131,7 @@ export default function PaymentPage() {
                             <p className="text-xs text-gray-400">{a.paymentTransactionId ?? '—'}</p>
                           </div>
                           <div className="text-right">
-                            <p className="text-sm font-bold text-gray-800">₹{a.paymentAmount?.toLocaleString('en-IN') ?? '—'}</p>
+                            <p className="text-sm font-bold text-gray-800">₹{a.paymentAmount?.toLocaleString(locale) ?? '—'}</p>
                             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${a.paymentStatus === 'verified' ? 'bg-cyan-100 text-cyan-700' : 'bg-blue-100 text-blue-700'}`}>
                               {a.paymentStatus}
                             </span>

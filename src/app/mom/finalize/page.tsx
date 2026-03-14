@@ -11,11 +11,14 @@ import ErrorMessage from '@/components/ErrorMessage';
 import WorkflowProgress from '@/components/WorkflowProgress';
 import StatusBadge from '@/components/StatusBadge';
 import { getMom, editMom, generateMomDoc, finalizeMom, downloadCertificate } from '@/lib/api';
+import { useLanguageStore } from '@/store/languageStore';
+import { formatUiText, getUiText } from '@/lib/translations';
 import { CheckCircle, FileDown, ScrollText, Stamp } from 'lucide-react';
 
 function MomFinalizePageContent() {
   const { user } = useAuthStore();
   const { applications, fetchAll, isLoading, error: storeError } = useWorkflowStore();
+  const { language } = useLanguageStore();
   const router = useRouter();
   const params = useSearchParams();
   const [selectedAppId, setSelectedAppId] = useState(params.get('id') ?? '');
@@ -47,9 +50,9 @@ function MomFinalizePageContent() {
     setLoading(true); setErr(''); setSuccess('');
     try {
       await editMom(selectedAppId, { momContent, meetingDate, meetingNumber });
-      setSuccess('MoM content saved successfully.');
+      setSuccess(getUiText('momSavedSuccess', language));
       fetchAll();
-    } catch (e) { setErr(e instanceof Error ? e.message : 'Save failed.'); }
+    } catch (e) { setErr(e instanceof Error ? e.message : getUiText('submissionFailed', language)); }
     finally { setLoading(false); }
   };
 
@@ -58,7 +61,6 @@ function MomFinalizePageContent() {
     try {
       const result = await generateMomDoc(selectedAppId);
       if (result.url) {
-        // Create a temporary link and trigger download
         const a = document.createElement('a');
         a.href = result.url;
         a.download = `MoM_${selectedAppId}.pdf`;
@@ -66,16 +68,16 @@ function MomFinalizePageContent() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(result.url);
-        setSuccess('MoM document downloaded successfully.');
+        setSuccess(getUiText('momDownloadedSuccess', language));
       } else {
-        setSuccess('MoM document generated and ready for download.');
+        setSuccess(getUiText('momGeneratedReady', language));
       }
-    } catch (e) { setErr(e instanceof Error ? e.message : 'Generation failed.'); }
+    } catch (e) { setErr(e instanceof Error ? e.message : getUiText('generationFailed', language)); }
     finally { setLoading(false); }
   };
 
   const doFinalize = async () => {
-    if (!confirm('Finalizing will issue the EC Certificate. This action cannot be undone. Proceed?')) return;
+    if (!confirm(getUiText('confirmFinalize', language))) return;
     setLoading(true); setErr(''); setSuccess('');
     try {
       await finalizeMom(selectedAppId);
@@ -83,7 +85,7 @@ function MomFinalizePageContent() {
       setCertUrl(cert.url);
       setSuccess(`EC Certificate issued! File: ${cert.filename}`);
       fetchAll();
-    } catch (e) { setErr(e instanceof Error ? e.message : 'Finalization failed.'); }
+    } catch (e) { setErr(e instanceof Error ? e.message : getUiText('finalizationFailed', language)); }
     finally { setLoading(false); }
   };
 
@@ -91,16 +93,24 @@ function MomFinalizePageContent() {
 
   const eligible = applications.filter((a) => ['referred', 'mom_draft', 'finalized'].includes(a.status));
   const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] transition-all";
+  const localeMap = {
+    en: 'en-IN',
+    hi: 'hi-IN',
+    mr: 'mr-IN',
+    bn: 'bn-IN',
+    kn: 'kn-IN',
+  } as const;
+  const locale = localeMap[language] ?? 'en-IN';
 
   return (
     <PageShell role="mom">
-            <h2 className="page-heading">Finalize & Issue EC</h2>
-            <p className="page-subheading mb-6">Edit Minutes of Meeting, generate MoM document, and issue Environmental Clearance certificate</p>
+            <h2 className="page-heading">{getUiText('finalizeIssueEcHeading', language)}</h2>
+            <p className="page-subheading mb-6">{getUiText('finalizeIssueEcSubheading', language)}</p>
 
             <div className="glass-card-strong p-4 mb-4">
-              <label className="ui-label">Select Application</label>
+              <label className="ui-label">{getUiText('selectApplicationLabel', language)}</label>
               <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63]" value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)}>
-                <option value="">-- Select application --</option>
+                <option value="">{getUiText('selectApplicationPromptSimple', language)}</option>
                 {eligible.map((a) => <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>)}
               </select>
             </div>
@@ -114,7 +124,7 @@ function MomFinalizePageContent() {
                   <p>{success}</p>
                   {certUrl && (
                     <a href={certUrl} className="flex items-center gap-1 text-cyan-700 underline mt-1 text-xs" target="_blank">
-                      <FileDown size={12} /> Download EC Certificate
+                      <FileDown size={12} /> {getUiText('downloadEcCertificate', language)}
                     </a>
                   )}
                 </div>
@@ -135,46 +145,44 @@ function MomFinalizePageContent() {
                   <StatusBadge status={selectedApp.status} />
                 </div>
 
-                {/* MoM Editor */}
                 <div className="glass-card-strong p-5">
                   <h3 className="font-semibold text-gray-700 mb-4 flex items-center gap-2">
-                    <ScrollText size={16} className="text-[#164e63]" /> Minutes of Meeting
+                    <ScrollText size={16} className="text-[#164e63]" /> {getUiText('minutesOfMeeting', language)}
                   </h3>
                   <div className="grid grid-cols-2 gap-3 mb-3">
                     <div>
-                      <label className="ui-label">Meeting Date</label>
+                      <label className="ui-label">{getUiText('meetingDate', language)}</label>
                       <input type="date" className={inputCls} value={meetingDate} onChange={(e) => setMeetingDate(e.target.value)} />
                     </div>
                     <div>
-                      <label className="ui-label">Meeting Number</label>
+                      <label className="ui-label">{getUiText('meetingNumber', language)}</label>
                       <input className={inputCls} value={meetingNumber} onChange={(e) => setMeetingNumber(e.target.value)} placeholder="e.g. EAC-2026-03/07" />
                     </div>
                   </div>
                   <div className="mb-3">
-                    <label className="ui-label">MoM Content</label>
+                    <label className="ui-label">{getUiText('momContent', language)}</label>
                     <textarea
                       rows={12}
                       className={`${inputCls} resize-y font-mono text-xs`}
                       value={momContent}
                       onChange={(e) => setMomContent(e.target.value)}
-                      placeholder="Paste or type the full Minutes of Meeting here..."
+                      placeholder={getUiText('momContentPlaceholder', language)}
                     />
                   </div>
                   <button onClick={doSave} disabled={loading || !selectedAppId} className="px-4 py-2 rounded-lg text-sm font-semibold text-white disabled:opacity-50" style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}>
-                    {loading ? 'Saving…' : 'Save MoM'}
+                    {loading ? getUiText('saving', language) : getUiText('saveMom', language)}
                   </button>
                 </div>
 
-                {/* Actions */}
                 <div className="glass-card-strong p-5">
-                  <h3 className="font-semibold text-gray-700 mb-4">Issue Environmental Clearance</h3>
+                  <h3 className="font-semibold text-gray-700 mb-4">{getUiText('issueEnvironmentalClearance', language)}</h3>
                   <div className="flex flex-wrap gap-3">
                     <button
                       onClick={doGenerate}
                       disabled={loading || !selectedAppId}
                       className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 transition-colors"
                     >
-                      <ScrollText size={15} /> {loading ? 'Generating…' : 'Generate MoM PDF'}
+                      <ScrollText size={15} /> {loading ? getUiText('generating', language) : getUiText('generateMomPdf', language)}
                     </button>
 
                     {selectedApp.status !== 'finalized' && (
@@ -184,7 +192,7 @@ function MomFinalizePageContent() {
                         className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white disabled:opacity-50 transition-all shadow-md"
                         style={{ background: 'linear-gradient(135deg, #164e63, #25c9d0)' }}
                       >
-                        <Stamp size={15} /> {loading ? 'Finalizing…' : 'Finalize & Issue EC Certificate'}
+                        <Stamp size={15} /> {loading ? getUiText('finalizing', language) : getUiText('finalizeIssueEcCertificate', language)}
                       </button>
                     )}
 
@@ -193,14 +201,14 @@ function MomFinalizePageContent() {
                         onClick={async () => { const c = await downloadCertificate(selectedApp.id); window.open(c.url); }}
                         className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-cyan-600 hover:bg-cyan-700 transition-colors"
                       >
-                        <FileDown size={15} /> Download EC Certificate
+                        <FileDown size={15} /> {getUiText('downloadEcCertificate', language)}
                       </button>
                     )}
                   </div>
 
                   {selectedApp.status === 'finalized' && (
                     <div className="mt-4 flex items-center gap-2 text-cyan-700 text-sm font-semibold bg-cyan-50 border border-cyan-200 rounded-lg px-4 py-2.5">
-                      <CheckCircle size={16} /> EC Certificate has been issued. Finalized on {selectedApp.finalizedAt ? new Date(selectedApp.finalizedAt).toLocaleDateString('en-IN') : '—'}.
+                      <CheckCircle size={16} /> {formatUiText('ecIssuedMessage', language, { date: selectedApp.finalizedAt ? new Date(selectedApp.finalizedAt).toLocaleDateString(locale) : '—' })}
                     </div>
                   )}
                 </div>

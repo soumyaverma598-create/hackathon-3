@@ -12,11 +12,14 @@ import EmptyState from '@/components/EmptyState';
 import StatusBadge from '@/components/StatusBadge';
 import { getEDSQueries, respondToEDS } from '@/lib/api';
 import { EDSQuery } from '@/types/workflow';
+import { useLanguageStore } from '@/store/languageStore';
+import { formatUiText, getUiText } from '@/lib/translations';
 import { MessageSquare, Send, ChevronDown, ChevronUp } from 'lucide-react';
 
 function ApplicantEDSPageContent() {
   const { user } = useAuthStore();
   const { applications, fetchByProponent } = useWorkflowStore();
+  const { language } = useLanguageStore();
   const router = useRouter();
   const params = useSearchParams();
   const [selectedAppId, setSelectedAppId] = useState(params.get('id') ?? '');
@@ -48,14 +51,14 @@ function ApplicantEDSPageContent() {
     try {
       const updated = await respondToEDS(selectedAppId, queryId, { response: responses[queryId] });
       setQueries((qs) => qs.map((q) => (q.id === queryId ? updated : q)));
-      setSuccessMsg((s) => ({ ...s, [queryId]: 'Response submitted successfully!' }));
+      setSuccessMsg((s) => ({ ...s, [queryId]: getUiText('responseSubmittedSuccess', language) }));
       setResponses((r) => ({ ...r, [queryId]: '' }));
       // Clear success message after 3 seconds
       setTimeout(() => {
         setSuccessMsg((s) => ({ ...s, [queryId]: '' }));
       }, 3000);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Submission failed.');
+      setError(e instanceof Error ? e.message : getUiText('submissionFailed', language));
     } finally {
       setSubmitting((s) => ({ ...s, [queryId]: false }));
     }
@@ -68,21 +71,29 @@ function ApplicantEDSPageContent() {
     responded: 'bg-blue-100 text-blue-700',
     closed: 'bg-cyan-100 text-cyan-700',
   };
+  const localeMap = {
+    en: 'en-IN',
+    hi: 'hi-IN',
+    mr: 'mr-IN',
+    bn: 'bn-IN',
+    kn: 'kn-IN',
+  } as const;
+  const locale = localeMap[language] ?? 'en-IN';
 
   return (
     <PageShell role="applicant">
-            <h2 className="page-heading">EDS Queries</h2>
-            <p className="page-subheading mb-6">Respond to Environmental Data Sheet queries raised by the scrutiny officer</p>
+          <h2 className="page-heading">{getUiText('edsQueriesHeading', language)}</h2>
+          <p className="page-subheading mb-6">{getUiText('edsQueriesSubheading', language)}</p>
 
             {/* Application Selector */}
             <div className="glass-card-strong p-4 mb-4">
-              <label className="ui-label">Select Application</label>
+              <label className="ui-label">{getUiText('selectApplicationLabel', language)}</label>
               <select
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63]"
                 value={selectedAppId}
                 onChange={(e) => setSelectedAppId(e.target.value)}
               >
-                <option value="">-- Select an application --</option>
+                <option value="">{getUiText('selectApplicationPrompt', language)}</option>
                 {applications.map((a) => (
                   <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>
                 ))}
@@ -93,7 +104,7 @@ function ApplicantEDSPageContent() {
              error ? <ErrorMessage message={error} /> :
              !selectedAppId ? null :
              queries.length === 0 ? (
-               <EmptyState title="No EDS queries" message="No Environmental Data Sheet queries have been raised on this application." />
+               <EmptyState title={getUiText('noEdsQueriesTitle', language)} message={getUiText('noEdsQueriesMessage', language)} />
              ) : (
                <div className="space-y-3">
                  {queries.map((q) => (
@@ -118,16 +129,16 @@ function ApplicantEDSPageContent() {
                      {expandedId === q.id && (
                        <div className="px-5 pb-5 border-t border-gray-50">
                          <div className="bg-sky-50 rounded-lg p-3 mt-3 mb-4">
-                           <p className="ui-section-title-text mb-1">Query Description</p>
+                           <p className="ui-section-title-text mb-1">{getUiText('queryDescription', language)}</p>
                            <p className="text-sm text-gray-700 leading-relaxed">{q.description}</p>
-                           <p className="text-xs text-gray-400 mt-2">Raised by {q.raisedBy} on {new Date(q.raisedAt).toLocaleDateString('en-IN')}</p>
+                           <p className="text-xs text-gray-400 mt-2">{formatUiText('raisedByOn', language, { name: q.raisedBy, date: new Date(q.raisedAt).toLocaleDateString(locale) })}</p>
                          </div>
 
                          {q.response && (
                            <div className="bg-blue-50 rounded-lg p-3 mb-4">
-                             <p className="ui-section-title-text mb-1">Your Response</p>
+                             <p className="ui-section-title-text mb-1">{getUiText('yourResponse', language)}</p>
                              <p className="text-sm text-gray-700 leading-relaxed">{q.response}</p>
-                             <p className="text-xs text-gray-400 mt-2">Responded on {q.respondedAt ? new Date(q.respondedAt).toLocaleDateString('en-IN') : '—'}</p>
+                             <p className="text-xs text-gray-400 mt-2">{formatUiText('respondedOn', language, { date: q.respondedAt ? new Date(q.respondedAt).toLocaleDateString(locale) : '—' })}</p>
                            </div>
                          )}
 
@@ -138,12 +149,12 @@ function ApplicantEDSPageContent() {
                          {q.status === 'open' && (
                            <div>
                              <label className="ui-label">
-                               Submit Response
+                               {getUiText('submitResponse', language)}
                              </label>
                              <textarea
                                rows={4}
                                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] resize-none"
-                               placeholder="Type your detailed response here..."
+                               placeholder={getUiText('typeDetailedResponse', language)}
                                value={responses[q.id] ?? ''}
                                onChange={(e) => setResponses((r) => ({ ...r, [q.id]: e.target.value }))}
                              />
@@ -153,7 +164,7 @@ function ApplicantEDSPageContent() {
                                className="mt-2 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-50"
                                style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}
                              >
-                               <Send size={14} /> {submitting[q.id] ? 'Submitting…' : 'Submit Response'}
+                               <Send size={14} /> {submitting[q.id] ? getUiText('submittingLabel', language) : getUiText('submitResponse', language)}
                              </button>
                            </div>
                          )}

@@ -8,6 +8,8 @@ import { approveRestrictedAccess, createUser, fetchUsers, updateUser } from '@/l
 import { AdminCreateUserInput, AdminUpdateUserInput, User, UserRole } from '@/types/auth';
 import { Plus, Save, ShieldCheck, ShieldX, UserRoundPen, Users, X } from 'lucide-react';
 import { RBAC_ROLE_POLICIES, TEAM_ROLES, canAssignTeamRole } from '@/lib/rbac';
+import { useLanguageStore } from '@/store/languageStore';
+import { formatUiText, getUiText } from '@/lib/translations';
 
 type FormMode = 'create' | 'edit';
 
@@ -33,6 +35,7 @@ const defaultForm: UserFormState = {
 
 export default function AdminUsersPage() {
   const { user } = useAuthStore();
+  const { language } = useLanguageStore();
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -122,17 +125,17 @@ export default function AdminUsersPage() {
     setError(null);
 
     if (!formState.name || !formState.email || !formState.department || !formState.designation) {
-      setError('Please fill in all required fields.');
+      setError(getUiText('fillRequiredFields', language));
       return;
     }
 
     if (formMode === 'create' && formState.password.trim().length < 6) {
-      setError('Password must be at least 6 characters for new users.');
+      setError(getUiText('passwordMinCharsError', language));
       return;
     }
 
     if (formMode === 'edit' && !selectedUserId) {
-      setError('Selected user was not found. Please retry.');
+      setError(getUiText('userNotFoundError', language));
       return;
     }
 
@@ -153,7 +156,7 @@ export default function AdminUsersPage() {
       } else {
         const editUserId = selectedUserId;
         if (!editUserId) {
-          setError('Selected user was not found. Please retry.');
+          setError(getUiText('userNotFoundError', language));
           return;
         }
 
@@ -171,7 +174,7 @@ export default function AdminUsersPage() {
       }
       resetForm();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to save user changes.');
+      setError(err instanceof Error ? err.message : getUiText('unableToSaveUser', language));
     } finally {
       setIsSaving(false);
     }
@@ -185,7 +188,7 @@ export default function AdminUsersPage() {
       await approveRestrictedAccess(targetUser.id);
       setApprovedIds((prev) => new Set([...prev, targetUser.id]));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to approve access.');
+      setError(err instanceof Error ? err.message : getUiText('approvalFailed', language));
     } finally {
       setApprovingUserId(null);
     }
@@ -208,7 +211,7 @@ export default function AdminUsersPage() {
   const assignTeamRole = async (targetUser: User, targetRole: UserRole) => {
     if (!user) return;
     if (!canAssignTeamRole(user.role, targetUser.role, targetRole)) {
-      setError('You are not allowed to perform this assignment.');
+      setError(getUiText('notAllowedToAssign', language));
       return;
     }
 
@@ -226,7 +229,7 @@ export default function AdminUsersPage() {
       });
       setUsers((previous) => previous.map((item) => (item.id === updated.id ? updated : item)));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to assign team role.');
+      setError(err instanceof Error ? err.message : getUiText('roleAssignFailed', language));
     } finally {
       setAssigningUserId(null);
     }
@@ -234,8 +237,8 @@ export default function AdminUsersPage() {
 
   return (
     <PageShell role="admin">
-            <h2 className="page-heading">User Management</h2>
-            <p className="page-subheading mb-6">Manage all registered users in PARIVESH 3.0.</p>
+            <h2 className="page-heading">{getUiText('navUserManagement', language)}</h2>
+            <p className="page-subheading mb-6">{getUiText('manageRegisteredUsers', language)}</p>
 
             <div className="mb-4 flex justify-end">
               <button
@@ -244,7 +247,7 @@ export default function AdminUsersPage() {
                 className="inline-flex items-center gap-2 rounded-lg bg-[#164e63] px-4 py-2 text-sm font-medium text-white hover:bg-[#0f4258] gov-action-btn"
               >
                 <Plus size={16} />
-                Add New User
+                {getUiText('addNewUser', language)}
               </button>
             </div>
 
@@ -258,7 +261,7 @@ export default function AdminUsersPage() {
               <section className="mb-5 glass-card-strong p-5 animate-gov-enter">
                 <div className="mb-4 flex items-center justify-between">
                   <h3 className="text-base font-semibold text-gray-800">
-                    {formMode === 'create' ? 'Add User Credentials' : `Edit Credentials - ${selectedUser?.name ?? ''}`}
+                    {formMode === 'create' ? getUiText('addUserCredentials', language) : formatUiText('editCredentials', language, { name: selectedUser?.name ?? '' })}
                   </h3>
                   <button
                     type="button"
@@ -266,13 +269,13 @@ export default function AdminUsersPage() {
                     className="inline-flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"
                   >
                     <X size={14} />
-                    Close
+                    {getUiText('closeLabel', language)}
                   </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <label className="block">
-                    <span className="mb-1 block text-sm font-medium text-gray-700">Name</span>
+                    <span className="mb-1 block text-sm font-medium text-gray-700">{getUiText('nameLabel', language)}</span>
                     <input
                       type="text"
                       value={formState.name}
@@ -283,7 +286,7 @@ export default function AdminUsersPage() {
                   </label>
 
                   <label className="block">
-                    <span className="mb-1 block text-sm font-medium text-gray-700">Email (Login ID)</span>
+                    <span className="mb-1 block text-sm font-medium text-gray-700">{getUiText('emailLabel', language)}</span>
                     <input
                       type="email"
                       value={formState.email}
@@ -294,7 +297,7 @@ export default function AdminUsersPage() {
                   </label>
 
                   <label className="block">
-                    <span className="mb-1 block text-sm font-medium text-gray-700">Role</span>
+                    <span className="mb-1 block text-sm font-medium text-gray-700">{getUiText('roleLabel', language)}</span>
                     <select
                       value={formState.role}
                       onChange={(event) => setFormState((previous) => ({ ...previous, role: event.target.value as UserRole }))}
@@ -308,7 +311,7 @@ export default function AdminUsersPage() {
                   </label>
 
                   <label className="block">
-                    <span className="mb-1 block text-sm font-medium text-gray-700">Department</span>
+                    <span className="mb-1 block text-sm font-medium text-gray-700">{getUiText('departmentLabel', language)}</span>
                     <input
                       type="text"
                       value={formState.department}
@@ -319,7 +322,7 @@ export default function AdminUsersPage() {
                   </label>
 
                   <label className="block">
-                    <span className="mb-1 block text-sm font-medium text-gray-700">Designation</span>
+                    <span className="mb-1 block text-sm font-medium text-gray-700">{getUiText('designationLabel', language)}</span>
                     <input
                       type="text"
                       value={formState.designation}
@@ -331,21 +334,21 @@ export default function AdminUsersPage() {
 
                   <label className="block">
                     <span className="mb-1 block text-sm font-medium text-gray-700">
-                      {formMode === 'create' ? 'Initial Password' : 'Reset Password (optional)'}
+                      {formMode === 'create' ? getUiText('initialPasswordLabel', language) : getUiText('resetPasswordLabel', language)}
                     </span>
                     <input
                       type="password"
                       value={formState.password}
                       onChange={(event) => setFormState((previous) => ({ ...previous, password: event.target.value }))}
                       className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#164e63]"
-                      placeholder={formMode === 'create' ? 'Minimum 6 characters' : 'Leave blank to keep existing'}
+                      placeholder={formMode === 'create' ? getUiText('passwordMinCharsHint', language) : getUiText('passwordLeaveBlankHint', language)}
                     />
                   </label>
 
                   <label className="flex items-center justify-between rounded-lg border border-gray-100 bg-gray-50 px-4 py-3 md:col-span-2">
                     <span>
-                      <span className="block text-sm font-medium text-gray-700">Account Status</span>
-                      <span className="block text-xs text-gray-500">Allow user to access the portal.</span>
+                      <span className="block text-sm font-medium text-gray-700">{getUiText('accountStatusLabel', language)}</span>
+                      <span className="block text-xs text-gray-500">{getUiText('accountStatusDesc', language)}</span>
                     </span>
                     <input
                       type="checkbox"
@@ -362,7 +365,7 @@ export default function AdminUsersPage() {
                       className="inline-flex items-center gap-2 rounded-lg bg-[#164e63] px-4 py-2 text-sm font-medium text-white hover:bg-[#0f4258] disabled:opacity-60 disabled:cursor-not-allowed gov-action-btn"
                     >
                       <Save size={15} />
-                      {isSaving ? 'Saving...' : formMode === 'create' ? 'Create User' : 'Save Changes'}
+                      {isSaving ? getUiText('savingLabel', language) : formMode === 'create' ? getUiText('createUserLabel', language) : getUiText('saveChangesLabel', language)}
                     </button>
                   </div>
                 </form>
@@ -371,15 +374,15 @@ export default function AdminUsersPage() {
 
             <section className="mb-5 glass-card-strong p-5 animate-gov-enter">
               <div className="mb-4">
-                <h3 className="text-base font-semibold text-gray-800">Central RBAC Team Assignment</h3>
+                <h3 className="text-base font-semibold text-gray-800">{getUiText('rbacTeamAssignment', language)}</h3>
                 <p className="text-xs text-gray-500 mt-1">
-                  Assign users to Scrutiny or MoM teams via centralized role-based access control.
+                  {getUiText('rbacTeamAssignmentDesc', language)}
                 </p>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {assignmentCandidates.length === 0 ? (
-                  <p className="text-sm text-gray-500">No non-admin users available for assignment.</p>
+                  <p className="text-sm text-gray-500">{getUiText('noNonAdminUsers', language)}</p>
                 ) : assignmentCandidates.map((candidate) => (
                   <div key={candidate.id} className="rounded-lg border border-[#d8e4ee] bg-[#edf2f6] p-4">
                     <div className="mb-3 flex items-start justify-between gap-2">
@@ -388,13 +391,13 @@ export default function AdminUsersPage() {
                           <p className="text-sm font-semibold text-gray-800">{candidate.name}</p>
                           {(candidate.role === 'scrutiny' || candidate.role === 'mom') && approvedIds.has(candidate.id) && (
                             <span className="inline-flex items-center gap-1 rounded-full bg-cyan-100 text-cyan-700 text-[11px] font-semibold px-2 py-0.5">
-                              <ShieldCheck size={11} /> Portal Access Granted
+                              <ShieldCheck size={11} /> {getUiText('portalAccessGranted', language)}
                             </span>
                           )}
                         </div>
                         <p className="text-xs text-gray-500">{candidate.email}</p>
                         <p className="text-xs text-gray-500 mt-0.5">
-                          Current Role: <span className="font-medium text-gray-700">{RBAC_ROLE_POLICIES[candidate.role].label}</span>
+                          {getUiText('currentRoleLabel', language)}: <span className="font-medium text-gray-700">{RBAC_ROLE_POLICIES[candidate.role].label}</span>
                         </p>
                       </div>
                       {/* Portal access approval badge */}
@@ -408,7 +411,7 @@ export default function AdminUsersPage() {
                               className="inline-flex items-center gap-1 rounded-full bg-cyan-100 text-cyan-700 border border-cyan-300 text-[11px] font-semibold px-2 py-0.5 hover:bg-cyan-200 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                               <ShieldX size={11} />
-                              {removingUserId === candidate.id ? 'Removing...' : 'Remove Portal Access'}
+                              {removingUserId === candidate.id ? getUiText('removingLabel', language) : getUiText('removePortalAccess', language)}
                             </button>
                           ) : (
                             <button
@@ -418,7 +421,7 @@ export default function AdminUsersPage() {
                               className="inline-flex items-center gap-1 rounded-full bg-cyan-100 text-cyan-700 border border-cyan-300 text-[11px] font-semibold px-2 py-0.5 hover:bg-cyan-200 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                               <ShieldCheck size={11} />
-                              {approvingUserId === candidate.id ? 'Approving...' : 'Approve Portal Access'}
+                              {approvingUserId === candidate.id ? getUiText('approvingLabel', language) : getUiText('approvePortalAccess', language)}
                             </button>
                           )}
                         </div>
@@ -441,7 +444,7 @@ export default function AdminUsersPage() {
                                 : 'bg-white text-gray-700 border-gray-200 hover:border-[#164e63] hover:text-[#164e63]'
                             }`}
                           >
-                            {isCurrent ? `${RBAC_ROLE_POLICIES[teamRole].label} Assigned` : `Assign to ${RBAC_ROLE_POLICIES[teamRole].label}`}
+                          {isCurrent ? `${RBAC_ROLE_POLICIES[teamRole].label} ${getUiText('roleAssignedLabel', language).replace('{role}', '')}`.trim() : formatUiText('assignToRoleLabel', language, { role: RBAC_ROLE_POLICIES[teamRole].label })}
                           </button>
                         );
                       })}
@@ -450,7 +453,7 @@ export default function AdminUsersPage() {
                     {/* Warning for restricted-role users without portal access */}
                     {(candidate.role === 'scrutiny' || candidate.role === 'mom') && !approvedIds.has(candidate.id) && (
                       <p className="mt-2 text-[11px] text-cyan-700 bg-cyan-50 border border-cyan-100 rounded px-2 py-1">
-                        ⚠ This user cannot sign in to the {RBAC_ROLE_POLICIES[candidate.role].label} portal until you grant portal access.
+                        ⚠ {formatUiText('userNoSignInWarning', language, { role: RBAC_ROLE_POLICIES[candidate.role].label })}
                       </p>
                     )}
                   </div>
@@ -461,30 +464,30 @@ export default function AdminUsersPage() {
             <div className="glass-card-strong overflow-hidden">
               <div className="px-5 py-3 ui-section-strip flex items-center gap-2">
                 <Users size={16} className="text-[#164e63]" />
-                <h3 className="font-semibold text-gray-700 text-sm">Registered Users</h3>
+                <h3 className="font-semibold text-gray-700 text-sm">{getUiText('registeredUsers', language)}</h3>
               </div>
 
               <table className="w-full">
                 <thead className="ui-table-head">
                   <tr>
-                    <th className="text-left px-5 py-3 ui-col-a">Name</th>
-                    <th className="text-left px-5 py-3 ui-col-b">Email</th>
-                    <th className="text-left px-5 py-3 ui-col-a">Role</th>
-                    <th className="text-left px-5 py-3 ui-col-b">Department</th>
-                    <th className="text-left px-5 py-3 ui-col-a">Designation</th>
-                    <th className="text-left px-5 py-3 ui-col-b">Status</th>
-                    <th className="text-left px-5 py-3 ui-col-a">Action</th>
+                    <th className="text-left px-5 py-3 ui-col-a">{getUiText('nameLabel', language)}</th>
+                    <th className="text-left px-5 py-3 ui-col-b">{getUiText('emailHeaderLabel', language)}</th>
+                    <th className="text-left px-5 py-3 ui-col-a">{getUiText('roleLabel', language)}</th>
+                    <th className="text-left px-5 py-3 ui-col-b">{getUiText('departmentLabel', language)}</th>
+                    <th className="text-left px-5 py-3 ui-col-a">{getUiText('designationLabel', language)}</th>
+                    <th className="text-left px-5 py-3 ui-col-b">{getUiText('statusLabel', language)}</th>
+                    <th className="text-left px-5 py-3 ui-col-a">{getUiText('actionLabel', language)}</th>
                   </tr>
                 </thead>
 
                 <tbody className="divide-y divide-gray-50 text-sm">
                   {isLoading ? (
                     <tr>
-                      <td className="px-5 py-4 text-gray-500" colSpan={7}>Loading users...</td>
+                      <td className="px-5 py-4 text-gray-500" colSpan={7}>{getUiText('loadingUsersLabel', language)}</td>
                     </tr>
                   ) : users.length === 0 ? (
                     <tr>
-                      <td className="px-5 py-4 text-gray-500" colSpan={7}>No users found.</td>
+                      <td className="px-5 py-4 text-gray-500" colSpan={7}>{getUiText('noUsersFound', language)}</td>
                     </tr>
                   ) : users.map((u) => (
                     <tr key={u.id} className="ui-row-hover">
@@ -503,7 +506,7 @@ export default function AdminUsersPage() {
                             u.isActive ? 'bg-cyan-100 text-cyan-700' : 'bg-red-100 text-red-600'
                           }`}
                         >
-                          {u.isActive ? 'Active' : 'Inactive'}
+                          {u.isActive ? getUiText('activeLabel', language) : getUiText('inactiveLabel', language)}
                         </span>
                       </td>
                       <td className="px-5 py-3 ui-col-a">
@@ -513,7 +516,7 @@ export default function AdminUsersPage() {
                           className="inline-flex items-center gap-1 rounded-md border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
                         >
                           <UserRoundPen size={13} />
-                          Edit
+                          {getUiText('editLabel', language)}
                         </button>
                       </td>
                     </tr>

@@ -20,6 +20,14 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Portal Assistant
+
+The frontend includes a floating portal assistant in the bottom-right corner.
+
+- It guides users through the website, including proponent proposal steps, documents, EDS, payment, and status tracking.
+- For live AI answers, add `GEMINI_API_KEY` in the root `.env.local` file.
+- If no Gemini key is configured, the assistant falls back to built-in website guidance.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

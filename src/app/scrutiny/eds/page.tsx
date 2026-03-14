@@ -11,6 +11,8 @@ import ErrorMessage from '@/components/ErrorMessage';
 import EmptyState from '@/components/EmptyState';
 import { getEDSQueries, raiseEDSQuery, closeEDSQuery } from '@/lib/api';
 import { EDSQuery } from '@/types/workflow';
+import { useLanguageStore } from '@/store/languageStore';
+import { formatUiText, getUiText } from '@/lib/translations';
 import { Plus, CheckCheck, ChevronDown, ChevronUp, MessageSquareWarning } from 'lucide-react';
 
 const EDS_CHECKLIST_ITEMS = [
@@ -81,6 +83,7 @@ const DEFAULT_CHECKLIST_STATE = Object.fromEntries(
 function ScrutinyEDSPageContent() {
   const { user } = useAuthStore();
   const { applications, fetchAll } = useWorkflowStore();
+  const { language } = useLanguageStore();
   const router = useRouter();
   const params = useSearchParams();
   const [selectedAppId, setSelectedAppId] = useState(params.get('id') ?? '');
@@ -122,9 +125,9 @@ function ScrutinyEDSPageContent() {
     try {
       const q = await raiseEDSQuery(selectedAppId, { subject: newSubject, description: newDesc, raisedBy: user.email });
       setQueries((qs) => [...qs, q]);
-      setSuccess(`EDS Query ${q.queryNumber} raised successfully.`);
+      setSuccess(formatUiText('edsQueryRaisedSuccess', language, { queryNumber: q.queryNumber }));
       setNewSubject(''); setNewDesc(''); setRaiseMode(false);
-    } catch (e) { setErr(e instanceof Error ? e.message : 'Failed.'); }
+    } catch (e) { setErr(e instanceof Error ? e.message : getUiText('submissionFailed', language)); }
     finally { setSubmitting(false); }
   };
 
@@ -132,8 +135,8 @@ function ScrutinyEDSPageContent() {
     try {
       const updated = await closeEDSQuery(selectedAppId, queryId);
       setQueries((qs) => qs.map((q) => (q.id === queryId ? updated : q)));
-      setSuccess('EDS Query closed.');
-    } catch (e) { setErr(e instanceof Error ? e.message : 'Failed.'); }
+      setSuccess(getUiText('edsQueryClosedSuccess', language));
+    } catch (e) { setErr(e instanceof Error ? e.message : getUiText('submissionFailed', language)); }
   };
 
   const currentChecklist = selectedAppId
@@ -203,20 +206,20 @@ function ScrutinyEDSPageContent() {
     <PageShell role="scrutiny">
             <div className="flex items-center justify-between mb-5">
               <div>
-                <h2 className="page-heading" style={{marginBottom:0}}>EDS Management</h2>
-                <p className="page-subheading">Raise and manage Environmental Data Sheet queries</p>
+                <h2 className="page-heading" style={{marginBottom:0}}>{getUiText('scrutinyEdsHeading', language)}</h2>
+                <p className="page-subheading">{getUiText('scrutinyEdsSubheading', language)}</p>
               </div>
               {selectedAppId && (
                 <button onClick={() => setRaiseMode(!raiseMode)} className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white" style={{ background: 'linear-gradient(135deg, #25c9d0, #179ea8)' }}>
-                  <Plus size={15} /> Raise EDS
+                  <Plus size={15} /> {getUiText('raiseEds', language)}
                 </button>
               )}
             </div>
 
             <div className="glass-card-strong p-4 mb-4">
-              <label className="ui-label">Select Application</label>
+              <label className="ui-label">{getUiText('selectApplicationLabel', language)}</label>
               <select className={inputCls} value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)}>
-                <option value="">-- Select application --</option>
+                <option value="">{getUiText('selectApplicationPromptSimple', language)}</option>
                 {applications.map((a) => <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>)}
               </select>
             </div>
@@ -265,18 +268,18 @@ function ScrutinyEDSPageContent() {
 
             {raiseMode && (
               <form onSubmit={handleRaise} className="bg-white rounded-xl border border-[#25c9d0]/30 shadow-sm p-5 mb-4 space-y-3">
-                <h4 className="font-semibold text-gray-700 flex items-center gap-2"><MessageSquareWarning size={16} className="text-[#25c9d0]" /> New EDS Query</h4>
+                <h4 className="font-semibold text-gray-700 flex items-center gap-2"><MessageSquareWarning size={16} className="text-[#25c9d0]" /> {getUiText('newEdsQuery', language)}</h4>
                 <div>
-                  <label className="ui-label">Subject *</label>
-                  <input className={inputCls} value={newSubject} onChange={(e) => setNewSubject(e.target.value)} required placeholder="e.g. Water Requirement Details" />
+                  <label className="ui-label">{getUiText('subjectLabel', language)}</label>
+                  <input className={inputCls} value={newSubject} onChange={(e) => setNewSubject(e.target.value)} required placeholder={getUiText('waterRequirementExample', language)} />
                 </div>
                 <div>
-                  <label className="ui-label">Description *</label>
-                  <textarea rows={4} className={`${inputCls} resize-none`} value={newDesc} onChange={(e) => setNewDesc(e.target.value)} required placeholder="Detailed query description..." />
+                  <label className="ui-label">{getUiText('descriptionLabel', language)}</label>
+                  <textarea rows={4} className={`${inputCls} resize-none`} value={newDesc} onChange={(e) => setNewDesc(e.target.value)} required placeholder={getUiText('detailedQueryPlaceholder', language)} />
                 </div>
                 <div className="flex gap-2">
                   <button type="submit" disabled={submitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-white disabled:opacity-50" style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}>
-                    {submitting ? 'Raising…' : 'Raise Query'}
+                    {submitting ? getUiText('raising', language) : getUiText('raiseQuery', language)}
                   </button>
                   <button type="button" onClick={() => setRaiseMode(false)} className="px-4 py-2 rounded-lg text-sm font-semibold text-gray-600 border border-gray-200 hover:bg-gray-50">Cancel</button>
                 </div>
@@ -285,7 +288,7 @@ function ScrutinyEDSPageContent() {
 
             {loading ? <SkeletonLoader /> :
              !selectedAppId ? null :
-             queries.length === 0 ? <EmptyState title="No EDS queries" message="No queries have been raised on this application." /> : (
+             queries.length === 0 ? <EmptyState title={getUiText('noEdsQueriesTitle', language)} message={getUiText('noEdsQueriesMessage', language)} /> : (
                <div className="space-y-3">
                  {queries.map((q) => (
                    <div key={q.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
@@ -305,13 +308,13 @@ function ScrutinyEDSPageContent() {
                          <div className="bg-sky-50 rounded-lg p-3 text-sm text-gray-700 leading-relaxed">{q.description}</div>
                          {q.response && (
                            <div className="bg-blue-50 rounded-lg p-3">
-                             <p className="ui-section-title-text mb-1">Applicant Response</p>
+                             <p className="ui-section-title-text mb-1">{getUiText('applicantResponse', language)}</p>
                              <p className="text-sm text-gray-700">{q.response}</p>
                            </div>
                          )}
                          {q.status === 'responded' && (
                            <button onClick={() => handleClose(q.id)} className="flex items-center gap-1.5 text-xs font-semibold text-white bg-cyan-600 hover:bg-cyan-700 px-3 py-1.5 rounded-lg transition-colors">
-                             <CheckCheck size={13} /> Mark Closed
+                             <CheckCheck size={13} /> {getUiText('markClosed', language)}
                            </button>
                          )}
                        </div>

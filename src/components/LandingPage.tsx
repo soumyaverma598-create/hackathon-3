@@ -17,6 +17,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import DynamicBackground from './DynamicBackground';
+import LanguageSelector from './LanguageSelector';
 
 /* ─── Animated counter hook ─────────────────────────── */
 function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
@@ -207,6 +208,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen relative">
+      <LanguageSelector placement="public" />
       {/* Dynamic background for landing */}
       <DynamicBackground variant="landing" />
 

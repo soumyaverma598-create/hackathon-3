@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
+import { useLanguageStore } from '@/store/languageStore';
 import { useWorkflowStore } from '@/store/workflowStore';
 import PageShell from '@/components/PageShell';
 import StatusBadge from '@/components/StatusBadge';
@@ -11,6 +12,7 @@ import ErrorMessage from '@/components/ErrorMessage';
 import Link from 'next/link';
 import { FilePlus, FolderOpen, TrendingUp, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { formatUiText, getUiText } from '@/lib/translations';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -24,6 +26,7 @@ const itemVariants = {
 
 export default function ApplicantDashboard() {
   const { user } = useAuthStore();
+  const { language } = useLanguageStore();
   const { applications, isLoading, error, fetchByProponent } = useWorkflowStore();
 
   useEffect(() => {
@@ -42,10 +45,10 @@ export default function ApplicantDashboard() {
   };
 
   const statCards = [
-    { label: 'Total Applications', value: stats.total, icon: <FolderOpen size={20} />, gradient: 'from-blue-500 to-indigo-600' },
-    { label: 'Active', value: stats.active, icon: <TrendingUp size={20} />, gradient: 'from-sky-500 to-cyan-600' },
-    { label: 'EC Granted', value: stats.granted, icon: <FilePlus size={20} />, gradient: 'from-cyan-500 to-teal-600' },
-    { label: 'Draft', value: stats.pending, icon: <Clock size={20} />, gradient: 'from-gray-500 to-slate-600' },
+    { label: getUiText('totalApplicationsLabel', language), value: stats.total, icon: <FolderOpen size={20} />, gradient: 'from-blue-500 to-indigo-600' },
+    { label: getUiText('activeLabel', language), value: stats.active, icon: <TrendingUp size={20} />, gradient: 'from-sky-500 to-cyan-600' },
+    { label: getUiText('ecGrantedLabel', language), value: stats.granted, icon: <FilePlus size={20} />, gradient: 'from-cyan-500 to-teal-600' },
+    { label: getUiText('draftLabel', language), value: stats.pending, icon: <Clock size={20} />, gradient: 'from-gray-500 to-slate-600' },
   ];
 
   return (
@@ -58,8 +61,8 @@ export default function ApplicantDashboard() {
         transition={{ duration: 0.5 }}
       >
         <div>
-          <h2 className="page-heading">My Applications</h2>
-          <p className="page-subheading">Track your Environmental Clearance applications</p>
+          <h2 className="page-heading">{getUiText('myApplicationsHeading', language)}</h2>
+          <p className="page-subheading">{getUiText('trackEcApplications', language)}</p>
         </div>
         <Link
           href="/applicant/apply"
@@ -69,7 +72,7 @@ export default function ApplicantDashboard() {
             boxShadow: '0 4px 16px rgba(26,107,60,0.25)',
           }}
         >
-          <FilePlus size={16} /> New Application
+          <FilePlus size={16} /> {getUiText('newApplicationLabel', language)}
         </Link>
       </motion.div>
 
@@ -98,11 +101,11 @@ export default function ApplicantDashboard() {
         <ErrorMessage message={error} onRetry={() => user && fetchByProponent(user.email)} />
       ) : applications.length === 0 ? (
         <EmptyState
-          title="No applications yet"
-          message="Start by creating your first Environmental Clearance application."
+          title={getUiText('noApplicationsYet', language)}
+          message={getUiText('startFirstApplication', language)}
           action={
             <Link href="/applicant/apply" className="inline-flex items-center gap-2 bg-[#164e63] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#0f3650] transition-colors shadow-md">
-              Create Application
+              {getUiText('createApplicationLabel', language)}
             </Link>
           }
         />
@@ -134,16 +137,16 @@ export default function ApplicantDashboard() {
 
               <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100/50">
                 <div className="flex gap-4 text-xs text-gray-400">
-                  <span>Applied: {app.submittedAt ? new Date(app.submittedAt).toLocaleDateString('en-IN') : 'Not submitted'}</span>
+                  <span>{getUiText('appliedLabel', language)}: {app.submittedAt ? new Date(app.submittedAt).toLocaleDateString('en-IN') : getUiText('notSubmittedLabel', language)}</span>
                   <span>
-                    Payment:{' '}
+                    {getUiText('paymentLabel', language)}:{' '}
                     <span className={app.paymentStatus === 'paid' || app.paymentStatus === 'verified' ? 'text-cyan-600 font-semibold' : 'text-sky-500 font-semibold'}>
                       {app.paymentStatus}
                     </span>
                   </span>
                   {app.edsQueries.filter((q) => q.status === 'open').length > 0 && (
                     <span className="text-sky-600 font-semibold">
-                      {app.edsQueries.filter((q) => q.status === 'open').length} EDS open
+                      {formatUiText('edsOpenCount', language, { count: app.edsQueries.filter((q) => q.status === 'open').length })}
                     </span>
                   )}
                 </div>
@@ -151,7 +154,7 @@ export default function ApplicantDashboard() {
                   href={`/applicant/eds?id=${app.id}`}
                   className="text-xs text-[#164e63] font-semibold hover:underline"
                 >
-                  View Details →
+                  {getUiText('viewDetailsLabel', language)} →
                 </Link>
               </div>
             </motion.div>

@@ -7,34 +7,36 @@ import PageShell from '@/components/PageShell';
 import { useAuthStore } from '@/store/authStore';
 import { useAdminSettingsStore } from '@/store/adminSettingsStore';
 import { AdminSettingsSection } from '@/types/settings';
+import { useLanguageStore } from '@/store/languageStore';
+import { formatUiText, getUiText } from '@/lib/translations';
 
 const tabConfig = [
   {
     id: 'security',
-    label: 'Security',
-    title: 'Security Settings',
-    description: 'Manage access controls and administrator account safety.',
+    labelKey: 'settingsTabSecurity',
+    titleKey: 'settingsTitleSecurity',
+    descKey: 'settingsDescSecurity',
     icon: ShieldCheck,
   },
   {
     id: 'notifications',
-    label: 'Notifications',
-    title: 'Notification Settings',
-    description: 'Control workflow updates and operational alerts.',
+    labelKey: 'settingsTabNotifications',
+    titleKey: 'settingsTitleNotifications',
+    descKey: 'settingsDescNotifications',
     icon: Bell,
   },
   {
     id: 'data-audit',
-    label: 'Data & Audit',
-    title: 'Data and Audit Settings',
-    description: 'Configure retention, export defaults, and change traceability.',
+    labelKey: 'settingsTabDataAudit',
+    titleKey: 'settingsTitleDataAudit',
+    descKey: 'settingsDescDataAudit',
     icon: Database,
   },
   {
     id: 'system-defaults',
-    label: 'System Defaults',
-    title: 'System Default Settings',
-    description: 'Set the default admin experience and workflow baseline.',
+    labelKey: 'settingsTabSystemDefaults',
+    titleKey: 'settingsTitleSystemDefaults',
+    descKey: 'settingsDescSystemDefaults',
     icon: Settings,
   },
 ] as const;
@@ -81,6 +83,7 @@ function SettingRow({
 
 export default function AdminSettingsPage() {
   const { user } = useAuthStore();
+  const { language } = useLanguageStore();
   const router = useRouter();
   const { settings, isLoading, isSaving, error, fetchSettings, saveSection, clearError } = useAdminSettingsStore();
   const [activeTab, setActiveTab] = useState<AdminSettingsSection>('notifications');
@@ -192,7 +195,7 @@ export default function AdminSettingsPage() {
       await saveSection('notifications', notificationForm);
       await saveSection('data-audit', dataAuditForm);
       await saveSection('system-defaults', systemDefaultsForm);
-      setSaveMessage('All settings updated successfully.');
+      setSaveMessage(getUiText('allSettingsUpdated', language));
     } catch {
       // Error state is handled by store.
     }
@@ -205,14 +208,14 @@ export default function AdminSettingsPage() {
 
   return (
     <PageShell role="admin">
-      <h2 className="page-heading animate-gov-enter">Settings</h2>
+      <h2 className="page-heading animate-gov-enter">{getUiText('navSettings', language)}</h2>
       <p className="page-subheading mb-4 animate-gov-enter" style={{ animationDelay: '0.05s' }}>
-        Configure admin preferences for PARIVESH 3.0.
+        {getUiText('settingsPageSubheading', language)}
       </p>
 
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3 animate-gov-enter" style={{ animationDelay: '0.08s' }}>
         <p className="text-xs text-gray-500">
-          {settings ? `Last updated: ${new Date(settings.updatedAt).toLocaleString()}` : 'Last updated: Loading...'}
+          {settings ? formatUiText('lastUpdated', language, { value: new Date(settings.updatedAt).toLocaleString() }) : formatUiText('lastUpdated', language, { value: getUiText('loadingLabel', language) })}
         </p>
         <button
           type="button"
@@ -220,7 +223,7 @@ export default function AdminSettingsPage() {
           disabled={isSaving || isLoading}
           className="rounded-md bg-[#164e63] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#0f3650] disabled:cursor-not-allowed disabled:bg-[#164e63]/60"
         >
-          {isSaving ? 'Saving...' : 'Save All Settings'}
+          {isSaving ? getUiText('saving', language) : getUiText('saveAllSettings', language)}
         </button>
       </div>
 
@@ -252,7 +255,7 @@ export default function AdminSettingsPage() {
                       : 'border-[#164e63]/10 bg-white/70 text-[#4f6777] hover:border-[#164e63]/22 hover:text-[#164e63]'
                   }`}
                 >
-                  {tab.label}
+                  {getUiText(tab.labelKey, language)}
                 </button>
               );
             })}
@@ -278,8 +281,8 @@ export default function AdminSettingsPage() {
                       <Icon size={16} className="text-[#164e63]" />
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-[#10364c]">{section.title}</h3>
-                      <p className="text-xs text-[#4d6a7f]">{section.description}</p>
+                      <h3 className="text-base font-bold text-[#10364c]">{getUiText(section.titleKey, language)}</h3>
+                      <p className="text-xs text-[#4d6a7f]">{getUiText(section.descKey, language)}</p>
                     </div>
                   </div>
                 </div>
@@ -287,8 +290,8 @@ export default function AdminSettingsPage() {
                 {section.id === 'notifications' ? (
                   <>
                     <SettingRow
-                      title="Email notifications"
-                      description="Send workflow alerts to official email inboxes."
+                      title={getUiText('settingEmailNotificationsTitle', language)}
+                      description={getUiText('settingEmailNotificationsDesc', language)}
                       control={
                         <Toggle
                           checked={notificationForm.emailEnabled}
@@ -297,8 +300,8 @@ export default function AdminSettingsPage() {
                       }
                     />
                     <SettingRow
-                      title="SMS notifications"
-                      description="Send urgent reminders to assigned officers."
+                      title={getUiText('settingSmsNotificationsTitle', language)}
+                      description={getUiText('settingSmsNotificationsDesc', language)}
                       control={
                         <Toggle
                           checked={notificationForm.smsEnabled}
@@ -307,8 +310,8 @@ export default function AdminSettingsPage() {
                       }
                     />
                     <SettingRow
-                      title="Reminder lead time"
-                      description="Hours before deadline when reminders are sent."
+                      title={getUiText('settingReminderLeadTimeTitle', language)}
+                      description={getUiText('settingReminderLeadTimeDesc', language)}
                       control={
                         <input
                           type="number"
@@ -330,8 +333,8 @@ export default function AdminSettingsPage() {
                 {section.id === 'security' ? (
                   <>
                     <SettingRow
-                      title="Session timeout"
-                      description="Minutes before inactive admin sessions expire."
+                      title={getUiText('settingSessionTimeoutTitle', language)}
+                      description={getUiText('settingSessionTimeoutDesc', language)}
                       control={
                         <input
                           type="number"
@@ -345,8 +348,8 @@ export default function AdminSettingsPage() {
                       }
                     />
                     <SettingRow
-                      title="Password rotation"
-                      description="Number of days before password renewal is required."
+                      title={getUiText('settingPasswordRotationTitle', language)}
+                      description={getUiText('settingPasswordRotationDesc', language)}
                       control={
                         <input
                           type="number"
@@ -360,8 +363,8 @@ export default function AdminSettingsPage() {
                       }
                     />
                     <SettingRow
-                      title="Two-factor authentication"
-                      description="Require 2FA for all administrator accounts."
+                      title={getUiText('settingTwoFactorTitle', language)}
+                      description={getUiText('settingTwoFactorDesc', language)}
                       control={
                         <Toggle
                           checked={securityForm.twoFactorRequired}
@@ -377,8 +380,8 @@ export default function AdminSettingsPage() {
                 {section.id === 'data-audit' ? (
                   <>
                     <SettingRow
-                      title="Retention period"
-                      description="Number of days to retain system records and logs."
+                      title={getUiText('settingRetentionPeriodTitle', language)}
+                      description={getUiText('settingRetentionPeriodDesc', language)}
                       control={
                         <input
                           type="number"
@@ -392,8 +395,8 @@ export default function AdminSettingsPage() {
                       }
                     />
                     <SettingRow
-                      title="Export format"
-                      description="Default format for audit and report exports."
+                      title={getUiText('settingExportFormatTitle', language)}
+                      description={getUiText('settingExportFormatDesc', language)}
                       control={
                         <select
                           className="w-28 rounded-md border border-[#164e63]/18 bg-white px-3 py-1.5 text-sm text-[#0f2f45] outline-none focus:border-[#164e63]"
@@ -412,8 +415,8 @@ export default function AdminSettingsPage() {
                       }
                     />
                     <SettingRow
-                      title="Audit logging"
-                      description="Track administrative changes and export activity."
+                      title={getUiText('settingAuditLoggingTitle', language)}
+                      description={getUiText('settingAuditLoggingDesc', language)}
                       control={
                         <Toggle
                           checked={dataAuditForm.auditLoggingEnabled}
@@ -432,8 +435,8 @@ export default function AdminSettingsPage() {
                 {section.id === 'system-defaults' ? (
                   <>
                     <SettingRow
-                      title="Default landing page"
-                      description="First page shown after admin login."
+                      title={getUiText('settingDefaultLandingTitle', language)}
+                      description={getUiText('settingDefaultLandingDesc', language)}
                       control={
                         <select
                           className="w-40 rounded-md border border-[#164e63]/18 bg-white px-3 py-1.5 text-sm text-[#0f2f45] outline-none focus:border-[#164e63]"
@@ -452,8 +455,8 @@ export default function AdminSettingsPage() {
                       }
                     />
                     <SettingRow
-                      title="Default workflow status"
-                      description="Initial state for newly processed records."
+                      title={getUiText('settingDefaultWorkflowTitle', language)}
+                      description={getUiText('settingDefaultWorkflowDesc', language)}
                       control={
                         <select
                           className="w-44 rounded-md border border-[#164e63]/18 bg-white px-3 py-1.5 text-sm text-[#0f2f45] outline-none focus:border-[#164e63]"
@@ -472,8 +475,8 @@ export default function AdminSettingsPage() {
                       }
                     />
                     <SettingRow
-                      title="Records per page"
-                      description="Default table pagination size in admin screens."
+                      title={getUiText('settingRecordsPerPageTitle', language)}
+                      description={getUiText('settingRecordsPerPageDesc', language)}
                       control={
                         <input
                           type="number"
@@ -496,7 +499,7 @@ export default function AdminSettingsPage() {
       </section>
 
       {isLoading && !settings ? (
-        <div className="mt-4 text-sm text-gray-500 animate-gov-enter">Loading settings...</div>
+        <div className="mt-4 text-sm text-gray-500 animate-gov-enter">{getUiText('loadingSettings', language)}</div>
       ) : null}
     </PageShell>
   );

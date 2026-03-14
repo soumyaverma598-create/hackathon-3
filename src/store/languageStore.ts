@@ -2,8 +2,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-type Language = 'en' | 'hi';
+import type { Language } from '@/lib/translations';
 
 interface LanguageState {
   language: Language;

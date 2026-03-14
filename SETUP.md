@@ -59,6 +59,18 @@ npm run dev
 ```
 ✅ Should print: `ready on http://localhost:3000`
 
+## Optional — Enable the AI chatbot with Gemini
+Create a root `.env.local` file for the Next.js app and add:
+```bash
+GEMINI_API_KEY=your_google_gemini_api_key
+GEMINI_MODEL=gemini-2.0-flash
+```
+
+Notes:
+- Without `GEMINI_API_KEY`, the floating portal assistant still appears, but it uses limited built-in guidance instead of live AI responses.
+- With the key configured, the chatbot calls Gemini through the Next.js route at `/api/chatbot`.
+- Restart `npm run dev` after changing `.env.local`.
+
 ## Step 9 — Open browser
 ```
 http://localhost:3000/login
