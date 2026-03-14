@@ -15,16 +15,26 @@ import {
   CheckCircle,
   Users,
   Settings,
+  ChevronDown,
+  ChevronRight,
 } from 'lucide-react';
 import { UserRole } from '@/types/auth';
 import { getUiText, UiTranslationKey } from '@/lib/translations';
 import { useLanguageStore } from '@/store/languageStore';
 import LanguageSelector from './LanguageSelector';
 
+interface SubNavItem {
+  href: string;
+  labelKey: UiTranslationKey;
+  icon: React.ReactNode;
+  stepNum: number;
+}
+
 interface NavItem {
   href: string;
   labelKey: UiTranslationKey;
   icon: React.ReactNode;
+  subItems?: SubNavItem[];
 }
 
 const navMap: Record<UserRole, NavItem[]> = {
@@ -35,10 +45,16 @@ const navMap: Record<UserRole, NavItem[]> = {
   ],
   applicant: [
     { href: '/applicant/dashboard', labelKey: 'navMyApplications', icon: <LayoutDashboard size={18} /> },
-    { href: '/applicant/apply', labelKey: 'navNewApplication', icon: <FilePlus size={18} /> },
-    { href: '/applicant/documents', labelKey: 'navUploadDocuments', icon: <FileText size={18} /> },
-    { href: '/applicant/eds', labelKey: 'navEdsQueries', icon: <MessageSquareWarning size={18} /> },
-    { href: '/applicant/payment', labelKey: 'navPayment', icon: <CreditCard size={18} /> },
+    {
+      href: '/applicant/apply',
+      labelKey: 'navNewApplication',
+      icon: <FilePlus size={18} />,
+      subItems: [
+        { href: '/applicant/apply?step=2', labelKey: 'navUploadDocuments', icon: <FileText size={15} />, stepNum: 2 },
+        { href: '/applicant/apply?step=3', labelKey: 'navEdsQueries', icon: <MessageSquareWarning size={15} />, stepNum: 3 },
+        { href: '/applicant/apply?step=4', labelKey: 'navPayment', icon: <CreditCard size={15} />, stepNum: 4 },
+      ],
+    },
   ],
   scrutiny: [
     { href: '/scrutiny/dashboard', labelKey: 'navDashboard', icon: <LayoutDashboard size={18} /> },
@@ -75,6 +91,7 @@ export default function Sidebar({ role }: { role: UserRole }) {
               pathname === item.href ||
               pathname.startsWith(`${item.href}/`) ||
               pathname.startsWith(`${item.href}?`);
+            const showSubItems = item.subItems && pathname.startsWith(item.href);
             return (
               <li key={item.href}>
                 <Link
@@ -99,8 +116,33 @@ export default function Sidebar({ role }: { role: UserRole }) {
                   >
                     {item.icon}
                   </span>
-                  {getUiText(item.labelKey, language)}
+                  <span className="flex-1">{getUiText(item.labelKey, language)}</span>
+                  {item.subItems && (
+                    <span className="text-cyan-300/60">
+                      {showSubItems ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                    </span>
+                  )}
                 </Link>
+
+                {/* Sub-items dropdown — shown when parent route is active */}
+                {showSubItems && item.subItems && (
+                  <ul className="mt-1 ml-5 border-l border-white/10 pl-3 space-y-0.5 pb-1">
+                    {item.subItems.map((sub) => (
+                      <li key={sub.href}>
+                        <Link
+                          href={sub.href}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-cyan-200/70 hover:bg-white/10 hover:text-cyan-100 transition-all"
+                        >
+                          <span className="w-4 h-4 rounded-full bg-white/12 text-[9px] font-bold text-cyan-200/80 flex items-center justify-center flex-shrink-0">
+                            {sub.stepNum}
+                          </span>
+                          <span className="text-cyan-300/60 flex-shrink-0">{sub.icon}</span>
+                          {getUiText(sub.labelKey, language)}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             );
           })}

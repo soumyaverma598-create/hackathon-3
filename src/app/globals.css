@@ -23,10 +23,12 @@
   /* Dark glass (for header/sidebar) */
   --glass-dark-bg: rgba(8, 35, 55, 0.95);
   --glass-dark-border: rgba(122, 232, 239, 0.28);
+
 }
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 body {

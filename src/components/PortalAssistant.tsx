@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import {
   Bot,
   LoaderCircle,
-  MessageCircleMore,
   Minimize2,
   SendHorizontal,
   Sparkles,
@@ -44,6 +43,7 @@ export default function PortalAssistant() {
   const [lastMode, setLastMode] = useState<'gemini' | 'fallback' | null>(null);
   const [messages, setMessages] = useState<AssistantMessage[]>(() => [starterMessage(language)]);
 
+  const assistantRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -63,6 +63,33 @@ export default function PortalAssistant() {
   useEffect(() => {
     viewportRef.current?.scrollTo({ top: viewportRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages, isSending]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target as Node | null;
+      if (!target || !assistantRef.current || assistantRef.current.contains(target)) {
+        return;
+      }
+
+      setIsOpen(false);
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen || !user || applications.length > 0) return;
@@ -154,16 +181,16 @@ export default function PortalAssistant() {
   }
 
   return (
-    <div className="fixed bottom-24 right-4 z-50 sm:bottom-6 sm:right-6">
-      <AnimatePresence initial={false}>
+    <div ref={assistantRef} className="fixed bottom-4 right-4 z-50 flex justify-end sm:bottom-6 sm:right-6">
+      <AnimatePresence initial={false} mode="wait">
         {isOpen ? (
           <motion.section
             key="assistant-panel"
-            initial={{ opacity: 0, y: 24, scale: 0.96 }}
+            initial={{ opacity: 0, y: 12, scale: 0.985 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 24, scale: 0.96 }}
-            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="w-[min(24rem,calc(100vw-2rem))] overflow-hidden rounded-[28px] border border-cyan-100/70 bg-white/92 shadow-[0_24px_70px_rgba(8,34,54,0.22)] backdrop-blur-2xl"
+            exit={{ opacity: 0, y: 10, scale: 0.985 }}
+            transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+            className="flex w-[min(20.5rem,calc(100vw-1rem))] max-h-[calc(100dvh-6rem)] flex-col overflow-hidden rounded-[24px] border border-cyan-100/70 bg-white/92 shadow-[0_24px_70px_rgba(8,34,54,0.22)] backdrop-blur-2xl sm:w-[min(21.5rem,calc(100vw-2rem))] sm:max-h-[calc(100dvh-7.5rem)]"
           >
             <div className="relative overflow-hidden border-b border-slate-200/80 bg-[linear-gradient(135deg,rgba(8,34,54,0.98),rgba(22,78,99,0.94),rgba(37,201,208,0.84))] px-5 py-4 text-white">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.24),transparent_38%)]" />
@@ -188,7 +215,7 @@ export default function PortalAssistant() {
               </div>
             </div>
 
-            <div ref={viewportRef} className="max-h-[26rem] space-y-4 overflow-y-auto bg-[linear-gradient(180deg,#f8fdff_0%,#edf8fd_100%)] px-4 py-4">
+            <div ref={viewportRef} className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-[linear-gradient(180deg,#f8fdff_0%,#edf8fd_100%)] px-4 py-4">
               {messages.map((message, index) => (
                 <div
                   key={`${message.role}-${index}-${message.content.slice(0, 18)}`}
@@ -267,23 +294,18 @@ export default function PortalAssistant() {
             key="assistant-trigger"
             type="button"
             onClick={() => setIsOpen(true)}
-            initial={{ opacity: 0, y: 20, scale: 0.96 }}
+            initial={{ opacity: 0, y: 8, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.96 }}
-            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="group flex items-center gap-3 rounded-full border border-cyan-100/80 bg-white/90 px-3 py-3 pr-5 shadow-[0_22px_60px_rgba(8,34,54,0.2)] backdrop-blur-xl transition hover:-translate-y-0.5"
+            exit={{ opacity: 0, y: 8, scale: 0.97 }}
+            transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
+            className="group inline-flex h-11 w-11 items-center justify-center rounded-full border border-cyan-100/80 bg-white/92 shadow-[0_16px_36px_rgba(8,34,54,0.2)] backdrop-blur-xl transition hover:-translate-y-0.5 sm:h-12 sm:w-12"
             aria-label="Open portal assistant"
+            title={copy.welcomeBadge}
           >
-            <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[linear-gradient(135deg,#164e63,#25c9d0)] text-white shadow-lg">
-              <Bot className="h-5 w-5" />
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(135deg,#164e63,#25c9d0)] text-white shadow-lg sm:h-10 sm:w-10">
+              <Bot className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
             </span>
-            <span className="min-w-0 text-left">
-              <span className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-                {copy.welcomeBadge}
-                <MessageCircleMore className="h-4 w-4 text-cyan-600 transition group-hover:translate-x-0.5" />
-              </span>
-              <span className="block text-xs text-slate-500">PARIVESH live guide</span>
-            </span>
+            <span className="sr-only">{copy.welcomeBadge}</span>
           </motion.button>
         )}
       </AnimatePresence>

@@ -1,8 +1,9 @@
 /**
  * api.ts — unified API client
  *
- * Set USE_MOCK = false (or NEXT_PUBLIC_USE_MOCK=false in .env.local)
- * when Dev-2's backend at http://localhost:3002 is ready.
+ * Mock mode is enabled by default for local frontend development.
+ * Set NEXT_PUBLIC_USE_MOCK=false in .env.local when the backend
+ * at http://localhost:3002 is running and should be used instead.
  */
 
 import { AdminCreateUserInput, AdminUpdateUserInput, User } from '@/types/auth';
@@ -21,9 +22,9 @@ import {
 import * as mock from './mockApi';
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Feature flag — use real backend; set NEXT_PUBLIC_USE_MOCK=true for mock
+// Feature flag — use mock by default; set NEXT_PUBLIC_USE_MOCK=false for real backend
 // ──────────────────────────────────────────────────────────────────────────────
-export const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === 'true';
+export const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK !== 'false';
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';

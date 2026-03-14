@@ -75,6 +75,7 @@ export interface WorkflowApplication {
   paymentStatus: PaymentStatus;
   paymentAmount?: number;
   paymentTransactionId?: string;
+  paymentDate?: string;
   documents: UploadedDocument[];
 }
 

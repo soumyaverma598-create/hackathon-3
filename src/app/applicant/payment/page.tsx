@@ -64,17 +64,11 @@ export default function PaymentPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'paid':
+      case 'verified':
         return (
           <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
             <CheckCircle size={12} />
-            Paid ✓
-          </span>
-        );
-      case 'failed':
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
-            <AlertCircle size={12} />
-            Failed
+            {status === 'verified' ? 'Verified ✓' : 'Paid ✓'}
           </span>
         );
       default:
@@ -90,8 +84,9 @@ export default function PaymentPage() {
   if (!user) return null;
 
   const pendingApps = applications.filter((a) => a.paymentStatus === 'pending' || !a.paymentStatus);
-  const paidApps = applications.filter((a) => a.paymentStatus === 'paid');
-  const failedApps = applications.filter((a) => a.paymentStatus === 'failed');
+  const paidApps = applications.filter(
+    (a) => a.paymentStatus === 'paid' || a.paymentStatus === 'verified'
+  );
 
   return (
     <PageShell role="applicant">
@@ -235,7 +230,7 @@ export default function PaymentPage() {
           )}
 
           {/* Payment History */}
-          {(paidApps.length > 0 || failedApps.length > 0) && (
+          {paidApps.length > 0 && (
             <div className="glass-card-strong overflow-hidden">
               <div className="px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700">
                 <h3 className="text-lg font-semibold text-white">Payment History</h3>
@@ -255,7 +250,7 @@ export default function PaymentPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {[...paidApps, ...failedApps].map((app) => (
+                    {paidApps.map((app) => (
                       <tr key={app.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 text-sm font-mono text-gray-900">
                           {formatAppId(app.applicationNumber)}
@@ -276,7 +271,7 @@ export default function PaymentPage() {
                           {getStatusBadge(app.paymentStatus || 'pending')}
                         </td>
                         <td className="px-6 py-4 text-sm">
-                          {app.paymentStatus === 'paid' && app.paymentTransactionId && (
+                          {(app.paymentStatus === 'paid' || app.paymentStatus === 'verified') && app.paymentTransactionId && (
                             <button className="inline-flex items-center gap-2 px-3 py-1 text-sm text-blue-600 hover:text-blue-800 transition-colors">
                               <Download size={14} />
                               Receipt
@@ -292,7 +287,7 @@ export default function PaymentPage() {
           )}
 
           {/* No Applications */}
-          {pendingApps.length === 0 && paidApps.length === 0 && failedApps.length === 0 && (
+          {pendingApps.length === 0 && paidApps.length === 0 && (
             <div className="glass-card-strong p-12 text-center">
               <CreditCard size={48} className="text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No Applications Found</h3>

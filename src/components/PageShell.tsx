@@ -41,7 +41,7 @@ export default function PageShell({ role, children }: PageShellProps) {
         <GovHeader />
         <div className="flex flex-1 min-h-0">
           <Sidebar role={role} />
-          <main className="flex-1 min-h-0 px-6 pb-6 pt-3 overflow-y-auto overflow-x-hidden">
+          <main className="flex-1 min-h-0 px-6 pb-4 pt-3 overflow-y-auto overflow-x-hidden">
             <AnimatePresence mode="sync" initial={false}>
               <motion.div
                 key={pathname}
