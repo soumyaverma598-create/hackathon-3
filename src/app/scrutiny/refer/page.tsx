@@ -59,7 +59,7 @@ function ScrutinyReferPageContent() {
                 <div className="glass-card-strong p-5">
                   <form onSubmit={handleRefer} className="space-y-4">
                     <div>
-                      <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">Application to Refer *</label>
+                      <label className="ui-label">Application to Refer *</label>
                       <select className={inputCls} value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)} required>
                         <option value="">-- Select application --</option>
                         {eligible.map((a) => <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>)}
@@ -78,17 +78,17 @@ function ScrutinyReferPageContent() {
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">EAC Meeting Date</label>
+                        <label className="ui-label">EAC Meeting Date</label>
                         <input type="date" className={inputCls} value={meetingDate} onChange={(e) => setMeetingDate(e.target.value)} />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">Meeting Number</label>
+                        <label className="ui-label">Meeting Number</label>
                         <input className={inputCls} value={meetingNumber} onChange={(e) => setMeetingNumber(e.target.value)} placeholder="e.g. EAC-2026-03/07" />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">Referral Remarks</label>
+                      <label className="ui-label">Referral Remarks</label>
                       <textarea rows={4} className={`${inputCls} resize-none`} value={remarks} onChange={(e) => setRemarks(e.target.value)} placeholder="Summarise scrutiny findings and reasons for referral..." />
                     </div>
 
@@ -106,7 +106,7 @@ function ScrutinyReferPageContent() {
                 {/* Already referred */}
                 {applications.filter((a) => a.status === 'referred').length > 0 && (
                   <div className="glass-card-strong p-4">
-                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Previously Referred</h4>
+                    <h4 className="ui-section-title-text mb-3">Previously Referred</h4>
                     <div className="divide-y divide-gray-50">
                       {applications.filter((a) => a.status === 'referred').map((a) => (
                         <div key={a.id} className="flex items-center justify-between py-2.5">

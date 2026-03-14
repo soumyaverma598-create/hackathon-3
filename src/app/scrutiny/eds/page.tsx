@@ -84,7 +84,7 @@ function ScrutinyEDSPageContent() {
             </div>
 
             <div className="glass-card-strong p-4 mb-4">
-              <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Select Application</label>
+              <label className="ui-label">Select Application</label>
               <select className={inputCls} value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)}>
                 <option value="">-- Select application --</option>
                 {applications.map((a) => <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>)}
@@ -98,11 +98,11 @@ function ScrutinyEDSPageContent() {
               <form onSubmit={handleRaise} className="bg-white rounded-xl border border-[#25c9d0]/30 shadow-sm p-5 mb-4 space-y-3">
                 <h4 className="font-semibold text-gray-700 flex items-center gap-2"><MessageSquareWarning size={16} className="text-[#25c9d0]" /> New EDS Query</h4>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Subject *</label>
+                  <label className="ui-label">Subject *</label>
                   <input className={inputCls} value={newSubject} onChange={(e) => setNewSubject(e.target.value)} required placeholder="e.g. Water Requirement Details" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Description *</label>
+                  <label className="ui-label">Description *</label>
                   <textarea rows={4} className={`${inputCls} resize-none`} value={newDesc} onChange={(e) => setNewDesc(e.target.value)} required placeholder="Detailed query description..." />
                 </div>
                 <div className="flex gap-2">
@@ -136,7 +136,7 @@ function ScrutinyEDSPageContent() {
                          <div className="bg-sky-50 rounded-lg p-3 text-sm text-gray-700 leading-relaxed">{q.description}</div>
                          {q.response && (
                            <div className="bg-blue-50 rounded-lg p-3">
-                             <p className="text-xs font-semibold text-blue-600 mb-1">Applicant Response</p>
+                             <p className="ui-section-title-text mb-1">Applicant Response</p>
                              <p className="text-sm text-gray-700">{q.response}</p>
                            </div>
                          )}

@@ -71,7 +71,7 @@ export default function PaymentPage() {
 
                   <form onSubmit={handlePay} className="space-y-4">
                     <div>
-                      <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">Application *</label>
+                      <label className="ui-label">Application *</label>
                       <select className={inputCls} value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)} required>
                         <option value="">-- Select application with pending payment --</option>
                         {pendingApps.map((a) => (
@@ -89,11 +89,11 @@ export default function PaymentPage() {
                     )}
 
                     <div>
-                      <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">Amount Paid (₹) *</label>
+                      <label className="ui-label">Amount Paid (₹) *</label>
                       <input type="number" className={inputCls} value={amount} onChange={(e) => setAmount(e.target.value)} required min={1} placeholder="e.g. 100000" />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">Transaction ID / DD Number *</label>
+                      <label className="ui-label">Transaction ID / DD Number *</label>
                       <input className={inputCls} value={txnId} onChange={(e) => setTxnId(e.target.value)} required placeholder="e.g. TXN2026031201" />
                     </div>
 
@@ -111,7 +111,7 @@ export default function PaymentPage() {
                 {/* Paid history */}
                 {paidApps.length > 0 && (
                   <div className="glass-card-strong p-4">
-                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Payment History</h4>
+                    <h4 className="ui-section-title-text mb-3">Payment History</h4>
                     <div className="divide-y divide-gray-50">
                       {paidApps.map((a) => (
                         <div key={a.id} className="flex items-center justify-between py-3">

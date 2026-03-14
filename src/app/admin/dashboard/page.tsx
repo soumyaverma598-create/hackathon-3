@@ -81,12 +81,12 @@ export default function AdminDashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
       >
-        <div className="px-5 py-4 border-b border-gray-100/50 flex items-center gap-2">
+        <div className="px-5 py-4 ui-section-strip flex items-center gap-2">
           <Users size={16} className="text-[#164e63]" />
           <h3 className="font-semibold text-gray-700 text-sm">Registered Users</h3>
         </div>
         <table className="w-full">
-          <thead className="text-xs text-gray-500 uppercase tracking-wide" style={{ background: 'rgba(249,250,251,0.5)' }}>
+          <thead className="ui-table-head">
             <tr>
               <th className="text-left px-5 py-3">Name</th>
               <th className="text-left px-5 py-3">Email</th>
@@ -128,7 +128,7 @@ export default function AdminDashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.45 }}
       >
-        <div className="px-5 py-4 border-b border-gray-100/50 flex items-center gap-2">
+        <div className="px-5 py-4 ui-section-strip-muted flex items-center gap-2">
           <FileStack size={16} className="text-[#164e63]" />
           <h3 className="font-semibold text-gray-700 text-sm">All Applications</h3>
         </div>
@@ -136,7 +136,7 @@ export default function AdminDashboard() {
           error ? <div className="p-4"><ErrorMessage message={error} /></div> :
           applications.length === 0 ? <EmptyState title="No applications" message="No applications submitted yet." /> : (
           <table className="w-full">
-            <thead className="text-xs text-gray-500 uppercase tracking-wide" style={{ background: 'rgba(249,250,251,0.5)' }}>
+            <thead className="ui-table-head">
               <tr>
                 <th className="text-left px-5 py-3">App No.</th>
                 <th className="text-left px-5 py-3">Project</th>

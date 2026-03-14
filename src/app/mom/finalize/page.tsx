@@ -98,7 +98,7 @@ function MomFinalizePageContent() {
             <p className="page-subheading mb-6">Edit Minutes of Meeting, generate MoM document, and issue Environmental Clearance certificate</p>
 
             <div className="glass-card-strong p-4 mb-4">
-              <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Select Application</label>
+              <label className="ui-label">Select Application</label>
               <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63]" value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)}>
                 <option value="">-- Select application --</option>
                 {eligible.map((a) => <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>)}
@@ -142,16 +142,16 @@ function MomFinalizePageContent() {
                   </h3>
                   <div className="grid grid-cols-2 gap-3 mb-3">
                     <div>
-                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Meeting Date</label>
+                      <label className="ui-label">Meeting Date</label>
                       <input type="date" className={inputCls} value={meetingDate} onChange={(e) => setMeetingDate(e.target.value)} />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Meeting Number</label>
+                      <label className="ui-label">Meeting Number</label>
                       <input className={inputCls} value={meetingNumber} onChange={(e) => setMeetingNumber(e.target.value)} placeholder="e.g. EAC-2026-03/07" />
                     </div>
                   </div>
                   <div className="mb-3">
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">MoM Content</label>
+                    <label className="ui-label">MoM Content</label>
                     <textarea
                       rows={12}
                       className={`${inputCls} resize-y font-mono text-xs`}

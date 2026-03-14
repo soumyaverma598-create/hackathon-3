@@ -217,49 +217,53 @@ export default function GovHeader() {
                 </button>
 
                 {showProfileMenu && (
-                  <div className="absolute right-0 top-14 w-[21rem] glass-card-strong rounded-xl shadow-2xl z-[140] animate-slide-down overflow-hidden">
-                    <div className="px-4 py-3 border-b border-gray-100/50 bg-gradient-to-r from-[#164e63]/5 to-transparent">
-                      <p className="text-sm font-semibold text-gray-800">{user.name}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">{user.designation}</p>
+                  <div className="absolute right-0 top-14 w-[19rem] sm:w-[20rem] glass-card-strong rounded-xl shadow-2xl z-[140] animate-slide-down overflow-hidden">
+                    <div className="px-3.5 py-2.5 border-b border-[#164e63]/12 bg-gradient-to-r from-[#164e63]/13 via-[#25c9d0]/9 to-transparent">
+                      <p className="ui-panel-title">{user.name}</p>
+                      <p className="ui-panel-subtitle mt-0.5">{user.designation}</p>
                     </div>
 
-                    <div className="px-4 py-3 border-b border-gray-100/50 space-y-1.5">
-                      <p className="text-[11px] uppercase tracking-wide text-gray-400 font-bold">Current Credentials</p>
-                      <p className="text-xs text-gray-700"><span className="text-gray-500">Email:</span> {user.email}</p>
-                      <p className="text-xs text-gray-700"><span className="text-gray-500">Department:</span> {user.department}</p>
-                      <p className="text-xs text-gray-700"><span className="text-gray-500">Role:</span> {roleLabels[user.role]}</p>
+                    <div className="px-3.5 py-2.5 border-b border-[#164e63]/10 bg-[#f3f9fd]">
+                      <div className="px-2 py-1.5 space-y-1.5">
+                        <p className="text-[0.7rem] uppercase tracking-[0.08em] font-semibold text-[#476b80]">Current Credentials</p>
+                        <p className="ui-kv-row"><span className="ui-kv-label">Email:</span><span className="ui-kv-value break-all">{user.email}</span></p>
+                        <p className="ui-kv-row"><span className="ui-kv-label">Department:</span><span className="ui-kv-value">{user.department}</span></p>
+                        <p className="ui-kv-row"><span className="ui-kv-label">Role:</span><span className="ui-kv-value">{roleLabels[user.role]}</span></p>
+                      </div>
                     </div>
 
-                    <div className="px-4 py-3">
-                      <p className="text-[11px] uppercase tracking-wide text-gray-400 font-bold mb-2">Quick Switch Credentials</p>
-                      <div className="space-y-2">
-                        {QUICK_SWITCH_CREDENTIALS.map((item) => (
-                          <div
-                            key={item.email}
-                            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-100/50 hover:bg-[#164e63]/5 hover:border-[#164e63]/20 transition-all"
-                          >
-                            <button
-                              type="button"
-                              onClick={() => handleQuickSwitch(item.email, item.password, item.role)}
-                              disabled={switchingTo !== null}
-                              className="flex-1 text-left disabled:opacity-60"
+                    <div className="px-3.5 py-2.5 bg-[#ecf5fb]">
+                      <div className="px-2 py-1.5">
+                        <p className="text-[0.7rem] uppercase tracking-[0.08em] font-semibold text-[#476b80] mb-1.5">Quick Switch Credentials</p>
+                        <div className="space-y-1.5">
+                          {QUICK_SWITCH_CREDENTIALS.map((item) => (
+                            <div
+                              key={item.email}
+                              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-[#164e63]/10 bg-white/85 hover:bg-cyan-50/75 hover:border-[#164e63]/20 transition-all"
                             >
-                              <p className="text-xs font-semibold text-gray-800">{item.label}</p>
-                              <p className="text-[11px] text-gray-500">{item.email}</p>
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleCopyEmail(item.email)}
-                              className="text-[11px] font-semibold px-2 py-1 rounded-md border border-gray-200/50 text-gray-600 hover:text-[#164e63] hover:border-[#164e63]/40 transition-colors"
-                              title="Copy email"
-                            >
-                              {copiedEmail === item.email ? 'Copied' : 'Copy'}
-                            </button>
-                          </div>
-                        ))}
+                              <button
+                                type="button"
+                                onClick={() => handleQuickSwitch(item.email, item.password, item.role)}
+                                disabled={switchingTo !== null}
+                                className="flex-1 text-left disabled:opacity-60"
+                              >
+                                <p className="text-[0.87rem] leading-none font-semibold text-[#0f3650]">{item.label}</p>
+                                <p className="text-[0.8rem] text-[#527086] mt-1 leading-none">{item.email}</p>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleCopyEmail(item.email)}
+                                className="text-[0.8rem] font-semibold px-2.5 py-1 rounded-md border border-[#164e63]/16 text-[#355e75] hover:text-[#0f3650] hover:border-[#164e63]/35 hover:bg-white transition-colors"
+                                title="Copy email"
+                              >
+                                {copiedEmail === item.email ? 'Copied' : 'Copy'}
+                              </button>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                       {switchingTo && (
-                        <p className="text-[11px] text-[#164e63] mt-2">Switching account...</p>
+                        <p className="text-[0.7rem] font-semibold text-[#164e63] mt-1.5">Switching account...</p>
                       )}
                     </div>
                   </div>

@@ -21,8 +21,8 @@ export default function WorkflowProgress({ currentStatus }: WorkflowProgressProp
   const currentIdx = ORDER.indexOf(currentStatus);
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+    <div className="ui-section-block rounded-xl p-4 shadow-sm">
+      <p className="ui-eyebrow mb-3">
         Workflow Progress
       </p>
       <div className="flex items-center">
@@ -49,10 +49,10 @@ export default function WorkflowProgress({ currentStatus }: WorkflowProgressProp
                 <span
                   className={`text-[9px] font-medium mt-1 w-14 text-center leading-tight ${
                     isCurrent
-                      ? 'text-[#25c9d0] font-bold'
+                      ? 'text-[#127598] font-extrabold'
                       : isDone
-                      ? 'text-[#164e63]'
-                      : 'text-gray-400'
+                      ? 'text-[#164e63] font-semibold'
+                      : 'text-[#7b95a5]'
                   }`}
                 >
                   {stage.label}

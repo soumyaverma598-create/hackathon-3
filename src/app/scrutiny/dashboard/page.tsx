@@ -85,11 +85,11 @@ export default function ScrutinyDashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <div className="px-5 py-4 border-b border-gray-100/50">
+          <div className="px-5 py-4 ui-section-strip">
             <h3 className="font-semibold text-gray-700 text-sm">Application Queue</h3>
           </div>
           <table className="w-full">
-            <thead className="text-xs text-gray-500 uppercase tracking-wide" style={{ background: 'rgba(249,250,251,0.5)' }}>
+            <thead className="ui-table-head">
               <tr>
                 <th className="text-left px-5 py-3">App No.</th>
                 <th className="text-left px-5 py-3">Project</th>

@@ -45,7 +45,7 @@ export default function PageShell({ role, children }: PageShellProps) {
             <AnimatePresence mode="sync" initial={false}>
               <motion.div
                 key={pathname}
-                className="route-transition-shell max-w-6xl mx-auto rounded-2xl border border-white/36 bg-white/86 backdrop-blur-md px-4 py-4 shadow-[0_12px_30px_rgba(8,35,55,0.16)] md:px-5 md:py-5"
+                className="route-transition-shell max-w-6xl mx-auto rounded-2xl border border-[#164e63]/18 bg-gradient-to-b from-white/94 to-[#edf8fd]/86 backdrop-blur-md px-4 py-4 shadow-[0_12px_30px_rgba(8,35,55,0.16)] md:px-5 md:py-5"
                 initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 8 }}
                 animate={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
                 exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -4 }}

@@ -431,13 +431,13 @@ export default function AdminUsersPage() {
             </section>
 
             <div className="glass-card-strong overflow-hidden">
-              <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
+              <div className="px-5 py-3 ui-section-strip flex items-center gap-2">
                 <Users size={16} className="text-[#164e63]" />
                 <h3 className="font-semibold text-gray-700 text-sm">Registered Users</h3>
               </div>
 
               <table className="w-full">
-                <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
+                <thead className="ui-table-head">
                   <tr>
                     <th className="text-left px-5 py-3">Name</th>
                     <th className="text-left px-5 py-3">Email</th>

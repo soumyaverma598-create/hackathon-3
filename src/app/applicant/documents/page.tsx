@@ -55,7 +55,7 @@ function DocumentsPageContent() {
               <div className="space-y-4">
                 {/* Select Application */}
                 <div className="glass-card-strong p-4">
-                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Select Application</label>
+                  <label className="ui-label">Select Application</label>
                   <select
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63]"
                     value={selectedAppId}
@@ -99,7 +99,7 @@ function DocumentsPageContent() {
                     {/* Existing docs */}
                     {selectedApp && selectedApp.documents.length > 0 && (
                       <div className="mt-6">
-                        <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Uploaded Documents ({selectedApp.documents.length})</h4>
+                        <h4 className="ui-section-title-text mb-3">Uploaded Documents ({selectedApp.documents.length})</h4>
                         <div className="space-y-2">
                           {selectedApp.documents.map((doc) => (
                             <div key={doc.id} className="flex items-center gap-3 bg-gray-50 rounded-lg px-3 py-2.5 border border-gray-100">

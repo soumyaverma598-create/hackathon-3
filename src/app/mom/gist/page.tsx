@@ -30,7 +30,7 @@ const GistField = ({
 }) => {
   return (
     <div>
-      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">{label}</label>
+      <label className="ui-label">{label}</label>
       {editMode ? (
         <textarea 
           rows={rows} 
@@ -93,7 +93,7 @@ function GistPageContent() {
             <p className="page-subheading mb-6">Auto-generate and edit the project summary gist for EAC appraisal</p>
 
             <div className="glass-card-strong p-4 mb-4">
-              <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Select Application</label>
+              <label className="ui-label">Select Application</label>
               <select
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63]"
                 value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)}

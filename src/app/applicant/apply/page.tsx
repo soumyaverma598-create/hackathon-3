@@ -50,7 +50,7 @@ interface FieldProps {
 const Field = memo(function Field({ label, id, children }: FieldProps) {
   return (
     <div>
-      <label htmlFor={id} className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">
+      <label htmlFor={id} className="ui-label">
         {label}
       </label>
       {children}
@@ -167,7 +167,7 @@ export default function ApplyPage() {
               </div>
 
               {/* Location */}
-              <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+              <div className="glass-card-strong p-6">
                 <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
                   <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">2</span>
                   Project Location
@@ -186,7 +186,7 @@ export default function ApplyPage() {
               </div>
 
               {/* Proponent Info */}
-              <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+              <div className="glass-card-strong p-6">
                 <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
                   <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">3</span>
                   Proponent / Applicant Details
@@ -202,14 +202,14 @@ export default function ApplyPage() {
               </div>
 
               {/* Required Documents Checklist */}
-              <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+              <div className="glass-card-strong p-6">
                 <h3 className="font-semibold text-gray-700 mb-1 pb-2 border-b border-gray-100 flex items-center gap-2">
                   <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">4</span>
                   Required Documents Checklist
                 </h3>
                 <p className="text-xs text-gray-400 mb-4">Confirm that the following documents are ready. All mandatory items must be acknowledged before submission.</p>
 
-                <p className="text-xs font-bold text-red-600 uppercase tracking-wide mb-2">Mandatory Documents</p>
+                <p className="ui-section-title-text mb-2">Mandatory Documents</p>
                 <div className="space-y-2 mb-5">
                   {REQUIRED_DOCS.filter(d => d.required).map(doc => (
                     <label
@@ -234,7 +234,7 @@ export default function ApplyPage() {
                   ))}
                 </div>
 
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">Conditional / Optional Documents</p>
+                <p className="ui-section-title-text mb-2">Conditional / Optional Documents</p>
                 <div className="space-y-2">
                   {REQUIRED_DOCS.filter(d => !d.required).map(doc => (
                     <label

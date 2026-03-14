@@ -76,7 +76,7 @@ function ApplicantEDSPageContent() {
 
             {/* Application Selector */}
             <div className="glass-card-strong p-4 mb-4">
-              <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Select Application</label>
+              <label className="ui-label">Select Application</label>
               <select
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63]"
                 value={selectedAppId}
@@ -118,14 +118,14 @@ function ApplicantEDSPageContent() {
                      {expandedId === q.id && (
                        <div className="px-5 pb-5 border-t border-gray-50">
                          <div className="bg-sky-50 rounded-lg p-3 mt-3 mb-4">
-                           <p className="text-xs font-semibold text-sky-600 mb-1">Query Description</p>
+                           <p className="ui-section-title-text mb-1">Query Description</p>
                            <p className="text-sm text-gray-700 leading-relaxed">{q.description}</p>
                            <p className="text-xs text-gray-400 mt-2">Raised by {q.raisedBy} on {new Date(q.raisedAt).toLocaleDateString('en-IN')}</p>
                          </div>
 
                          {q.response && (
                            <div className="bg-blue-50 rounded-lg p-3 mb-4">
-                             <p className="text-xs font-semibold text-blue-600 mb-1">Your Response</p>
+                             <p className="ui-section-title-text mb-1">Your Response</p>
                              <p className="text-sm text-gray-700 leading-relaxed">{q.response}</p>
                              <p className="text-xs text-gray-400 mt-2">Responded on {q.respondedAt ? new Date(q.respondedAt).toLocaleDateString('en-IN') : '—'}</p>
                            </div>
@@ -137,7 +137,7 @@ function ApplicantEDSPageContent() {
 
                          {q.status === 'open' && (
                            <div>
-                             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                             <label className="ui-label">
                                Submit Response
                              </label>
                              <textarea

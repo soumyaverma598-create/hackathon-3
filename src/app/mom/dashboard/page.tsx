@@ -87,7 +87,7 @@ export default function MomDashboard() {
           {/* Referred applications */}
           {referred.length > 0 && (
             <div className="glass-card-strong overflow-hidden">
-              <div className="px-5 py-4 border-b border-gray-100/50" style={{ background: 'linear-gradient(135deg, rgba(147,51,234,0.05), transparent)' }}>
+              <div className="px-5 py-4 ui-section-strip">
                 <h3 className="font-semibold text-purple-800 text-sm">Referred — Awaiting EAC Appraisal</h3>
               </div>
               <div className="divide-y divide-gray-50/50">
@@ -118,7 +118,7 @@ export default function MomDashboard() {
           {/* MoM draft */}
           {momDraft.length > 0 && (
             <div className="glass-card-strong overflow-hidden">
-              <div className="px-5 py-4 border-b border-gray-100/50" style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.05), transparent)' }}>
+              <div className="px-5 py-4 ui-section-strip-muted">
                 <h3 className="font-semibold text-indigo-800 text-sm">MoM Draft — Pending Finalization</h3>
               </div>
               <div className="divide-y divide-gray-50/50">

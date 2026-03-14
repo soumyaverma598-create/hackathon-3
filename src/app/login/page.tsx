@@ -395,7 +395,7 @@ export default function LoginPage() {
                   className="animate-fade-slide-up"
                   style={{ animationDelay: `${d + 0.22}s` }}
                 >
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                  <label className="ui-label">
                     {loginMode === 'official' ? 'Email / User ID' : 'Work / Company Email'}
                   </label>
                   <input
@@ -413,7 +413,7 @@ export default function LoginPage() {
                   className="animate-fade-slide-up"
                   style={{ animationDelay: `${d + 0.28}s` }}
                 >
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">
+                  <label className="ui-label">
                     Password
                   </label>
                   <div className="relative">
@@ -467,7 +467,7 @@ export default function LoginPage() {
                 className="mt-6 border-t border-gray-100 pt-5 animate-fade-slide-up"
                 style={{ animationDelay: `${d + 0.42}s` }}
               >
-                <p className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3 text-center">
+                <p className="ui-eyebrow mb-3 text-center justify-center">
                   {loginMode === 'applicant' ? 'Demo Account' : 'Demo Credentials'}
                 </p>
                 <div className="grid grid-cols-2 gap-3">
@@ -475,11 +475,11 @@ export default function LoginPage() {
                     <button
                       key={hint.email}
                       onClick={() => fillDemo(hint)}
-                      className="text-left bg-gray-50 hover:bg-cyan-50 border border-gray-100 hover:border-[#164e63]/30 rounded-lg px-4 py-3 transition-all group hover:scale-[1.03] hover:shadow-sm animate-fade-slide-up"
+                      className="text-left bg-gradient-to-b from-white to-[#eef8fc] hover:bg-cyan-50 border border-[#164e63]/15 hover:border-[#164e63]/35 rounded-lg px-4 py-3 transition-all group hover:scale-[1.03] hover:shadow-sm animate-fade-slide-up"
                       style={{ animationDelay: `${d + 0.48 + idx * 0.06}s` }}
                     >
-                      <p className="text-sm font-bold text-[#164e63] group-hover:text-[#0f3650]">{hint.role}</p>
-                      <p className="text-xs text-gray-400 truncate mt-0.5">{hint.email}</p>
+                      <p className="text-[11px] uppercase tracking-wide font-extrabold text-[#3a6a80]">{hint.role}</p>
+                      <p className="text-xs font-semibold text-[#164e63] truncate mt-1">{hint.email}</p>
                     </button>
                   ))}
                 </div>
