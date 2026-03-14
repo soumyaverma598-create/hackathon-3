@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
 import {
   LayoutDashboard,
   FilePlus,
@@ -53,10 +54,11 @@ const navMap: Record<UserRole, NavItem[]> = {
 export default function Sidebar({ role }: { role: UserRole }) {
   const pathname = usePathname();
   const items = navMap[role] ?? [];
+  const activeTabLayoutId = `sidebar-active-${role}`;
 
   return (
     <aside
-      className="w-64 md:w-68 shrink-0 pl-4 pr-2 py-4 animate-fade-slide-left"
+      className="w-64 md:w-68 shrink-0 pl-4 pr-2 py-4"
       style={{
         minHeight: 'calc(100vh - 84px)',
       }}
@@ -69,35 +71,39 @@ export default function Sidebar({ role }: { role: UserRole }) {
           <p className="text-cyan-200/75 text-[10px] font-semibold uppercase tracking-[0.24em]">Navigation</p>
         </div>
         <ul className="space-y-1 px-2">
-          {items.map((item, idx) => {
+          {items.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + '?');
             return (
-              <li
-                key={item.href}
-                className="animate-fade-slide-left"
-                style={{ animationDelay: `${0.05 + idx * 0.06}s` }}
-              >
+              <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-250 ${
+                  scroll={false}
+                  className={`relative isolate flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                     isActive
-                      ? 'text-white shadow-lg'
-                      : 'text-cyan-100/80 hover:bg-white/22 hover:text-white hover:translate-x-0.5'
+                      ? 'text-white'
+                      : 'text-cyan-100/80 hover:bg-white/18 hover:text-white hover:translate-x-0.5'
                   }`}
-                  style={isActive ? {
-                    background: 'linear-gradient(135deg, rgba(37,201,208,0.88), rgba(22,78,99,0.78))',
-                    boxShadow: '0 4px 16px rgba(37,201,208,0.28), inset 0 1px rgba(255,255,255,0.2)',
-                  } : undefined}
                 >
-                  <span className={`h-6 w-1 rounded-full ${isActive ? 'bg-white/90' : 'bg-transparent'}`} />
+                  {isActive ? (
+                    <motion.span
+                      layoutId={activeTabLayoutId}
+                      className="absolute inset-0 rounded-xl"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(37,201,208,0.9), rgba(22,78,99,0.82))',
+                        boxShadow: '0 5px 18px rgba(37,201,208,0.26), inset 0 1px rgba(255,255,255,0.22)',
+                      }}
+                      transition={{ type: 'spring', stiffness: 420, damping: 34, mass: 0.55 }}
+                    />
+                  ) : null}
+                  <span className={`relative z-10 h-6 w-1 rounded-full transition-colors duration-200 ${isActive ? 'bg-white/90' : 'bg-transparent'}`} />
                   <span
-                    className={`transition-all duration-200 ${
+                    className={`relative z-10 transition-all duration-200 ${
                       isActive ? 'text-white scale-110 drop-shadow-[0_0_4px_rgba(255,255,255,0.4)]' : 'text-cyan-400/50'
                     }`}
                   >
                     {item.icon}
                   </span>
-                  {item.label}
+                  <span className="relative z-10">{item.label}</span>
                 </Link>
               </li>
             );

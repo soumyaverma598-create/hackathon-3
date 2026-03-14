@@ -93,9 +93,9 @@ export default function GovHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-50 px-4 pt-4 animate-fade-slide-up">
+    <header className="sticky top-0 z-[120] px-4 pt-4 animate-fade-slide-up">
       <div
-        className="glass-dark rounded-2xl border shadow-[0_16px_40px_rgba(4,18,34,0.35)] overflow-hidden"
+        className="glass-dark rounded-2xl border shadow-[0_16px_40px_rgba(4,18,34,0.35)] overflow-visible"
         style={{
           background: 'linear-gradient(135deg, rgba(7,34,53,0.97), rgba(11,52,79,0.95))',
           borderColor: 'rgba(122,232,239,0.24)',
@@ -146,7 +146,7 @@ export default function GovHeader() {
           {user && (
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Notification bell */}
-              <div className="relative" ref={notifRef}>
+              <div className="relative z-[130]" ref={notifRef}>
                 <button
                   onClick={handleBellClick}
                   className="relative p-2.5 rounded-xl bg-white/16 hover:bg-white/28 border border-white/24 transition-all duration-200 hover:scale-105"
@@ -163,7 +163,7 @@ export default function GovHeader() {
                 </button>
 
                 {showNotifs && (
-                  <div className="absolute right-0 top-12 w-80 glass-card-strong rounded-xl shadow-2xl z-50 animate-slide-down overflow-hidden">
+                  <div className="absolute right-0 top-12 w-80 glass-card-strong rounded-xl shadow-2xl z-[140] animate-slide-down overflow-hidden">
                     <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100/50">
                       <span className="font-semibold text-gray-800 text-sm">Notifications</span>
                       {unread > 0 && (
@@ -200,7 +200,7 @@ export default function GovHeader() {
               </div>
 
               {/* User info + profile dropdown */}
-              <div className="relative" ref={profileRef}>
+              <div className="relative z-[130]" ref={profileRef}>
                 <button
                   type="button"
                   onClick={() => { setShowProfileMenu((s) => !s); setShowNotifs(false); }}
@@ -217,7 +217,7 @@ export default function GovHeader() {
                 </button>
 
                 {showProfileMenu && (
-                  <div className="absolute right-0 top-14 w-[21rem] glass-card-strong rounded-xl shadow-2xl z-50 animate-slide-down overflow-hidden">
+                  <div className="absolute right-0 top-14 w-[21rem] glass-card-strong rounded-xl shadow-2xl z-[140] animate-slide-down overflow-hidden">
                     <div className="px-4 py-3 border-b border-gray-100/50 bg-gradient-to-r from-[#164e63]/5 to-transparent">
                       <p className="text-sm font-semibold text-gray-800">{user.name}</p>
                       <p className="text-xs text-gray-500 mt-0.5">{user.designation}</p>
