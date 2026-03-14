@@ -39,7 +39,10 @@ export const useAuthStore = create<AuthState>()(
       logout: () => {
         localStorage.removeItem('auth-token');
         set({ user: null, error: null });
-        window.location.href = '/login';
+        // Only navigate away if not already on the login page
+        if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
+          window.location.href = '/login';
+        }
       },
 
       hydrate: async () => {
@@ -62,7 +65,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'parivesh-auth',
-      partialize: (state) => ({ user: state.user }),
+      partialize: () => ({}),
     }
   )
 );

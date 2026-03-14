@@ -24,23 +24,17 @@ export default function LoginPage() {
   const [otpCode, setOtpCode] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [otpError, setOtpError] = useState('');
-  const { login, user, isLoading, error, clearError } = useAuthStore();
+  const { login, isLoading, error, clearError } = useAuthStore();
   const router = useRouter();
 
   const d = 0;
 
-  // Redirect if already logged in
+  // Always clear any existing session when the login page mounts
+  // so users must always log in manually
   useEffect(() => {
-    if (user) {
-      const routes: Record<string, string> = {
-        admin: '/admin/dashboard',
-        applicant: '/applicant/dashboard',
-        scrutiny: '/scrutiny/dashboard',
-        mom: '/mom/dashboard',
-      };
-      router.replace(routes[user.role] ?? '/');
-    }
-  }, [user, router]);
+    localStorage.removeItem('auth-token');
+    useAuthStore.setState({ user: null, error: null });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
