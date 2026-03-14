@@ -53,9 +53,6 @@ export default function PaymentPage() {
   const localeMap = {
     en: 'en-IN',
     hi: 'hi-IN',
-    mr: 'mr-IN',
-    bn: 'bn-IN',
-    kn: 'kn-IN',
   } as const;
   const locale = localeMap[language] ?? 'en-IN';
 

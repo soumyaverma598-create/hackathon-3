@@ -5,6 +5,21 @@ export interface AssistantMessage {
   content: string;
 }
 
+export interface LiveUserContext {
+  userName?: string;
+  userRole?: string;
+  userDepartment?: string;
+  applications?: Array<{
+    id: string;
+    applicationNumber: string;
+    projectName: string;
+    status: string;
+    paymentStatus: string;
+    openEdsCount: number;
+    sector?: string;
+  }>;
+}
+
 export const assistantQuickPrompts: Record<Language, string[]> = {
   en: [
     'How do I submit a new proponent proposal?',
@@ -18,32 +33,11 @@ export const assistantQuickPrompts: Record<Language, string[]> = {
     'इस पोर्टल पर EDS कैसे काम करता है?',
     'मैं आवेदन की स्थिति कैसे ट्रैक करूं?',
   ],
-  mr: [
-    'नवीन प्रस्तावक अर्ज कसा सुरू करू?',
-    'अर्ज करण्यापूर्वी कोणती कागदपत्रे लागतात?',
-    'या पोर्टलवर EDS कसे काम करते?',
-    'अर्जाची स्थिती कशी ट्रॅक करू?',
-  ],
-  bn: [
-    'নতুন প্রপোনেন্ট আবেদন কীভাবে শুরু করব?',
-    'আবেদনের আগে কোন কোন নথি লাগবে?',
-    'এই পোর্টালে EDS কীভাবে কাজ করে?',
-    'আমি আবেদনের স্ট্যাটাস কীভাবে ট্র্যাক করব?',
-  ],
-  kn: [
-    'ಹೊಸ ಪ್ರಪೋನೆಂಟ್ ಅರ್ಜಿಯನ್ನು ಹೇಗೆ ಪ್ರಾರಂಭಿಸಬೇಕು?',
-    'ಅರ್ಜಿಗೂ ಮೊದಲು ಯಾವ ದಾಖಲೆಗಳು ಬೇಕು?',
-    'ಈ ಪೋರ್ಟಲ್‌ನಲ್ಲಿ EDS ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ?',
-    'ಅರ್ಜಿಯ ಸ್ಥಿತಿಯನ್ನು ಹೇಗೆ ಟ್ರ್ಯಾಕ್ ಮಾಡಬೇಕು?',
-  ],
 };
 
 export const assistantWelcome: Record<Language, string> = {
   en: 'Hello. I can guide you through the PARIVESH portal, explain the proponent proposal flow, required documents, EDS, payment, status tracking, and role-based steps. Ask your question in plain language.',
   hi: 'नमस्ते। मैं PARIVESH पोर्टल में आपकी मदद कर सकता हूं। मैं प्रपोनेंट आवेदन प्रक्रिया, दस्तावेज, EDS, भुगतान, स्टेटस ट्रैकिंग और अलग-अलग भूमिकाओं के चरण समझा सकता हूं। अपना सवाल सीधे लिखें।',
-  mr: 'नमस्कार. मी PARIVESH पोर्टलमध्ये तुम्हाला मार्गदर्शन करू शकतो. प्रस्तावक अर्ज प्रक्रिया, कागदपत्रे, EDS, पेमेंट, स्टेटस ट्रॅकिंग आणि विविध भूमिकांचे टप्पे समजावून सांगू शकतो. तुमचा प्रश्न थेट लिहा.',
-  bn: 'নমস্কার। আমি PARIVESH পোর্টাল ব্যবহারে আপনাকে সাহায্য করতে পারি। প্রপোনেন্ট আবেদন, নথি, EDS, পেমেন্ট, স্ট্যাটাস ট্র্যাকিং এবং বিভিন্ন রোলের ধাপ বুঝিয়ে দিতে পারি। সরাসরি আপনার প্রশ্ন লিখুন।',
-  kn: 'ನಮಸ್ಕಾರ. ನಾನು PARIVESH ಪೋರ್ಟಲ್ ಬಳಸಲು ನಿಮಗೆ ಮಾರ್ಗದರ್ಶನ ಮಾಡಬಹುದು. ಪ್ರಪೋನೆಂಟ್ ಅರ್ಜಿ ಪ್ರಕ್ರಿಯೆ, ದಾಖಲೆಗಳು, EDS, ಪಾವತಿ, ಸ್ಥಿತಿ ಟ್ರ್ಯಾಕಿಂಗ್ ಮತ್ತು ವಿಭಿನ್ನ ಪಾತ್ರಗಳ ಹಂತಗಳನ್ನು ವಿವರಿಸಬಹುದು. ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ನೇರವಾಗಿ ಬರೆಯಿರಿ.',
 };
 
 export const assistantUiCopy: Record<
@@ -75,33 +69,6 @@ export const assistantUiCopy: Record<
     suggested: 'सुझावित प्रश्न',
     unavailable: 'AI अभी उपलब्ध नहीं है। बुनियादी मार्गदर्शन सक्रिय है।',
     welcomeBadge: 'मदद चाहिए?',
-  },
-  mr: {
-    title: 'पोर्टल सहाय्यक',
-    subtitle: 'लाईव्ह नेव्हिगेशन आणि वर्कफ्लो मार्गदर्शन',
-    placeholder: 'अर्जाचे टप्पे, कागदपत्रे, EDS, पेमेंट याबद्दल विचारा...',
-    send: 'पाठवा',
-    suggested: 'सूचवलेले प्रश्न',
-    unavailable: 'AI सध्या उपलब्ध नाही. मूलभूत मार्गदर्शन सक्रिय आहे.',
-    welcomeBadge: 'मदत हवी?',
-  },
-  bn: {
-    title: 'পোর্টাল সহায়ক',
-    subtitle: 'লাইভ নেভিগেশন ও ওয়ার্কফ্লো গাইডেন্স',
-    placeholder: 'আবেদনের ধাপ, নথি, EDS, পেমেন্ট সম্পর্কে জিজ্ঞাসা করুন...',
-    send: 'পাঠান',
-    suggested: 'প্রস্তাবিত প্রশ্ন',
-    unavailable: 'AI এখন সাময়িকভাবে অনুপলব্ধ। বেসিক গাইডেন্স চালু আছে।',
-    welcomeBadge: 'সাহায্য চাই?',
-  },
-  kn: {
-    title: 'ಪೋರ್ಟಲ್ ಸಹಾಯಕ',
-    subtitle: 'ಲೈವ್ ನ್ಯಾವಿಗೇಷನ್ ಮತ್ತು ವರ್ಕ್‌ಫ್ಲೋ ಮಾರ್ಗದರ್ಶನ',
-    placeholder: 'ಅರ್ಜಿಯ ಹಂತಗಳು, ದಾಖಲೆಗಳು, EDS, ಪಾವತಿ ಬಗ್ಗೆ ಕೇಳಿ...',
-    send: 'ಕಳುಹಿಸಿ',
-    suggested: 'ಸೂಚಿಸಿದ ಪ್ರಶ್ನೆಗಳು',
-    unavailable: 'AI ತಾತ್ಕಾಲಿಕವಾಗಿ ಲಭ್ಯವಿಲ್ಲ. ಮೂಲ ಮಾರ್ಗದರ್ಶನ ಸಕ್ರಿಯವಾಗಿದೆ.',
-    welcomeBadge: 'ಸಹಾಯ ಬೇಕೆ?',
   },
 };
 
@@ -145,8 +112,12 @@ Guidance rules:
 - If the question is outside this website, say you can only help with this portal and related process guidance.
 `;
 
-export function buildAssistantSystemPrompt(language: Language, pathname: string) {
-  return [
+export function buildAssistantSystemPrompt(
+  language: Language,
+  pathname: string,
+  context?: LiveUserContext,
+) {
+  const lines = [
     'You are the PARIVESH 3.0 portal assistant for this website only.',
     `Reply in the same language as this code: ${language}. If that language is unsupported, reply in simple English.`,
     `Current route in the app: ${pathname || '/'}.`,
@@ -155,7 +126,32 @@ export function buildAssistantSystemPrompt(language: Language, pathname: string)
     'Do not invent legal commitments, approval guarantees, timelines, or backend state.',
     'If the answer depends on project category, say that clearly and list the categories available in the UI.',
     portalKnowledge.trim(),
-  ].join('\n\n');
+  ];
+
+  if (context) {
+    const userLines = [
+      'Live session context — use this to personalise your answers:',
+      context.userName ? `- Logged-in user: ${context.userName}` : null,
+      context.userRole ? `- Role: ${context.userRole}` : null,
+      context.userDepartment ? `- Department / Organisation: ${context.userDepartment}` : null,
+    ].filter((l): l is string => l !== null).join('\n');
+
+    const appLines = context.applications?.length
+      ? [
+          `Applications visible to this user (${context.applications.length}):`,
+          ...context.applications.map(
+            (app) =>
+              `  [${app.applicationNumber}] ${app.projectName} — status: ${app.status}, payment: ${app.paymentStatus}` +
+              (app.openEdsCount > 0 ? `, open EDS queries: ${app.openEdsCount}` : '') +
+              (app.sector ? `, sector: ${app.sector}` : '')
+          ),
+        ].join('\n')
+      : 'No applications loaded for this user yet.';
+
+    lines.push([userLines, appLines].join('\n'));
+  }
+
+  return lines.join('\n\n');
 }
 
 export function getAssistantFallbackReply(message: string, language: Language) {

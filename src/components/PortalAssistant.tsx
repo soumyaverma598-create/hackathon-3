@@ -12,8 +12,11 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useLanguageStore } from '@/store/languageStore';
+import { useAuthStore } from '@/store/authStore';
+import { useWorkflowStore } from '@/store/workflowStore';
 import {
   AssistantMessage,
+  LiveUserContext,
   assistantQuickPrompts,
   assistantUiCopy,
   assistantWelcome,
@@ -29,6 +32,11 @@ export default function PortalAssistant() {
   const language = useLanguageStore((state) => state.language);
   const copy = assistantUiCopy[language];
   const quickPrompts = assistantQuickPrompts[language];
+
+  const user = useAuthStore((state) => state.user);
+  const applications = useWorkflowStore((state) => state.applications);
+  const fetchByProponent = useWorkflowStore((state) => state.fetchByProponent);
+  const fetchAll = useWorkflowStore((state) => state.fetchAll);
 
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
@@ -56,6 +64,16 @@ export default function PortalAssistant() {
     viewportRef.current?.scrollTo({ top: viewportRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages, isSending]);
 
+  useEffect(() => {
+    if (!isOpen || !user || applications.length > 0) return;
+    if (user.role === 'applicant') {
+      void fetchByProponent(user.email);
+    } else {
+      void fetchAll();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, user]);
+
   async function submitMessage(messageText?: string) {
     const trimmed = (messageText ?? input).trim();
     if (!trimmed || isSending) {
@@ -67,6 +85,23 @@ export default function PortalAssistant() {
     setInput('');
     setIsSending(true);
 
+    const ctx: LiveUserContext | undefined = user
+      ? {
+          userName: user.name,
+          userRole: user.role,
+          userDepartment: user.department,
+          applications: applications.slice(0, 10).map((app) => ({
+            id: app.id,
+            applicationNumber: app.applicationNumber,
+            projectName: app.projectName,
+            status: app.status,
+            paymentStatus: app.paymentStatus,
+            openEdsCount: app.edsQueries.filter((q) => q.status === 'open').length,
+            sector: app.projectSector,
+          })),
+        }
+      : undefined;
+
     try {
       const response = await fetch('/api/chatbot', {
         method: 'POST',
@@ -77,6 +112,7 @@ export default function PortalAssistant() {
           messages: nextMessages,
           language,
           pathname,
+          context: ctx,
         }),
       });
 
@@ -202,12 +238,6 @@ export default function PortalAssistant() {
             </div>
 
             <div className="border-t border-slate-200/80 bg-white/92 p-4">
-              {lastMode === 'fallback' ? (
-                <p className="mb-3 rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
-                  {copy.unavailable}
-                </p>
-              ) : null}
-
               <div className="rounded-[22px] border border-slate-200 bg-slate-50 p-2 shadow-inner">
                 <textarea
                   value={input}
