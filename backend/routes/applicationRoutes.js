@@ -1,18 +1,42 @@
 const express = require('express');
-const {
-  createApplication,
-  getAllApplications,
-  getApplicationById,
-  updateApplicationStatus
-} = require('../controllers/applicationController');
+const { getAll, getById, create, updateStatus } = require('../controllers/applicationController');
 const { verifyToken } = require('../middleware/authMiddleware');
+const { uploadMiddleware, uploadDoc, getByApplicationId } = require('../controllers/documentController');
+const { submitPayment } = require('../controllers/paymentController');
+const { getByApplicationId: getEDS, create: createEDS, update: updateEDS } = require('../controllers/edsController');
+const { generate: generateGist, getByApplicationId: getGist } = require('../controllers/gistController');
+const { get: getMom, update: updateMom, generateDoc, finalize, downloadCertificate } = require('../controllers/momController');
 
 const router = express.Router();
 
-// Protected routes using verifyToken middleware
-router.post('/', verifyToken, createApplication);
-router.get('/', verifyToken, getAllApplications);
-router.get('/:id', verifyToken, getApplicationById);
-router.put('/:id/status', verifyToken, updateApplicationStatus);
+router.use(verifyToken);
+
+router.get('/', getAll);
+router.post('/', create);
+router.get('/:id', getById);
+router.put('/:id/status', updateStatus);
+
+router.post('/:id/documents', uploadMiddleware, uploadDoc);
+router.get('/:id/documents', getByApplicationId);
+
+router.post('/:id/payment', submitPayment);
+
+router.get('/:id/eds', getEDS);
+router.post('/:id/eds', createEDS);
+router.put('/:id/eds/:queryId', updateEDS);
+router.put('/:id/eds/:queryId/close', (req, res, next) => {
+  req.body = { ...req.body, status: 'closed' };
+  return updateEDS(req, res, next);
+});
+
+router.get('/:id/gist', getGist);
+router.post('/:id/gist', generateGist);
+
+router.get('/:id/mom', getMom);
+router.put('/:id/mom', updateMom);
+router.post('/:id/mom/generate', generateDoc);
+router.post('/:id/mom/finalize', finalize);
+
+router.get('/:id/certificate', downloadCertificate);
 
 module.exports = router;

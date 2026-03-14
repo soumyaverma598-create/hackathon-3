@@ -1,62 +1,98 @@
 const pool = require('../config/db');
 
-const createQuery = async (req, res) => {
-  const { application_id, raised_by, query_text } = req.body;
+function mapEDS(row) {
+  return {
+    id: row.id,
+    queryNumber: row.query_number,
+    subject: row.subject,
+    description: row.description,
+    raisedAt: row.raised_at ? new Date(row.raised_at).toISOString() : undefined,
+    raisedBy: row.raised_by,
+    response: row.response || undefined,
+    respondedAt: row.responded_at ? new Date(row.responded_at).toISOString() : undefined,
+    status: row.status,
+  };
+}
 
+const getByApplicationId = async (req, res) => {
   try {
-    const result = await pool.query(
-      `INSERT INTO "EDSQuery" (id, application_id, raised_by, query_text, status, created_at) 
-       VALUES (gen_random_uuid(), $1, $2, $3, 'Open', NOW()) RETURNING *`,
-      [application_id, raised_by, query_text]
-    );
-
-    return res.status(201).json({
-      message: 'EDS Query created',
-      query: result.rows[0]
-    });
-  } catch (error) {
-    console.error('Error creating EDS query:', error);
-    return res.status(500).json({ message: 'Server error creating EDS query' });
+    const { id } = req.params;
+    const result = await pool.query('SELECT * FROM eds_queries WHERE application_id = $1 ORDER BY raised_at ASC', [id]);
+    return res.json({ success: true, data: result.rows.map(mapEDS) });
+  } catch (err) {
+    console.error('getEDS error:', err);
+    return res.status(500).json({ success: false, error: 'Server error' });
   }
 };
 
-const resolveQuery = async (req, res) => {
-  const { id } = req.params;
-
+const create = async (req, res) => {
   try {
-    const result = await pool.query(
-      `UPDATE "EDSQuery" SET status = 'Resolved', resolved_at = NOW() WHERE id = $1 RETURNING *`,
+    const { id } = req.params;
+    const { subject, description } = req.body;
+    const appRes = await pool.query('SELECT id, status FROM applications WHERE id = $1', [id]);
+    if (appRes.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Application not found' });
+    }
+    const countRes = await pool.query('SELECT COUNT(*) AS c FROM eds_queries WHERE application_id = $1', [id]);
+    const count = parseInt(countRes.rows[0]?.c || '0', 10) + 1;
+    const queryNumber = `EDS-${String(count).padStart(3, '0')}`;
+    const qId = 'eds' + Date.now();
+    await pool.query(
+      `INSERT INTO eds_queries (id, application_id, query_number, subject, description, raised_at, raised_by, status)
+       VALUES ($1, $2, $3, $4, $5, NOW(), $6, 'open')`,
+      [qId, id, queryNumber, subject || '', description || '', req.user.id]
+    );
+    await pool.query(
+      "UPDATE applications SET status = 'eds_raised', updated_at = NOW() WHERE id = $1 AND status != 'eds_raised'",
       [id]
     );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: 'EDS Query not found' });
-    }
-
-    return res.status(200).json({
-      message: 'EDS Query resolved',
-      query: result.rows[0]
-    });
-  } catch (error) {
-    console.error('Error resolving EDS query:', error);
-    return res.status(500).json({ message: 'Server error resolving EDS query' });
+    const rowRes = await pool.query('SELECT * FROM eds_queries WHERE id = $1', [qId]);
+    return res.status(201).json({ success: true, data: mapEDS(rowRes.rows[0]) });
+  } catch (err) {
+    console.error('createEDS error:', err);
+    return res.status(500).json({ success: false, error: 'Server error' });
   }
 };
 
-const getQueriesByApplicationId = async (req, res) => {
-  const { applicationId } = req.params;
-
+const update = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM "EDSQuery" WHERE application_id = $1 ORDER BY created_at DESC', [applicationId]);
-    return res.status(200).json(result.rows);
-  } catch (error) {
-    console.error('Error fetching EDS queries:', error);
-    return res.status(500).json({ message: 'Server error fetching EDS queries' });
+    const { id, queryId } = req.params;
+    const { response, status } = req.body;
+    const qRes = await pool.query(
+      'SELECT * FROM eds_queries WHERE id = $1 AND application_id = $2',
+      [queryId, id]
+    );
+    if (qRes.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'EDS query not found' });
+    }
+    const updates = [];
+    const params = [];
+    let idx = 1;
+    if (response != null) {
+      updates.push(`response = $${idx}, responded_at = NOW()`);
+      params.push(response);
+      idx++;
+    }
+    if (status && ['open', 'responded', 'closed'].includes(status)) {
+      updates.push(`status = $${idx}`);
+      params.push(status);
+      idx++;
+    }
+    if (updates.length === 0) {
+      const row = qRes.rows[0];
+      return res.json({ success: true, data: mapEDS(row) });
+    }
+    params.push(queryId);
+    await pool.query(
+      `UPDATE eds_queries SET ${updates.join(', ')} WHERE id = $${idx}`,
+      params
+    );
+    const rowRes = await pool.query('SELECT * FROM eds_queries WHERE id = $1', [queryId]);
+    return res.json({ success: true, data: mapEDS(rowRes.rows[0]) });
+  } catch (err) {
+    console.error('updateEDS error:', err);
+    return res.status(500).json({ success: false, error: 'Server error' });
   }
 };
 
-module.exports = {
-  createQuery,
-  resolveQuery,
-  getQueriesByApplicationId
-};
+module.exports = { getByApplicationId, create, update };

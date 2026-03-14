@@ -1,22 +1,25 @@
 const jwt = require('jsonwebtoken');
 
+const JWT_SECRET = process.env.JWT_SECRET || 'parivesh_secret';
+
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
-
-  if (!authHeader) {
-    return res.status(403).json({ message: 'A token is required for authentication' });
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ success: false, error: 'Unauthorized' });
   }
-
-  // Extract token from "Bearer <token>" string
-  const token = authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : authHeader;
-
+  const token = authHeader.split(' ')[1];
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Attach decoded user data
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded; // { id, email, role }
     next();
   } catch (err) {
-    return res.status(401).json({ message: 'Invalid or expired token' });
+    return res.status(401).json({ success: false, error: 'Unauthorized' });
   }
 };
 
-module.exports = { verifyToken };
+const requireAdmin = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') return next();
+  return res.status(403).json({ success: false, error: 'Forbidden' });
+};
+
+module.exports = { verifyToken, requireAdmin };

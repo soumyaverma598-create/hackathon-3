@@ -21,10 +21,10 @@ import {
 import * as mock from './mockApi';
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Feature flag — flip to false when backend is ready
+// Feature flag — use real backend; set NEXT_PUBLIC_USE_MOCK=true for mock
 // ──────────────────────────────────────────────────────────────────────────────
 export const USE_MOCK =
-  process.env.NEXT_PUBLIC_USE_MOCK !== 'false';
+  process.env.NEXT_PUBLIC_USE_MOCK === 'true';
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
@@ -52,6 +52,7 @@ async function apiFetch<T>(
 
   if (res.status === 401) {
     if (typeof window !== 'undefined') {
+      localStorage.clear();
       window.location.href = '/login';
     }
     throw new Error('Unauthorized');
@@ -110,14 +111,14 @@ export async function fetchUsers(): Promise<User[]> {
   if (USE_MOCK) {
     return fromMock(mock.mockFetchUsers());
   }
-  return apiFetch<User[]>('/users');
+  return apiFetch<User[]>('/admin/users');
 }
 
 export async function createUser(payload: AdminCreateUserInput): Promise<User> {
   if (USE_MOCK) {
     return fromMock(mock.mockCreateUser(payload));
   }
-  return apiFetch<User>('/users', {
+  return apiFetch<User>('/admin/users', {
     method: 'POST',
     body: JSON.stringify(payload),
   });
@@ -130,7 +131,7 @@ export async function updateUser(
   if (USE_MOCK) {
     return fromMock(mock.mockUpdateUser(userId, payload));
   }
-  return apiFetch<User>(`/users/${userId}`, {
+  return apiFetch<User>(`/admin/users/${userId}`, {
     method: 'PUT',
     body: JSON.stringify(payload),
   });
@@ -155,9 +156,7 @@ export async function fetchMyApplications(
     // TODO: remove mock fallback once GET /applications?proponent= is live
     return fromMock(mock.mockFetchMyApplications(email));
   }
-  return apiFetch<WorkflowApplication[]>(
-    `/applications?proponent=${encodeURIComponent(email)}`
-  );
+  return apiFetch<WorkflowApplication[]>('/applications');
 }
 
 export async function fetchApplicationById(
@@ -222,6 +221,13 @@ export async function uploadDocuments(
     },
     body: formData,
   });
+  if (res.status === 401) {
+    if (typeof window !== 'undefined') {
+      localStorage.clear();
+      window.location.href = '/login';
+    }
+    throw new Error('Unauthorized');
+  }
   if (!res.ok) throw new Error(await res.text());
   const json = await res.json();
   return json.data as WorkflowApplication;
@@ -251,9 +257,9 @@ export async function submitPayment(
     // TODO: remove mock fallback once POST /applications/:id/payment is live
     return fromMock(mock.mockSubmitPayment(id, paymentData));
   }
-  return apiFetch<WorkflowApplication>(`/applications/${id}/payment`, {
+  return apiFetch(`/applications/${id}/payment`, {
     method: 'POST',
-    body: JSON.stringify(paymentData),
+    body: JSON.stringify({ amount: paymentData.amount, paymentMethod: 'online' }),
   });
 }
 
@@ -363,14 +369,31 @@ export async function editMom(
 
 export async function generateMomDoc(
   id: string
-): Promise<{ message: string }> {
+): Promise<{ message: string; url?: string }> {
   if (USE_MOCK) {
-    // TODO: remove mock fallback once POST /applications/:id/mom/generate is live
     return fromMock(mock.mockGenerateMomDoc(id));
   }
-  return apiFetch<{ message: string }>(`/applications/${id}/mom/generate`, {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('auth-token') : null;
+  const res = await fetch(`${BASE_URL}/applications/${id}/mom/generate`, {
     method: 'POST',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
+  if (res.status === 401) {
+    if (typeof window !== 'undefined') {
+      localStorage.clear();
+      window.location.href = '/login';
+    }
+    throw new Error('Unauthorized');
+  }
+  if (!res.ok) throw new Error(await res.text());
+  const contentType = res.headers.get('content-type') || '';
+  if (contentType.includes('application/pdf') || contentType.includes('application/octet-stream')) {
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    return { message: 'MoM document generated.', url };
+  }
+  const json = await res.json();
+  return json.data ?? { message: 'MoM document generated.' };
 }
 
 export async function finalizeMom(
@@ -393,12 +416,23 @@ export async function downloadCertificate(
   id: string
 ): Promise<{ url: string; filename: string }> {
   if (USE_MOCK) {
-    // TODO: remove mock fallback once GET /applications/:id/certificate is live
     return fromMock(mock.mockDownloadCertificate(id));
   }
-  return apiFetch<{ url: string; filename: string }>(
-    `/applications/${id}/certificate`
-  );
+  const token = typeof window !== 'undefined' ? localStorage.getItem('auth-token') : null;
+  const res = await fetch(`${BASE_URL}/applications/${id}/certificate`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (res.status === 401) {
+    if (typeof window !== 'undefined') {
+      localStorage.clear();
+      window.location.href = '/login';
+    }
+    throw new Error('Unauthorized');
+  }
+  if (!res.ok) throw new Error(await res.text());
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  return { url, filename: `EC_Certificate_${id}.pdf` };
 }
 
 // ──────────────────────────────────────────────────────────────────────────────

@@ -1,91 +1,66 @@
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const pool = require('../config/db');
 
-// Register a new user
-const register = async (req, res) => {
-  const { name, email, password, role } = req.body;
+const JWT_SECRET = process.env.JWT_SECRET || 'parivesh_secret';
 
-  if (!name || !email || !password || !role) {
-    return res.status(400).json({ message: 'All fields are required' });
-  }
-
-  try {
-    // Check if user already exists
-    const userExists = await pool.query('SELECT * FROM "User" WHERE email = $1', [email]);
-    if (userExists.rows.length > 0) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    // Hash the password
-    const salt = await bcrypt.genSalt(10);
-    const password_hash = await bcrypt.hash(password, salt);
-
-    // Insert user into database
-    // Note: Assuming 'id' is generated via uuid_generate_v4() or similar in DB,
-    // and created_at defaults to NOW()
-    const result = await pool.query(
-      'INSERT INTO "User" (id, name, email, password_hash, role) VALUES (gen_random_uuid(), $1, $2, $3, $4) RETURNING id, name, email, role',
-      [name, email, password_hash, role]
-    );
-
-    const newUser = result.rows[0];
-
-    return res.status(201).json({
-      message: 'User registered successfully',
-      user: newUser
-    });
-  } catch (error) {
-    console.error('Registration error:', error);
-    return res.status(500).json({ message: 'Server error during registration' });
-  }
-};
+function mapUser(row) {
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    role: row.role,
+    department: row.department || '',
+    designation: row.designation || '',
+    isActive: row.is_active !== false,
+  };
+}
 
 const login = async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password are required' });
-  }
-
   try {
-    // Find user by email
-    const result = await pool.query('SELECT * FROM "User" WHERE email = $1', [email]);
-    const user = result.rows[0];
-
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ success: false, error: 'Email and password required' });
     }
-
-    // Verify password match
-    const isMatch = await bcrypt.compare(password, user.password_hash);
-
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email.trim().toLowerCase()]);
+    const row = result.rows[0];
+    if (!row) {
+      return res.status(401).json({ success: false, error: 'Invalid credentials' });
     }
-
-    // Generate JWT token
+    const match = await bcrypt.compare(password, row.password_hash);
+    if (!match) {
+      return res.status(401).json({ success: false, error: 'Invalid credentials' });
+    }
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role, name: user.name },
-      process.env.JWT_SECRET || 'supersecretjwtkey_parivesh3',
-      { expiresIn: '1h' }
+      { id: row.id, email: row.email, role: row.role },
+      JWT_SECRET,
+      { expiresIn: '24h' }
     );
-
-    return res.status(200).json({
-      message: 'Login successful',
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role
-      }
+    return res.json({
+      success: true,
+      data: { token, user: mapUser(row) },
     });
-
-  } catch (error) {
-    console.error('Login error:', error);
-    return res.status(500).json({ message: 'Server error during login' });
+  } catch (err) {
+    console.error('Login error:', err);
+    return res.status(500).json({ success: false, error: 'Server error' });
   }
 };
 
-module.exports = { login, register };
+const me = async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE id = $1', [req.user.id]);
+    const row = result.rows[0];
+    if (!row) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+    return res.json({
+      success: true,
+      data: mapUser(row),
+    });
+  } catch (err) {
+    console.error('Me error:', err);
+    return res.status(500).json({ success: false, error: 'Server error' });
+  }
+};
+
+module.exports = { login, me };
