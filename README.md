@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PARIVESH 3.0 - Environmental Clearance Workflow Portal
 
-## Getting Started
+A fully functional Environmental Clearance workflow portal built for a hackathon.
 
-First, run the development server:
+## Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Frontend**: Next.js 16, TypeScript, Tailwind CSS, Zustand
+- **Backend**: Express.js, PostgreSQL, JWT, Multer, pdfkit
+- **Database**: PostgreSQL
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment Setup for Teammates
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Backend Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
 
-## Learn More
+2. Copy the environment file template:
+   ```bash
+   cp .env.example .env
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+3. Fill in your PostgreSQL credentials in `backend/.env`:
+   - `DB_PASSWORD`: Your PostgreSQL password
+   - `JWT_SECRET`: Your preferred JWT secret
+   - `RAZORPAY_KEY_ID` & `RAZORPAY_KEY_SECRET`: Your Razorpay credentials (optional)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. Install dependencies and start the backend:
+   ```bash
+   npm install
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The backend will run on http://localhost:3002
 
-## Deploy on Vercel
+### Frontend Setup
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Navigate to the root directory (if not already there):
+   ```bash
+   cd ..
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. Copy the environment file template:
+   ```bash
+   cp .env.local.example .env.local
+   ```
+
+3. Configure your frontend environment in `.env.local`:
+   - `NEXT_PUBLIC_API_URL`: Backend URL (default: http://localhost:3002)
+   - `NEXT_PUBLIC_USE_MOCK`: Set to `false` for real backend, `true` for mock data
+   - `NEXT_PUBLIC_GEMINI_API_KEY`: Your Gemini API key (optional)
+   - `NEXT_PUBLIC_RAZORPAY_KEY_ID`: Your Razorpay key ID (optional)
+
+4. Install dependencies and start the frontend:
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+The frontend will run on http://localhost:3000
+
+## Quick Start
+
+After completing the environment setup:
+
+1. Start PostgreSQL database
+2. Start backend server (port 3002)
+3. Start frontend server (port 3000)
+4. Open http://localhost:3000 in your browser
+
+## Authentication
+
+The application supports 4 user roles with JWT authentication:
+- Admin
+- Proponent
+- EDS (Expert Determination System)
+- MoM (Minutes of Meeting)
+
+## Database
+
+The application uses PostgreSQL database named `parivesh`. Make sure your PostgreSQL server is running and the database exists before starting the backend.
+
+## Development
+
+- Frontend runs on port 3000
+- Backend runs on port 3002
+- Database: PostgreSQL on port 5432 (default)
+
+## Environment Variables
+
+### Frontend (.env.local)
+- `NEXT_PUBLIC_API_URL`: Backend API URL
+- `NEXT_PUBLIC_USE_MOCK`: Enable/disable mock data
+- `NEXT_PUBLIC_GEMINI_API_KEY`: Gemini AI API key
+- `NEXT_PUBLIC_RAZORPAY_KEY_ID`: Razorpay payment key ID
+
+### Backend (.env)
+- `DB_HOST`: Database host
+- `DB_PORT`: Database port
+- `DB_NAME`: Database name
+- `DB_USER`: Database username
+- `DB_PASSWORD`: Database password
+- `JWT_SECRET`: JWT signing secret
+- `PORT`: Backend server port
+- `RAZORPAY_KEY_ID`: Razorpay key ID
+- `RAZORPAY_KEY_SECRET`: Razorpay key secret
