@@ -91,10 +91,9 @@ export default function GovHeader() {
   return (
     <header className="sticky top-0 z-[120] pl-0 pr-0 pt-0">
       <div
-        className="glass-dark rounded-t-none rounded-bl-none rounded-br-2xl border shadow-[0_16px_40px_rgba(4,18,34,0.35)] overflow-visible"
+        className="glass-dark rounded-t-none rounded-bl-none rounded-br-2xl shadow-[0_16px_40px_rgba(4,18,34,0.35)] overflow-visible"
         style={{
           background: 'linear-gradient(135deg, rgba(7,34,53,0.97), rgba(11,52,79,0.95))',
-          borderColor: 'rgba(122,232,239,0.24)',
         }}
       >
         <div

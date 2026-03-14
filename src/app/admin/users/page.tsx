@@ -6,7 +6,7 @@ import PageShell from '@/components/PageShell';
 import { useAuthStore } from '@/store/authStore';
 import { approveRestrictedAccess, createUser, fetchUsers, updateUser } from '@/lib/api';
 import { AdminCreateUserInput, AdminUpdateUserInput, User, UserRole } from '@/types/auth';
-import { Plus, Save, ShieldCheck, UserRoundPen, Users, X } from 'lucide-react';
+import { Plus, Save, ShieldCheck, ShieldX, UserRoundPen, Users, X } from 'lucide-react';
 import { RBAC_ROLE_POLICIES, TEAM_ROLES, canAssignTeamRole } from '@/lib/rbac';
 
 type FormMode = 'create' | 'edit';
@@ -39,6 +39,7 @@ export default function AdminUsersPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [assigningUserId, setAssigningUserId] = useState<string | null>(null);
   const [approvingUserId, setApprovingUserId] = useState<string | null>(null);
+  const [removingUserId, setRemovingUserId] = useState<string | null>(null);
   const [approvedIds, setApprovedIds] = useState<Set<string>>(() => new Set(['u3', 'u4']));
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -187,6 +188,20 @@ export default function AdminUsersPage() {
       setError(err instanceof Error ? err.message : 'Failed to approve access.');
     } finally {
       setApprovingUserId(null);
+    }
+  };
+
+  const handleRemoveAccess = async (targetUser: User) => {
+    setError(null);
+    setRemovingUserId(targetUser.id);
+    try {
+      setApprovedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(targetUser.id);
+        return next;
+      });
+    } finally {
+      setRemovingUserId(null);
     }
   };
 
@@ -366,10 +381,17 @@ export default function AdminUsersPage() {
                 {assignmentCandidates.length === 0 ? (
                   <p className="text-sm text-gray-500">No non-admin users available for assignment.</p>
                 ) : assignmentCandidates.map((candidate) => (
-                  <div key={candidate.id} className="rounded-lg border border-gray-100 bg-gray-50 p-4">
+                  <div key={candidate.id} className="rounded-lg border border-[#d8e4ee] bg-[#edf2f6] p-4">
                     <div className="mb-3 flex items-start justify-between gap-2">
                       <div>
-                        <p className="text-sm font-semibold text-gray-800">{candidate.name}</p>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-sm font-semibold text-gray-800">{candidate.name}</p>
+                          {(candidate.role === 'scrutiny' || candidate.role === 'mom') && approvedIds.has(candidate.id) && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-cyan-100 text-cyan-700 text-[11px] font-semibold px-2 py-0.5">
+                              <ShieldCheck size={11} /> Portal Access Granted
+                            </span>
+                          )}
+                        </div>
                         <p className="text-xs text-gray-500">{candidate.email}</p>
                         <p className="text-xs text-gray-500 mt-0.5">
                           Current Role: <span className="font-medium text-gray-700">{RBAC_ROLE_POLICIES[candidate.role].label}</span>
@@ -377,11 +399,17 @@ export default function AdminUsersPage() {
                       </div>
                       {/* Portal access approval badge */}
                       {(candidate.role === 'scrutiny' || candidate.role === 'mom') && (
-                        <div className="shrink-0">
+                        <div className="shrink-0 flex flex-col items-end gap-1.5">
                           {approvedIds.has(candidate.id) ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-cyan-100 text-cyan-700 text-[11px] font-semibold px-2 py-0.5">
-                              <ShieldCheck size={11} /> Portal Access Granted
-                            </span>
+                            <button
+                              type="button"
+                              disabled={removingUserId !== null}
+                              onClick={() => handleRemoveAccess(candidate)}
+                              className="inline-flex items-center gap-1 rounded-full bg-cyan-100 text-cyan-700 border border-cyan-300 text-[11px] font-semibold px-2 py-0.5 hover:bg-cyan-200 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                              <ShieldX size={11} />
+                              {removingUserId === candidate.id ? 'Removing...' : 'Remove Portal Access'}
+                            </button>
                           ) : (
                             <button
                               type="button"

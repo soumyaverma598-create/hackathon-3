@@ -67,15 +67,18 @@ export default function Sidebar({ role }: { role: UserRole }) {
         </div>
         <ul className="space-y-1 px-2">
           {items.map((item) => {
-            const isActive = pathname === item.href || pathname.startsWith(item.href + '?');
+            const isActive =
+              pathname === item.href ||
+              pathname.startsWith(`${item.href}/`) ||
+              pathname.startsWith(`${item.href}?`);
             return (
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium ${
                     isActive
                       ? 'text-white shadow-lg'
-                      : 'text-cyan-100/80 hover:bg-white/22 hover:text-white hover:translate-x-0.5'
+                      : 'text-cyan-100/90 hover:bg-white/18'
                   }`}
                   style={isActive ? {
                     background: 'linear-gradient(135deg, rgba(37,201,208,0.88), rgba(22,78,99,0.78))',
@@ -84,8 +87,10 @@ export default function Sidebar({ role }: { role: UserRole }) {
                 >
                   <span className={`h-6 w-1 rounded-full ${isActive ? 'bg-white/90' : 'bg-transparent'}`} />
                   <span
-                    className={`transition-all duration-200 ${
-                      isActive ? 'text-white scale-110 drop-shadow-[0_0_4px_rgba(255,255,255,0.4)]' : 'text-cyan-400/50'
+                    className={`${
+                      isActive
+                        ? 'text-white scale-110 drop-shadow-[0_0_4px_rgba(255,255,255,0.4)]'
+                        : 'text-cyan-300/75'
                     }`}
                   >
                     {item.icon}
@@ -100,10 +105,7 @@ export default function Sidebar({ role }: { role: UserRole }) {
 
       {/* Footer */}
       <div className="px-4 py-4 border-t border-white/24">
-        <p
-          className="text-cyan-200/55 text-[10px] text-center font-medium"
-          style={{ animation: 'pulseSoft 4s ease-in-out infinite' }}
-        >
+        <p className="text-cyan-200/55 text-[10px] text-center font-medium">
           PARIVESH 3.0 &copy; MoEFCC 2026
         </p>
       </div>
