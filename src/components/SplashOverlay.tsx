@@ -18,7 +18,7 @@ export default function SplashOverlay({ onFinished }: SplashOverlayProps) {
         <motion.div
           key="splash-curtain"
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden"
-          style={{ background: 'linear-gradient(135deg, #1a6b3c 0%, #0f4a2a 100%)' }}
+          style={{ background: 'linear-gradient(135deg, #164e63 0%, #0f3650 100%)' }}
           exit={{
             opacity: 0,
             scale: 1.12,
@@ -65,9 +65,9 @@ export default function SplashOverlay({ onFinished }: SplashOverlayProps) {
                   transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
                 />
                 <svg className="w-28 h-28" viewBox="0 0 64 64" fill="none" suppressHydrationWarning>
-                  <circle cx="32" cy="32" r="30" fill="#fff" stroke="#1a6b3c" strokeWidth="2" />
+                  <circle cx="32" cy="32" r="30" fill="#fff" stroke="#164e63" strokeWidth="2" />
                   <g className="animate-spin-slow" style={{ transformOrigin: '32px 32px' }} suppressHydrationWarning>
-                    <circle cx="32" cy="32" r="14" fill="none" stroke="#f7941d" strokeWidth="2" />
+                    <circle cx="32" cy="32" r="14" fill="none" stroke="#25c9d0" strokeWidth="2" />
                     {Array.from({ length: 24 }).map((_, i) => {
                       const angle = (i / 24) * 2 * Math.PI;
                       const r = (n: number) => Math.round(n * 1000) / 1000;
@@ -78,14 +78,14 @@ export default function SplashOverlay({ onFinished }: SplashOverlayProps) {
                           y1={r(32 + 14 * Math.sin(angle))}
                           x2={r(32 + 18 * Math.cos(angle))}
                           y2={r(32 + 18 * Math.sin(angle))}
-                          stroke="#f7941d"
+                          stroke="#25c9d0"
                           strokeWidth="1"
                           suppressHydrationWarning
                         />
                       );
                     })}
                   </g>
-                  <text x="32" y="36" fontSize="10" fontWeight="bold" fill="#1a6b3c" textAnchor="middle">
+                  <text x="32" y="36" fontSize="10" fontWeight="bold" fill="#164e63" textAnchor="middle">
                     अशोक
                   </text>
                 </svg>
@@ -145,7 +145,7 @@ export default function SplashOverlay({ onFinished }: SplashOverlayProps) {
 
                 {/* Hindi / English subtitle */}
                 <motion.p
-                  className="text-green-200 text-xl font-medium mt-3"
+                  className="text-cyan-200 text-xl font-medium mt-3"
                   variants={{
                     hidden: { opacity: 0, y: 25, filter: 'blur(6px)' },
                     visible: { opacity: 1, y: 0, filter: 'blur(0px)' },
@@ -157,7 +157,7 @@ export default function SplashOverlay({ onFinished }: SplashOverlayProps) {
 
                 {/* Portal tagline */}
                 <motion.p
-                  className="text-green-300 text-sm mt-2"
+                  className="text-cyan-300 text-sm mt-2"
                   variants={{
                     hidden: { opacity: 0, y: 20, filter: 'blur(4px)' },
                     visible: { opacity: 1, y: 0, filter: 'blur(0px)' },
@@ -170,7 +170,7 @@ export default function SplashOverlay({ onFinished }: SplashOverlayProps) {
                 {/* Accent line */}
                 <motion.div
                   className="mx-auto mt-6 h-[2px] rounded-full"
-                  style={{ background: 'linear-gradient(90deg, transparent, #f7941d, transparent)' }}
+                  style={{ background: 'linear-gradient(90deg, transparent, #25c9d0, transparent)' }}
                   variants={{
                     hidden: { opacity: 0, width: 0 },
                     visible: { opacity: 1, width: 100 },
@@ -180,7 +180,7 @@ export default function SplashOverlay({ onFinished }: SplashOverlayProps) {
 
                 {/* Ministry line */}
                 <motion.p
-                  className="text-green-200/60 text-xs mt-4 tracking-widest uppercase"
+                  className="text-cyan-200/60 text-xs mt-4 tracking-widest uppercase"
                   variants={{
                     hidden: { opacity: 0, y: 15 },
                     visible: { opacity: 1, y: 0 },
@@ -197,7 +197,7 @@ export default function SplashOverlay({ onFinished }: SplashOverlayProps) {
           {[...Array(8)].map((_, i) => (
             <motion.div
               key={`particle-${i}`}
-              className="absolute w-1.5 h-1.5 rounded-full bg-white/10"
+              className="absolute w-1.5 h-1.5 rounded-full bg-white/26"
               style={{
                 left: `${15 + i * 10}%`,
                 top: `${20 + (i % 3) * 25}%`,

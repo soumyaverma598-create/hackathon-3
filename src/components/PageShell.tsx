@@ -39,7 +39,7 @@ export default function PageShell({ role, children }: PageShellProps) {
         <div className="flex flex-1">
           <Sidebar role={role} />
           <main className="flex-1 p-6 overflow-auto">
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-6xl mx-auto rounded-2xl border border-white/36 bg-white/86 backdrop-blur-md px-4 py-4 shadow-[0_12px_30px_rgba(8,35,55,0.16)] md:px-5 md:py-5">
               {children}
             </div>
           </main>

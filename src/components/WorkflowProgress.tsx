@@ -38,9 +38,9 @@ export default function WorkflowProgress({ currentStatus }: WorkflowProgressProp
                 <div
                   className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all ${
                     isDone
-                      ? 'bg-[#1a6b3c] border-[#1a6b3c] text-white'
+                      ? 'bg-[#164e63] border-[#164e63] text-white'
                       : isCurrent
-                      ? 'bg-[#f7941d] border-[#f7941d] text-white shadow-lg scale-110'
+                      ? 'bg-[#25c9d0] border-[#25c9d0] text-white shadow-lg scale-110'
                       : 'bg-white border-gray-300 text-gray-400'
                   }`}
                 >
@@ -49,9 +49,9 @@ export default function WorkflowProgress({ currentStatus }: WorkflowProgressProp
                 <span
                   className={`text-[9px] font-medium mt-1 w-14 text-center leading-tight ${
                     isCurrent
-                      ? 'text-[#f7941d] font-bold'
+                      ? 'text-[#25c9d0] font-bold'
                       : isDone
-                      ? 'text-[#1a6b3c]'
+                      ? 'text-[#164e63]'
                       : 'text-gray-400'
                   }`}
                 >
@@ -66,7 +66,7 @@ export default function WorkflowProgress({ currentStatus }: WorkflowProgressProp
                     className="h-full rounded-full transition-all duration-500"
                     style={{
                       width: isDone ? '100%' : isCurrent ? '50%' : '0%',
-                      background: 'linear-gradient(90deg, #1a6b3c, #f7941d)',
+                      background: 'linear-gradient(90deg, #164e63, #25c9d0)',
                     }}
                   />
                 </div>

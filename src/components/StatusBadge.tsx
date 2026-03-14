@@ -29,9 +29,9 @@ const STATUS_CONFIG: Record<
   },
   eds_raised: {
     label: 'EDS Raised',
-    bg: 'bg-orange-100',
-    text: 'text-orange-700',
-    dot: 'bg-orange-500',
+    bg: 'bg-sky-100',
+    text: 'text-sky-700',
+    dot: 'bg-sky-500',
   },
   referred: {
     label: 'Referred to EAC',
@@ -47,9 +47,9 @@ const STATUS_CONFIG: Record<
   },
   finalized: {
     label: 'EC Granted',
-    bg: 'bg-green-100',
-    text: 'text-green-700',
-    dot: 'bg-green-500',
+    bg: 'bg-cyan-100',
+    text: 'text-cyan-700',
+    dot: 'bg-cyan-500',
   },
 };
 

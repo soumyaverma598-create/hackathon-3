@@ -56,19 +56,19 @@ export default function Sidebar({ role }: { role: UserRole }) {
 
   return (
     <aside
-      className="w-56 min-h-screen flex flex-col animate-fade-slide-left"
+      className="w-64 md:w-68 shrink-0 pl-4 pr-2 py-4 animate-fade-slide-left"
       style={{
-        background: 'rgba(10, 46, 26, 0.92)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        borderRight: '1px solid rgba(255,255,255,0.04)',
+        minHeight: 'calc(100vh - 84px)',
       }}
     >
-      <nav className="flex-1 py-5">
-        <div className="px-5 mb-3">
-          <p className="text-emerald-400/60 text-[10px] font-semibold uppercase tracking-[0.2em]">Navigation</p>
+      <div
+        className="h-full rounded-3xl border border-white/24 bg-slate-950/72 backdrop-blur-xl shadow-[0_14px_34px_rgba(5,19,36,0.32)] flex flex-col"
+      >
+        <nav className="flex-1 py-5 overflow-y-auto">
+        <div className="px-5 mb-4">
+          <p className="text-cyan-200/75 text-[10px] font-semibold uppercase tracking-[0.24em]">Navigation</p>
         </div>
-        <ul className="space-y-0.5 px-2">
+        <ul className="space-y-1 px-2">
           {items.map((item, idx) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + '?');
             return (
@@ -82,16 +82,17 @@ export default function Sidebar({ role }: { role: UserRole }) {
                   className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-250 ${
                     isActive
                       ? 'text-white shadow-lg'
-                      : 'text-green-200/60 hover:bg-white/6 hover:text-white/90 hover:translate-x-0.5'
+                      : 'text-cyan-100/80 hover:bg-white/22 hover:text-white hover:translate-x-0.5'
                   }`}
                   style={isActive ? {
-                    background: 'linear-gradient(135deg, rgba(247,148,29,0.85), rgba(247,148,29,0.65))',
-                    boxShadow: '0 4px 16px rgba(247,148,29,0.25), inset 0 1px rgba(255,255,255,0.15)',
+                    background: 'linear-gradient(135deg, rgba(37,201,208,0.88), rgba(22,78,99,0.78))',
+                    boxShadow: '0 4px 16px rgba(37,201,208,0.28), inset 0 1px rgba(255,255,255,0.2)',
                   } : undefined}
                 >
+                  <span className={`h-6 w-1 rounded-full ${isActive ? 'bg-white/90' : 'bg-transparent'}`} />
                   <span
                     className={`transition-all duration-200 ${
-                      isActive ? 'text-white scale-110 drop-shadow-[0_0_4px_rgba(255,255,255,0.4)]' : 'text-emerald-400/50'
+                      isActive ? 'text-white scale-110 drop-shadow-[0_0_4px_rgba(255,255,255,0.4)]' : 'text-cyan-400/50'
                     }`}
                   >
                     {item.icon}
@@ -105,13 +106,14 @@ export default function Sidebar({ role }: { role: UserRole }) {
       </nav>
 
       {/* Footer */}
-      <div className="px-4 py-4 border-t border-white/5">
+      <div className="px-4 py-4 border-t border-white/24">
         <p
-          className="text-emerald-500/40 text-[10px] text-center font-medium"
+          className="text-cyan-200/55 text-[10px] text-center font-medium"
           style={{ animation: 'pulseSoft 4s ease-in-out infinite' }}
         >
           PARIVESH 3.0 &copy; MoEFCC 2026
         </p>
+      </div>
       </div>
     </aside>
   );

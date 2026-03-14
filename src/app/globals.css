@@ -1,22 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  --color-primary: #1a6b3c;
-  --color-primary-dark: #0f4a2a;
-  --color-accent: #f7941d;
-  --color-accent-light: #ffb84d;
+  --color-primary: #164e63;
+  --color-primary-dark: #0f3650;
+  --color-accent: #25c9d0;
+  --color-accent-light: #7ae8ef;
+  --color-ink: #082236;
+  --color-surface: #f4fbff;
+  --color-surface-soft: #eaf8ff;
   --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
 
   /* Glassmorphism tokens */
-  --glass-bg: rgba(255, 255, 255, 0.72);
-  --glass-bg-strong: rgba(255, 255, 255, 0.88);
-  --glass-border: rgba(255, 255, 255, 0.3);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --glass-bg: rgba(244, 251, 255, 0.92);
+  --glass-bg-strong: rgba(250, 254, 255, 0.97);
+  --glass-border: rgba(80, 163, 196, 0.36);
+  --glass-shadow: 0 14px 34px rgba(10, 34, 52, 0.18);
   --glass-blur: 16px;
 
   /* Dark glass (for header/sidebar) */
-  --glass-dark-bg: rgba(15, 74, 42, 0.85);
-  --glass-dark-border: rgba(255, 255, 255, 0.08);
+  --glass-dark-bg: rgba(8, 35, 55, 0.95);
+  --glass-dark-border: rgba(122, 232, 239, 0.28);
 }
 
 html {
@@ -25,6 +28,9 @@ html {
 
 body {
   font-family: var(--font-sans);
+  color: var(--color-ink);
+  background: radial-gradient(circle at 10% 10%, rgba(122, 232, 239, 0.2), transparent 38%),
+              linear-gradient(165deg, var(--color-surface) 0%, var(--color-surface-soft) 60%, #f8fdff 100%);
 }
 
 * {
@@ -43,8 +49,8 @@ body {
 /* ─── Smooth scrollbar ─────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(26, 107, 60, 0.2); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(26, 107, 60, 0.4); }
+::-webkit-scrollbar-thumb { background: rgba(22, 78, 99, 0.3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(22, 78, 99, 0.5); }
 
 /* Clamp multi-line */
 .line-clamp-2 {
@@ -63,6 +69,7 @@ body {
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
   border-radius: 16px;
+  color: #0f2f45;
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
               box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
               border-color 0.3s ease;
@@ -70,8 +77,8 @@ body {
 
 .glass-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-  border-color: rgba(26, 107, 60, 0.15);
+  box-shadow: 0 16px 42px rgba(15, 54, 80, 0.18);
+  border-color: rgba(37, 201, 208, 0.3);
 }
 
 .glass-card-strong {
@@ -81,6 +88,7 @@ body {
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
   border-radius: 16px;
+  color: #0d2a40;
 }
 
 .glass-dark {
@@ -88,6 +96,16 @@ body {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-dark-border);
+}
+
+/* Global focus visibility for keyboard accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(122, 232, 239, 0.38), 0 0 0 1px rgba(22, 78, 99, 0.5);
 }
 
 /* ─── Stat card with glow ─────────────────────────────────── */
@@ -111,12 +129,12 @@ body {
   border-radius: 16px;
   opacity: 0;
   transition: opacity 0.35s ease;
-  background: linear-gradient(135deg, rgba(26, 107, 60, 0.04), rgba(247, 148, 29, 0.04));
+  background: linear-gradient(135deg, rgba(22, 78, 99, 0.09), rgba(37, 201, 208, 0.11));
 }
 
 .stat-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(26, 107, 60, 0.1);
+  box-shadow: 0 16px 48px rgba(11, 41, 64, 0.17), 0 0 0 1px rgba(37, 201, 208, 0.2);
 }
 
 .stat-card:hover::before {
@@ -310,13 +328,13 @@ body {
 
 @keyframes govGlowSweep {
   0% {
-    box-shadow: 0 0 0 0 rgba(26, 107, 60, 0.0);
+    box-shadow: 0 0 0 0 rgba(22, 78, 99, 0.0);
   }
   50% {
-    box-shadow: 0 10px 26px -16px rgba(26, 107, 60, 0.30);
+    box-shadow: 0 10px 26px -16px rgba(22, 78, 99, 0.36);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(26, 107, 60, 0.0);
+    box-shadow: 0 0 0 0 rgba(22, 78, 99, 0.0);
   }
 }
 
@@ -342,7 +360,7 @@ body {
 
 .gov-surface-hover:hover {
   transform: translateY(-2px);
-  border-color: rgba(26, 107, 60, 0.22);
+  border-color: rgba(37, 201, 208, 0.36);
   animation: govGlowSweep 1.8s ease-in-out;
 }
 
@@ -357,14 +375,14 @@ body {
 
 .gov-action-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 18px -12px rgba(20, 82, 46, 0.9);
+  box-shadow: 0 10px 22px -12px rgba(12, 46, 68, 0.9);
 }
 
 /* ─── Page heading styles ─────────────────────────────── */
 .page-heading {
   font-size: 1.75rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #1a6b3c 0%, #0f4a2a 50%, #1a6b3c 100%);
+  background: linear-gradient(135deg, #164e63 0%, #0f3650 50%, #164e63 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

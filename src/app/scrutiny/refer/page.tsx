@@ -41,7 +41,7 @@ function ScrutinyReferPageContent() {
 
   const eligible = applications.filter((a) => ['under_scrutiny', 'eds_raised'].includes(a.status));
   const selectedApp = applications.find((a) => a.id === selectedAppId);
-  const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c]";
+  const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63]";
 
   return (
     <PageShell role="scrutiny">
@@ -51,7 +51,7 @@ function ScrutinyReferPageContent() {
             {isLoading ? <SkeletonLoader /> : error ? <ErrorMessage message={error} /> : (
               <div className="space-y-4">
                 {success && (
-                  <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 text-sm font-semibold">
+                  <div className="flex items-center gap-2 bg-cyan-50 border border-cyan-200 text-cyan-700 rounded-xl px-4 py-3 text-sm font-semibold">
                     <CheckCircle size={16} /> {success}
                   </div>
                 )}

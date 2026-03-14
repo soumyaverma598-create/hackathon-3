@@ -40,7 +40,7 @@ export default function ScrutinyDashboard() {
 
   const statCards = [
     { label: 'Pending Review', value: pending.length, icon: <Clock size={20} />, gradient: 'from-blue-500 to-indigo-600' },
-    { label: 'Open EDS', value: edsOpen.length, icon: <AlertTriangle size={20} />, gradient: 'from-orange-500 to-amber-600' },
+    { label: 'Open EDS', value: edsOpen.length, icon: <AlertTriangle size={20} />, gradient: 'from-sky-500 to-cyan-600' },
     { label: 'Active Cases', value: active.length, icon: <ClipboardList size={20} />, gradient: 'from-purple-500 to-violet-600' },
   ];
 
@@ -103,7 +103,7 @@ export default function ScrutinyDashboard() {
               {applications.map((a, idx) => (
                 <motion.tr
                   key={a.id}
-                  className="hover:bg-[#1a6b3c]/3 transition-colors"
+                  className="hover:bg-[#164e63]/3 transition-colors"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.35 + idx * 0.04 }}
@@ -114,18 +114,18 @@ export default function ScrutinyDashboard() {
                     <p className="text-xs text-gray-400">{a.stateUT}</p>
                   </td>
                   <td className="px-5 py-3">
-                    <span className="text-xs font-bold text-[#f7941d] bg-[#f7941d]/10 px-2 py-0.5 rounded-lg">Cat {a.projectCategory}</span>
+                    <span className="text-xs font-bold text-[#25c9d0] bg-[#25c9d0]/10 px-2 py-0.5 rounded-lg">Cat {a.projectCategory}</span>
                   </td>
                   <td className="px-5 py-3"><StatusBadge status={a.status} /></td>
                   <td className="px-5 py-3 text-center">
                     {a.edsQueries.filter((q) => q.status === 'open').length > 0 ? (
-                      <span className="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-lg">
+                      <span className="text-xs font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-lg">
                         {a.edsQueries.filter((q) => q.status === 'open').length} open
                       </span>
                     ) : <span className="text-gray-300">—</span>}
                   </td>
                   <td className="px-5 py-3">
-                    <Link href={`/scrutiny/review?id=${a.id}`} className="text-xs font-semibold text-[#1a6b3c] hover:underline">Review →</Link>
+                    <Link href={`/scrutiny/review?id=${a.id}`} className="text-xs font-semibold text-[#164e63] hover:underline">Review →</Link>
                   </td>
                 </motion.tr>
               ))}

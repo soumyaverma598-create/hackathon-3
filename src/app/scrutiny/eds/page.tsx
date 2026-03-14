@@ -64,10 +64,10 @@ function ScrutinyEDSPageContent() {
   if (!user) return null;
 
   const edsBadge: Record<EDSQuery['status'], string> = {
-    open: 'bg-orange-100 text-orange-700', responded: 'bg-blue-100 text-blue-700', closed: 'bg-green-100 text-green-700',
+    open: 'bg-sky-100 text-sky-700', responded: 'bg-blue-100 text-blue-700', closed: 'bg-cyan-100 text-cyan-700',
   };
 
-  const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c]";
+  const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63]";
 
   return (
     <PageShell role="scrutiny">
@@ -77,7 +77,7 @@ function ScrutinyEDSPageContent() {
                 <p className="page-subheading">Raise and manage Environmental Data Sheet queries</p>
               </div>
               {selectedAppId && (
-                <button onClick={() => setRaiseMode(!raiseMode)} className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white" style={{ background: 'linear-gradient(135deg, #f7941d, #e07a10)' }}>
+                <button onClick={() => setRaiseMode(!raiseMode)} className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white" style={{ background: 'linear-gradient(135deg, #25c9d0, #179ea8)' }}>
                   <Plus size={15} /> Raise EDS
                 </button>
               )}
@@ -91,12 +91,12 @@ function ScrutinyEDSPageContent() {
               </select>
             </div>
 
-            {success && <div className="mb-3 bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-2.5 text-sm font-semibold">{success}</div>}
+            {success && <div className="mb-3 bg-cyan-50 border border-cyan-200 text-cyan-700 rounded-lg px-4 py-2.5 text-sm font-semibold">{success}</div>}
             {err && <ErrorMessage message={err} className="mb-3" />}
 
             {raiseMode && (
-              <form onSubmit={handleRaise} className="bg-white rounded-xl border border-[#f7941d]/30 shadow-sm p-5 mb-4 space-y-3">
-                <h4 className="font-semibold text-gray-700 flex items-center gap-2"><MessageSquareWarning size={16} className="text-[#f7941d]" /> New EDS Query</h4>
+              <form onSubmit={handleRaise} className="bg-white rounded-xl border border-[#25c9d0]/30 shadow-sm p-5 mb-4 space-y-3">
+                <h4 className="font-semibold text-gray-700 flex items-center gap-2"><MessageSquareWarning size={16} className="text-[#25c9d0]" /> New EDS Query</h4>
                 <div>
                   <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Subject *</label>
                   <input className={inputCls} value={newSubject} onChange={(e) => setNewSubject(e.target.value)} required placeholder="e.g. Water Requirement Details" />
@@ -106,7 +106,7 @@ function ScrutinyEDSPageContent() {
                   <textarea rows={4} className={`${inputCls} resize-none`} value={newDesc} onChange={(e) => setNewDesc(e.target.value)} required placeholder="Detailed query description..." />
                 </div>
                 <div className="flex gap-2">
-                  <button type="submit" disabled={submitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-white disabled:opacity-50" style={{ background: 'linear-gradient(135deg, #1a6b3c, #256b45)' }}>
+                  <button type="submit" disabled={submitting} className="px-4 py-2 rounded-lg text-sm font-semibold text-white disabled:opacity-50" style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}>
                     {submitting ? 'Raising…' : 'Raise Query'}
                   </button>
                   <button type="button" onClick={() => setRaiseMode(false)} className="px-4 py-2 rounded-lg text-sm font-semibold text-gray-600 border border-gray-200 hover:bg-gray-50">Cancel</button>
@@ -121,7 +121,7 @@ function ScrutinyEDSPageContent() {
                  {queries.map((q) => (
                    <div key={q.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
                      <div className="flex items-start gap-3 px-5 py-4 cursor-pointer hover:bg-gray-50" onClick={() => setExpandedId(expandedId === q.id ? null : q.id)}>
-                       <MessageSquareWarning size={16} className="text-[#f7941d] mt-0.5 flex-shrink-0" />
+                       <MessageSquareWarning size={16} className="text-[#25c9d0] mt-0.5 flex-shrink-0" />
                        <div className="flex-1 min-w-0">
                          <span className="text-xs font-mono text-gray-400">{q.queryNumber}</span>
                          <p className="text-sm font-semibold text-gray-700 truncate">{q.subject}</p>
@@ -133,7 +133,7 @@ function ScrutinyEDSPageContent() {
                      </div>
                      {expandedId === q.id && (
                        <div className="px-5 pb-4 border-t border-gray-50 pt-3 space-y-3">
-                         <div className="bg-orange-50 rounded-lg p-3 text-sm text-gray-700 leading-relaxed">{q.description}</div>
+                         <div className="bg-sky-50 rounded-lg p-3 text-sm text-gray-700 leading-relaxed">{q.description}</div>
                          {q.response && (
                            <div className="bg-blue-50 rounded-lg p-3">
                              <p className="text-xs font-semibold text-blue-600 mb-1">Applicant Response</p>
@@ -141,7 +141,7 @@ function ScrutinyEDSPageContent() {
                            </div>
                          )}
                          {q.status === 'responded' && (
-                           <button onClick={() => handleClose(q.id)} className="flex items-center gap-1.5 text-xs font-semibold text-white bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded-lg transition-colors">
+                           <button onClick={() => handleClose(q.id)} className="flex items-center gap-1.5 text-xs font-semibold text-white bg-cyan-600 hover:bg-cyan-700 px-3 py-1.5 rounded-lg transition-colors">
                              <CheckCheck size={13} /> Mark Closed
                            </button>
                          )}

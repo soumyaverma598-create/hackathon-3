@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
-import { Eye, EyeOff, LogIn, Shield, Leaf } from 'lucide-react';
+import { Eye, EyeOff, LogIn, Shield } from 'lucide-react';
 import DynamicBackground from '@/components/DynamicBackground';
 
 const ROLE_HINTS = [
@@ -12,17 +12,6 @@ const ROLE_HINTS = [
   { email: 'scrutiny@moef.gov.in', password: 'scrutiny123', role: 'Scrutiny' },
   { email: 'mom@moef.gov.in', password: 'mom123', role: 'MoM Secretary' },
 ];
-
-// Each leaf gets randomised animation params for a natural feel
-const LEAVES = Array.from({ length: 24 }).map((_, i) => ({
-  left: `${(i * 7 + 3) % 100}%`,
-  top: `${(i * 13 + 5) % 100}%`,
-  size: 18 + (i % 5) * 9,
-  opacity: 0.06 + (i % 4) * 0.04,
-  dur: `${6 + (i % 7) * 1.2}s`,
-  delay: `${-(i * 0.7)}s`,   // negative delay = already mid-animation on load
-  rot: `${i * 47}deg`,
-}));
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -110,34 +99,13 @@ export default function LoginPage() {
 
   return (
     <>
-    <div className="min-h-screen flex relative" style={{ background: 'linear-gradient(135deg, #0f4a2a 0%, #1a6b3c 50%, #0d3d24 100%)' }}>
-      <DynamicBackground variant="landing" />
+    <div className="min-h-screen flex relative" style={{ background: 'linear-gradient(135deg, #0f3650 0%, #164e63 50%, #0c2e44 100%)' }}>
+      <DynamicBackground variant="login" />
       {/* Left branding panel */}
       <div className="hidden lg:flex flex-col justify-center items-center w-1/2 p-12 relative overflow-hidden">
 
-        {/* ── Animated floating leaves ── */}
-        <div className="absolute inset-0 pointer-events-none">
-          {LEAVES.map((leaf, i) => (
-            <Leaf
-              key={i}
-              className="absolute text-white"
-              style={{
-                left: leaf.left,
-                top: leaf.top,
-                width: `${leaf.size}px`,
-                height: `${leaf.size}px`,
-                opacity: leaf.opacity,
-                '--leaf-rot': leaf.rot,
-                '--leaf-dur': leaf.dur,
-                '--leaf-delay': leaf.delay,
-                animation: `leafFloat ${leaf.dur} ease-in-out infinite ${leaf.delay}`,
-              } as React.CSSProperties}
-            />
-          ))}
-        </div>
-
         {/* ── Branding content (staggered entrance) ── */}
-        <div className="relative z-10 text-center">
+        <div className="relative z-10 text-center rounded-[30px] border border-white/36 bg-slate-950/56 px-10 py-10 backdrop-blur-lg shadow-[0_24px_60px_rgba(2,14,28,0.52)]">
 
           {/* Logo with pulse + slow-spin on the spokes */}
           <div
@@ -145,10 +113,10 @@ export default function LoginPage() {
             style={{ animationDelay: `${d + 0}s` }}
           >
             <svg className="w-20 h-20" viewBox="0 0 64 64" fill="none" suppressHydrationWarning>
-              <circle cx="32" cy="32" r="30" fill="#fff" stroke="#1a6b3c" strokeWidth="2"/>
+              <circle cx="32" cy="32" r="30" fill="#fff" stroke="#164e63" strokeWidth="2"/>
               {/* suppressHydrationWarning prevents mismatch on floating-point SVG coords */}
               <g className="animate-spin-slow" style={{ transformOrigin: '32px 32px' }} suppressHydrationWarning>
-                <circle cx="32" cy="32" r="14" fill="none" stroke="#f7941d" strokeWidth="2"/>
+                <circle cx="32" cy="32" r="14" fill="none" stroke="#25c9d0" strokeWidth="2"/>
                 {Array.from({ length: 24 }).map((_, i) => {
                   const angle = (i / 24) * 2 * Math.PI;
                   const r = (n: number) => Math.round(n * 1000) / 1000;
@@ -157,36 +125,36 @@ export default function LoginPage() {
                       key={i}
                       x1={r(32 + 14 * Math.cos(angle))} y1={r(32 + 14 * Math.sin(angle))}
                       x2={r(32 + 18 * Math.cos(angle))} y2={r(32 + 18 * Math.sin(angle))}
-                      stroke="#f7941d" strokeWidth="1"
+                      stroke="#25c9d0" strokeWidth="1"
                       suppressHydrationWarning
                     />
                   );
                 })}
               </g>
-              <text x="32" y="36" fontSize="10" fontWeight="bold" fill="#1a6b3c" textAnchor="middle">अशोक</text>
+              <text x="32" y="36" fontSize="10" fontWeight="bold" fill="#164e63" textAnchor="middle">अशोक</text>
             </svg>
           </div>
 
           <h1
-            className="text-white text-4xl font-extrabold mb-2 tracking-wide animate-fade-slide-up"
+            className="text-white text-4xl font-extrabold mb-2 tracking-wide animate-fade-slide-up [text-shadow:0_8px_24px_rgba(0,0,0,0.45)]"
             style={{ animationDelay: `${d + 0.1}s` }}
           >
             PARIVESH 3.0
           </h1>
           <p
-            className="text-green-200 text-lg font-medium mb-1 animate-fade-slide-up"
+            className="text-cyan-100 text-lg font-semibold mb-1 animate-fade-slide-up"
             style={{ animationDelay: `${d + 0.2}s` }}
           >
             पर्यावरण/ ENVIRONMENT
           </p>
           <p
-            className="text-green-300 text-sm mb-6 animate-fade-slide-up"
+            className="text-cyan-100/95 text-sm mb-6 animate-fade-slide-up"
             style={{ animationDelay: `${d + 0.28}s` }}
           >
             Environmental Clearance Portal
           </p>
           <p
-            className="text-green-200 text-xs max-w-xs leading-relaxed animate-fade-slide-up text-center mx-auto"
+            className="text-cyan-100/90 text-xs max-w-xs leading-relaxed animate-fade-slide-up text-center mx-auto"
             style={{ animationDelay: `${d + 0.34}s` }}
           >
             Ministry of Environment, Forest and Climate Change<br />
@@ -194,7 +162,7 @@ export default function LoginPage() {
           </p>
 
           <div
-            className="mt-8 bg-white/10 rounded-xl p-4 backdrop-blur-sm border border-white/20 animate-fade-slide-up mx-auto max-w-xs text-center"
+            className="mt-8 bg-white/26 rounded-xl p-4 backdrop-blur-sm border border-white/36 animate-fade-slide-up mx-auto max-w-xs text-center"
             style={{ animationDelay: `${d + 0.44}s` }}
           >
             <p className="text-white text-xs font-semibold mb-2 flex items-center justify-center gap-1">
@@ -205,7 +173,7 @@ export default function LoginPage() {
               />
               EIA Notification, 2006
             </p>
-            <p className="text-green-200 text-xs leading-relaxed">
+            <p className="text-cyan-200 text-xs leading-relaxed">
               Digitizing Environmental Clearance for Category A, B1 &amp; B2 projects across India.
             </p>
           </div>
@@ -224,7 +192,7 @@ export default function LoginPage() {
             <div
               className="h-1.5 w-full"
               style={{
-                background: 'linear-gradient(90deg, #1a6b3c, #f7941d, #1a6b3c)',
+                background: 'linear-gradient(90deg, #164e63, #25c9d0, #164e63)',
                 backgroundSize: '200% 100%',
                 animation: 'shimmer 3s linear infinite',
               }}
@@ -236,7 +204,7 @@ export default function LoginPage() {
                 className="lg:hidden text-center mb-6 animate-fade-slide-up"
                 style={{ animationDelay: `${d + 0.1}s` }}
               >
-                <h1 className="text-2xl font-extrabold text-[#1a6b3c]">PARIVESH 3.0</h1>
+                <h1 className="text-2xl font-extrabold text-[#164e63]">PARIVESH 3.0</h1>
                 <p className="text-gray-500 text-sm">Environmental Clearance Portal</p>
               </div>
 
@@ -248,14 +216,14 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => { setLoginMode('official'); setOtpMode(false); clearError(); }}
-                  className={`flex-1 text-xs font-semibold py-2 px-2 rounded-lg transition-all ${loginMode === 'official' ? 'bg-white text-[#1a6b3c] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`flex-1 text-xs font-semibold py-2 px-2 rounded-lg transition-all ${loginMode === 'official' ? 'bg-white text-[#164e63] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                 >
                   Government Officials
                 </button>
                 <button
                   type="button"
                   onClick={() => { setLoginMode('applicant'); clearError(); }}
-                  className={`flex-1 text-xs font-semibold py-2 px-2 rounded-lg transition-all ${loginMode === 'applicant' ? 'bg-white text-[#1a6b3c] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`flex-1 text-xs font-semibold py-2 px-2 rounded-lg transition-all ${loginMode === 'applicant' ? 'bg-white text-[#164e63] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                 >
                   Applicants & Consultants
                 </button>
@@ -278,15 +246,15 @@ export default function LoginPage() {
 
               {error && (
                 error.startsWith('Access to the') ? (
-                  <div className="mb-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 animate-fade-slide-up">
+                  <div className="mb-4 rounded-lg border border-cyan-300 bg-cyan-50 px-4 py-3 animate-fade-slide-up">
                     <div className="flex items-start gap-2.5">
-                      <span className="text-amber-500 text-lg leading-none mt-0.5">⚠</span>
+                      <span className="text-cyan-500 text-lg leading-none mt-0.5">⚠</span>
                       <div>
-                        <p className="text-sm font-semibold text-amber-800">Portal Access Restricted</p>
-                        <p className="mt-0.5 text-xs text-amber-700">{error}</p>
+                        <p className="text-sm font-semibold text-cyan-800">Portal Access Restricted</p>
+                        <p className="mt-0.5 text-xs text-cyan-700">{error}</p>
                         <a
                           href="mailto:admin@moef.gov.in"
-                          className="mt-1.5 inline-block text-xs font-semibold text-amber-800 underline underline-offset-2 hover:text-amber-900"
+                          className="mt-1.5 inline-block text-xs font-semibold text-cyan-800 underline underline-offset-2 hover:text-cyan-900"
                         >
                           Contact admin@moef.gov.in
                         </a>
@@ -339,9 +307,9 @@ export default function LoginPage() {
                       href="https://digilocker.gov.in"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full flex items-center gap-3 border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-green-50 hover:border-[#1a6b3c]/40 transition-all hover:scale-[1.01] no-underline"
+                      className="w-full flex items-center gap-3 border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-cyan-50 hover:border-[#164e63]/40 transition-all hover:scale-[1.01] no-underline"
                     >
-                      <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none" stroke="#1a6b3c" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none" stroke="#164e63" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                       <span className="flex-1">Sign in with DigiLocker (Aadhaar)</span>
                       <svg viewBox="0 0 24 24" className="w-3 h-3 text-gray-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
@@ -376,7 +344,7 @@ export default function LoginPage() {
                     <button
                       type="button"
                       onClick={() => { setOtpMode(false); setOtpSent(false); setOtpCode(''); setOtpContact(''); setOtpError(''); }}
-                      className="text-[#1a6b3c] hover:text-[#0f4a2a] text-xs font-medium transition-colors"
+                      className="text-[#164e63] hover:text-[#0f3650] text-xs font-medium transition-colors"
                     >
                       ← Back
                     </button>
@@ -389,14 +357,14 @@ export default function LoginPage() {
                         value={otpContact}
                         onChange={e => setOtpContact(e.target.value)}
                         placeholder="Mobile number or email address"
-                        className="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c] focus:border-transparent transition-all"
+                        className="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] focus:border-transparent transition-all"
                       />
                       <button
                         type="button"
                         onClick={handleSendOTP}
                         disabled={!otpContact.trim()}
                         className="w-full py-2.5 rounded-lg text-sm font-semibold text-white disabled:opacity-50 transition-all hover:scale-[1.02]"
-                        style={{ background: 'linear-gradient(135deg, #1a6b3c, #256b45)' }}
+                        style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}
                       >
                         Send OTP
                       </button>
@@ -411,7 +379,7 @@ export default function LoginPage() {
                         onChange={e => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                         placeholder="Enter 6-digit OTP"
                         maxLength={6}
-                        className="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c] focus:border-transparent transition-all tracking-[0.6em] text-center font-mono"
+                        className="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] focus:border-transparent transition-all tracking-[0.6em] text-center font-mono"
                       />
                       {otpError && <p className="text-xs text-red-600">{otpError}</p>}
                       <button
@@ -419,7 +387,7 @@ export default function LoginPage() {
                         onClick={handleVerifyOTP}
                         disabled={otpCode.length < 6 || isLoading}
                         className="w-full py-2.5 rounded-lg text-sm font-semibold text-white disabled:opacity-50 transition-all hover:scale-[1.02]"
-                        style={{ background: 'linear-gradient(135deg, #1a6b3c, #256b45)' }}
+                        style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}
                       >
                         {isLoading ? 'Verifying…' : 'Verify & Sign In'}
                       </button>
@@ -443,7 +411,7 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     placeholder={loginMode === 'official' ? 'user@moef.gov.in' : 'name@company.com'}
-                    className="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c] focus:border-transparent transition-all hover:border-[#1a6b3c]/40"
+                    className="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] focus:border-transparent transition-all hover:border-[#164e63]/40"
                   />
                 </div>
 
@@ -462,12 +430,12 @@ export default function LoginPage() {
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       placeholder="••••••••"
-                      className="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm pr-10 focus:outline-none focus:ring-2 focus:ring-[#1a6b3c] focus:border-transparent transition-all hover:border-[#1a6b3c]/40"
+                      className="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm pr-10 focus:outline-none focus:ring-2 focus:ring-[#164e63] focus:border-transparent transition-all hover:border-[#164e63]/40"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPwd(!showPwd)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1a6b3c] transition-colors icon-btn-hover"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#164e63] transition-colors icon-btn-hover"
                     >
                       {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
@@ -480,7 +448,7 @@ export default function LoginPage() {
                   id="login-btn"
                   className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-semibold text-sm text-white transition-all disabled:opacity-60 disabled:cursor-not-allowed hover:scale-[1.02] hover:shadow-lg active:scale-[0.99] animate-fade-slide-up"
                   style={{
-                    background: isLoading ? '#6b7280' : 'linear-gradient(135deg, #1a6b3c, #256b45)',
+                    background: isLoading ? '#6b7280' : 'linear-gradient(135deg, #164e63, #1f7ea4)',
                     animationDelay: `${d + 0.34}s`,
                   }}
                 >
@@ -513,10 +481,10 @@ export default function LoginPage() {
                     <button
                       key={hint.email}
                       onClick={() => fillDemo(hint)}
-                      className="text-left bg-gray-50 hover:bg-green-50 border border-gray-100 hover:border-[#1a6b3c]/30 rounded-lg px-4 py-3 transition-all group hover:scale-[1.03] hover:shadow-sm animate-fade-slide-up"
+                      className="text-left bg-gray-50 hover:bg-cyan-50 border border-gray-100 hover:border-[#164e63]/30 rounded-lg px-4 py-3 transition-all group hover:scale-[1.03] hover:shadow-sm animate-fade-slide-up"
                       style={{ animationDelay: `${d + 0.48 + idx * 0.06}s` }}
                     >
-                      <p className="text-sm font-bold text-[#1a6b3c] group-hover:text-[#0f4a2a]">{hint.role}</p>
+                      <p className="text-sm font-bold text-[#164e63] group-hover:text-[#0f3650]">{hint.role}</p>
                       <p className="text-xs text-gray-400 truncate mt-0.5">{hint.email}</p>
                     </button>
                   ))}
@@ -526,7 +494,7 @@ export default function LoginPage() {
           </div>
 
           <p
-            className="text-center text-green-200 text-[11px] mt-4 animate-fade-slide-up"
+            className="text-center text-cyan-200 text-[11px] mt-4 animate-fade-slide-up"
             style={{ animationDelay: `${d + 0.72}s` }}
           >
             &copy; 2026 MoEFCC, Government of India. All rights reserved.

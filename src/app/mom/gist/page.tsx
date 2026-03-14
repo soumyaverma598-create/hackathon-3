@@ -34,7 +34,7 @@ const GistField = ({
       {editMode ? (
         <textarea 
           rows={rows} 
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c] resize-none" 
+          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] resize-none" 
           value={value ?? ''} 
           onChange={(e) => onChange(field, e.target.value)} 
         />
@@ -95,7 +95,7 @@ function GistPageContent() {
             <div className="glass-card-strong p-4 mb-4">
               <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Select Application</label>
               <select
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c]"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63]"
                 value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)}
               >
                 <option value="">-- Select referred application --</option>
@@ -106,14 +106,14 @@ function GistPageContent() {
             {genError && <ErrorMessage message={genError} className="mb-4" />}
 
             {selectedAppId && !gist && !fetchingGist && (
-              <div className="bg-white rounded-xl border border-dashed border-[#1a6b3c]/30 p-10 text-center">
-                <BookOpen size={40} className="text-[#1a6b3c]/40 mx-auto mb-3" />
+              <div className="bg-white rounded-xl border border-dashed border-[#164e63]/30 p-10 text-center">
+                <BookOpen size={40} className="text-[#164e63]/40 mx-auto mb-3" />
                 <p className="text-gray-500 text-sm mb-4">No gist generated yet for this application.</p>
                 <button
                   onClick={handleGenerate}
                   disabled={generating}
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white disabled:opacity-50"
-                  style={{ background: 'linear-gradient(135deg, #1a6b3c, #256b45)' }}
+                  style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}
                 >
                   <Sparkles size={16} /> {generating ? 'Generating…' : 'Generate Gist with AI'}
                 </button>
@@ -125,27 +125,27 @@ function GistPageContent() {
             {gist && (
               <div className="glass-card-strong p-6 space-y-5">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-gray-800 flex items-center gap-2"><BookOpen size={18} className="text-[#1a6b3c]" /> Project Gist</h3>
+                  <h3 className="font-bold text-gray-800 flex items-center gap-2"><BookOpen size={18} className="text-[#164e63]" /> Project Gist</h3>
                   <div className="flex items-center gap-2">
                     {editMode ? (
                       <>
                         <button
                           onClick={() => { setGist((g) => g ? { ...g, ...edited } : g); setEditMode(false); setEdited({}); }}
-                          className="flex items-center gap-1.5 text-xs font-semibold text-white bg-[#1a6b3c] hover:bg-[#0f4a2a] px-3 py-1.5 rounded-lg"
+                          className="flex items-center gap-1.5 text-xs font-semibold text-white bg-[#164e63] hover:bg-[#0f3650] px-3 py-1.5 rounded-lg"
                         >
                           <CheckCircle size={13} /> Save
                         </button>
                         <button onClick={() => { setEditMode(false); setEdited({}); }} className="text-xs font-semibold text-gray-500 hover:text-gray-700 border border-gray-200 px-3 py-1.5 rounded-lg">Cancel</button>
                       </>
                     ) : (
-                      <button onClick={() => setEditMode(true)} className="flex items-center gap-1.5 text-xs font-semibold text-[#1a6b3c] border border-[#1a6b3c]/30 hover:bg-green-50 px-3 py-1.5 rounded-lg">
+                      <button onClick={() => setEditMode(true)} className="flex items-center gap-1.5 text-xs font-semibold text-[#164e63] border border-[#164e63]/30 hover:bg-cyan-50 px-3 py-1.5 rounded-lg">
                         <Edit3 size={13} /> Edit
                       </button>
                     )}
                     <button
                       onClick={handleGenerate}
                       disabled={generating}
-                      className="flex items-center gap-1.5 text-xs font-semibold text-white bg-[#f7941d] hover:bg-[#e07a10] px-3 py-1.5 rounded-lg disabled:opacity-50"
+                      className="flex items-center gap-1.5 text-xs font-semibold text-white bg-[#25c9d0] hover:bg-[#179ea8] px-3 py-1.5 rounded-lg disabled:opacity-50"
                     >
                       <Sparkles size={13} /> {generating ? 'Regenerating…' : 'Regenerate'}
                     </button>

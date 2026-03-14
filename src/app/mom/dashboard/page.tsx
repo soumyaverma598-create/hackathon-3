@@ -41,7 +41,7 @@ export default function MomDashboard() {
   const statCards = [
     { label: 'Pending EAC Appraisal', value: referred.length, icon: <Calendar size={20} />, gradient: 'from-purple-500 to-violet-600' },
     { label: 'MoM In Draft', value: momDraft.length, icon: <BookOpen size={20} />, gradient: 'from-indigo-500 to-blue-600' },
-    { label: 'EC Granted', value: finalized.length, icon: <CheckCircle size={20} />, gradient: 'from-emerald-500 to-teal-600' },
+    { label: 'EC Granted', value: finalized.length, icon: <CheckCircle size={20} />, gradient: 'from-cyan-500 to-teal-600' },
   ];
 
   return (
@@ -98,7 +98,7 @@ export default function MomDashboard() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: 0.35 + idx * 0.05 }}
                   >
-                    <Link href={`/mom/gist?id=${a.id}`} className="flex items-center gap-4 px-5 py-3.5 hover:bg-[#1a6b3c]/3 transition-colors block">
+                    <Link href={`/mom/gist?id=${a.id}`} className="flex items-center gap-4 px-5 py-3.5 hover:bg-[#164e63]/3 transition-colors block">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-gray-800 truncate">{a.projectName}</p>
                         <p className="text-xs text-gray-400">{a.applicationNumber} &bull; {a.stateUT} &bull; Cat {a.projectCategory}</p>
@@ -106,7 +106,7 @@ export default function MomDashboard() {
                       </div>
                       <div className="flex items-center gap-3">
                         <StatusBadge status={a.status} />
-                        <span className="text-xs font-semibold text-[#1a6b3c] hover:underline whitespace-nowrap">Generate Gist →</span>
+                        <span className="text-xs font-semibold text-[#164e63] hover:underline whitespace-nowrap">Generate Gist →</span>
                       </div>
                     </Link>
                   </motion.div>
@@ -129,7 +129,7 @@ export default function MomDashboard() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: 0.35 + idx * 0.05 }}
                   >
-                    <Link href={`/mom/finalize?id=${a.id}`} className="flex items-center gap-4 px-5 py-3.5 hover:bg-[#1a6b3c]/3 transition-colors block">
+                    <Link href={`/mom/finalize?id=${a.id}`} className="flex items-center gap-4 px-5 py-3.5 hover:bg-[#164e63]/3 transition-colors block">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-gray-800 truncate">{a.projectName}</p>
                         <p className="text-xs text-gray-400">{a.applicationNumber}</p>

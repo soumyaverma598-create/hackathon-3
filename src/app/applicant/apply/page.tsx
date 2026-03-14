@@ -39,7 +39,7 @@ const INITIAL: Partial<FormData> = {
 };
 
 const inputCls =
-  'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c] transition-all';
+  'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] transition-all';
 
 interface FieldProps {
   label: string;
@@ -119,14 +119,14 @@ export default function ApplyPage() {
             <p className="page-subheading mb-6">Fill in all details for Environmental Clearance under EIA Notification, 2006</p>
 
             {success && (
-              <div className="mb-4 bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 text-sm font-semibold">{success}</div>
+              <div className="mb-4 bg-cyan-50 border border-cyan-200 text-cyan-700 rounded-lg px-4 py-3 text-sm font-semibold">{success}</div>
             )}
 
             <form onSubmit={(e) => handleSubmit(e, false)} className="space-y-6">
               {/* Project Details */}
               <div className="glass-card-strong p-6">
                 <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span className="w-6 h-6 bg-[#1a6b3c] text-white text-xs rounded-full flex items-center justify-center font-bold">1</span>
+                  <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">1</span>
                   Project Details
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -169,7 +169,7 @@ export default function ApplyPage() {
               {/* Location */}
               <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
                 <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span className="w-6 h-6 bg-[#1a6b3c] text-white text-xs rounded-full flex items-center justify-center font-bold">2</span>
+                  <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">2</span>
                   Project Location
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -188,7 +188,7 @@ export default function ApplyPage() {
               {/* Proponent Info */}
               <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
                 <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span className="w-6 h-6 bg-[#1a6b3c] text-white text-xs rounded-full flex items-center justify-center font-bold">3</span>
+                  <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">3</span>
                   Proponent / Applicant Details
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -204,7 +204,7 @@ export default function ApplyPage() {
               {/* Required Documents Checklist */}
               <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
                 <h3 className="font-semibold text-gray-700 mb-1 pb-2 border-b border-gray-100 flex items-center gap-2">
-                  <span className="w-6 h-6 bg-[#1a6b3c] text-white text-xs rounded-full flex items-center justify-center font-bold">4</span>
+                  <span className="w-6 h-6 bg-[#164e63] text-white text-xs rounded-full flex items-center justify-center font-bold">4</span>
                   Required Documents Checklist
                 </h3>
                 <p className="text-xs text-gray-400 mb-4">Confirm that the following documents are ready. All mandatory items must be acknowledged before submission.</p>
@@ -216,15 +216,15 @@ export default function ApplyPage() {
                       key={doc.id}
                       className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all select-none ${
                         docChecks[doc.id]
-                          ? 'bg-green-50 border-[#1a6b3c]/40'
-                          : 'bg-gray-50 border-gray-200 hover:border-[#1a6b3c]/30'
+                          ? 'bg-cyan-50 border-[#164e63]/40'
+                          : 'bg-gray-50 border-gray-200 hover:border-[#164e63]/30'
                       }`}
                     >
                       <input
                         type="checkbox"
                         checked={!!docChecks[doc.id]}
                         onChange={() => toggleDoc(doc.id)}
-                        className="mt-0.5 w-4 h-4 accent-[#1a6b3c] shrink-0 cursor-pointer"
+                        className="mt-0.5 w-4 h-4 accent-[#164e63] shrink-0 cursor-pointer"
                       />
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-gray-800">{doc.label}</p>
@@ -260,7 +260,7 @@ export default function ApplyPage() {
                 </div>
 
                 {!allMandatoryChecked && (
-                  <p className="mt-4 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                  <p className="mt-4 text-xs text-cyan-700 bg-cyan-50 border border-cyan-200 rounded-lg px-3 py-2">
                     ⚠ Please acknowledge all <strong>mandatory documents</strong> before submitting the application.
                   </p>
                 )}
@@ -284,7 +284,7 @@ export default function ApplyPage() {
                   disabled={isLoading || !allMandatoryChecked}
                   title={!allMandatoryChecked ? 'Acknowledge all mandatory documents first' : ''}
                   className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ background: 'linear-gradient(135deg, #1a6b3c, #256b45)' }}
+                  style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}
                 >
                   {isLoading ? 'Submitting…' : <><Send size={15} /> Submit Application</>}
                 </button>

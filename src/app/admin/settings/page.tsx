@@ -90,19 +90,19 @@ export default function AdminSettingsPage() {
                   <Link
                     key={section.href}
                     href={section.href}
-                    className="group glass-card-strong p-5 focus:outline-none focus:ring-2 focus:ring-[#1a6b3c]/20 animate-gov-enter gov-surface-hover"
+                    className="group glass-card-strong p-5 focus:outline-none focus:ring-2 focus:ring-[#164e63]/20 animate-gov-enter gov-surface-hover"
                     style={{ animationDelay: `${0.1 + idx * 0.06}s` }}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2 mb-2">
-                          <Icon size={16} className="text-[#1a6b3c] transition-transform duration-200 group-hover:scale-105" />
+                          <Icon size={16} className="text-[#164e63] transition-transform duration-200 group-hover:scale-105" />
                           <h3 className="font-semibold text-gray-800 text-sm">{section.title}</h3>
                         </div>
                         <p className="text-sm text-gray-500">{section.description}</p>
                         <p className="mt-3 text-xs text-gray-400">{section.summary}</p>
                       </div>
-                      <ChevronRight size={18} className="text-gray-300 transition-transform duration-200 group-hover:text-[#1a6b3c] group-hover:translate-x-1" />
+                      <ChevronRight size={18} className="text-gray-300 transition-transform duration-200 group-hover:text-[#164e63] group-hover:translate-x-1" />
                     </div>
                   </Link>
                 );

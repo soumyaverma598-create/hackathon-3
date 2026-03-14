@@ -43,8 +43,8 @@ export default function ApplicantDashboard() {
 
   const statCards = [
     { label: 'Total Applications', value: stats.total, icon: <FolderOpen size={20} />, gradient: 'from-blue-500 to-indigo-600' },
-    { label: 'Active', value: stats.active, icon: <TrendingUp size={20} />, gradient: 'from-orange-500 to-amber-600' },
-    { label: 'EC Granted', value: stats.granted, icon: <FilePlus size={20} />, gradient: 'from-emerald-500 to-teal-600' },
+    { label: 'Active', value: stats.active, icon: <TrendingUp size={20} />, gradient: 'from-sky-500 to-cyan-600' },
+    { label: 'EC Granted', value: stats.granted, icon: <FilePlus size={20} />, gradient: 'from-cyan-500 to-teal-600' },
     { label: 'Draft', value: stats.pending, icon: <Clock size={20} />, gradient: 'from-gray-500 to-slate-600' },
   ];
 
@@ -65,7 +65,7 @@ export default function ApplicantDashboard() {
           href="/applicant/apply"
           className="group flex items-center gap-2 text-sm font-semibold text-white px-5 py-2.5 rounded-xl shadow-lg transition-all hover:scale-105 hover:shadow-xl active:scale-95"
           style={{
-            background: 'linear-gradient(135deg, #1a6b3c, #256b45)',
+            background: 'linear-gradient(135deg, #164e63, #1f7ea4)',
             boxShadow: '0 4px 16px rgba(26,107,60,0.25)',
           }}
         >
@@ -101,7 +101,7 @@ export default function ApplicantDashboard() {
           title="No applications yet"
           message="Start by creating your first Environmental Clearance application."
           action={
-            <Link href="/applicant/apply" className="inline-flex items-center gap-2 bg-[#1a6b3c] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#0f4a2a] transition-colors shadow-md">
+            <Link href="/applicant/apply" className="inline-flex items-center gap-2 bg-[#164e63] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#0f3650] transition-colors shadow-md">
               Create Application
             </Link>
           }
@@ -124,7 +124,7 @@ export default function ApplicantDashboard() {
                   <div className="flex items-center gap-2 flex-wrap mb-1">
                     <span className="text-xs font-mono text-gray-400">{app.applicationNumber}</span>
                     <span className="text-xs text-gray-300">|</span>
-                    <span className="text-xs font-semibold text-[#f7941d]">{app.projectCategory} Category</span>
+                    <span className="text-xs font-semibold text-[#25c9d0]">{app.projectCategory} Category</span>
                   </div>
                   <h3 className="font-semibold text-gray-800 truncate">{app.projectName}</h3>
                   <p className="text-sm text-gray-400 mt-0.5">{app.stateUT} &bull; {app.projectSector}</p>
@@ -137,19 +137,19 @@ export default function ApplicantDashboard() {
                   <span>Applied: {app.submittedAt ? new Date(app.submittedAt).toLocaleDateString('en-IN') : 'Not submitted'}</span>
                   <span>
                     Payment:{' '}
-                    <span className={app.paymentStatus === 'paid' || app.paymentStatus === 'verified' ? 'text-green-600 font-semibold' : 'text-orange-500 font-semibold'}>
+                    <span className={app.paymentStatus === 'paid' || app.paymentStatus === 'verified' ? 'text-cyan-600 font-semibold' : 'text-sky-500 font-semibold'}>
                       {app.paymentStatus}
                     </span>
                   </span>
                   {app.edsQueries.filter((q) => q.status === 'open').length > 0 && (
-                    <span className="text-orange-600 font-semibold">
+                    <span className="text-sky-600 font-semibold">
                       {app.edsQueries.filter((q) => q.status === 'open').length} EDS open
                     </span>
                   )}
                 </div>
                 <Link
                   href={`/applicant/eds?id=${app.id}`}
-                  className="text-xs text-[#1a6b3c] font-semibold hover:underline"
+                  className="text-xs text-[#164e63] font-semibold hover:underline"
                 >
                   View Details →
                 </Link>

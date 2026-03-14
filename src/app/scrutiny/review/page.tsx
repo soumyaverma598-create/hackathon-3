@@ -43,7 +43,7 @@ function ScrutinyReviewPageContent() {
   return (
     <PageShell role="scrutiny">
             <div className="flex items-center gap-3 mb-5">
-              <Link href="/scrutiny/dashboard" className="text-gray-400 hover:text-[#1a6b3c] transition-colors">
+              <Link href="/scrutiny/dashboard" className="text-gray-400 hover:text-[#164e63] transition-colors">
                 <ChevronLeft size={20} />
               </Link>
               <h2 className="page-heading" style={{marginBottom:0}}>Application Review</h2>
@@ -54,7 +54,7 @@ function ScrutinyReviewPageContent() {
              !app ? null : (
               <div className="space-y-4">
                 {success && (
-                  <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 text-sm font-semibold">
+                  <div className="flex items-center gap-2 bg-cyan-50 border border-cyan-200 text-cyan-700 rounded-xl px-4 py-3 text-sm font-semibold">
                     <CheckCircle size={16} /> {success}
                   </div>
                 )}
@@ -99,7 +99,7 @@ function ScrutinyReviewPageContent() {
                       <div className="space-y-1.5">
                         {app.documents.map((d) => (
                           <div key={d.id} className="flex items-center gap-2 text-xs text-gray-600">
-                            <FileText size={13} className="text-[#1a6b3c] flex-shrink-0" />
+                            <FileText size={13} className="text-[#164e63] flex-shrink-0" />
                             <span>{d.name}</span>
                             <span className="text-gray-300">({(d.size / 1024 / 1024).toFixed(2)} MB)</span>
                           </div>
@@ -114,9 +114,9 @@ function ScrutinyReviewPageContent() {
                       <div className="space-y-1.5">
                         {app.edsQueries.map((q) => (
                           <div key={q.id} className="flex items-center gap-2 text-xs">
-                            <AlertTriangle size={13} className="text-orange-400 flex-shrink-0" />
+                            <AlertTriangle size={13} className="text-sky-400 flex-shrink-0" />
                             <span className="text-gray-600">{q.queryNumber}: {q.subject}</span>
-                            <span className={`ml-auto px-2 py-0.5 rounded-full font-semibold ${q.status === 'open' ? 'bg-orange-100 text-orange-600' : q.status === 'responded' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}>
+                            <span className={`ml-auto px-2 py-0.5 rounded-full font-semibold ${q.status === 'open' ? 'bg-sky-100 text-sky-600' : q.status === 'responded' ? 'bg-blue-100 text-blue-600' : 'bg-cyan-100 text-cyan-600'}`}>
                               {q.status}
                             </span>
                           </div>
@@ -133,7 +133,7 @@ function ScrutinyReviewPageContent() {
                     <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Remarks</label>
                     <textarea
                       rows={3}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c] resize-none"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] resize-none"
                       placeholder="Add review remarks (optional for most actions)..."
                       value={remarks}
                       onChange={(e) => setRemarks(e.target.value)}
@@ -150,7 +150,7 @@ function ScrutinyReviewPageContent() {
                       </button>
                     )}
                     <Link href={`/scrutiny/eds?id=${app.id}`}>
-                      <button className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors">
+                      <button className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-sky-500 hover:bg-sky-600 transition-colors">
                         Raise EDS Query
                       </button>
                     </Link>

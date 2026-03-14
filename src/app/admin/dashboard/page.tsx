@@ -39,8 +39,8 @@ export default function AdminDashboard() {
   const statCards = [
     { label: 'Total Users', value: MOCK_USERS.length, icon: <Users size={20} />, gradient: 'from-blue-500 to-indigo-600' },
     { label: 'Total Applications', value: applications.length, icon: <FileStack size={20} />, gradient: 'from-purple-500 to-violet-600' },
-    { label: 'EC Granted', value: byStatus('finalized'), icon: <ShieldCheck size={20} />, gradient: 'from-emerald-500 to-teal-600' },
-    { label: 'Active Cases', value: applications.filter((a) => !['draft', 'finalized'].includes(a.status)).length, icon: <Database size={20} />, gradient: 'from-orange-500 to-amber-600' },
+    { label: 'EC Granted', value: byStatus('finalized'), icon: <ShieldCheck size={20} />, gradient: 'from-cyan-500 to-teal-600' },
+    { label: 'Active Cases', value: applications.filter((a) => !['draft', 'finalized'].includes(a.status)).length, icon: <Database size={20} />, gradient: 'from-sky-500 to-cyan-600' },
   ];
 
   return (
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
         transition={{ duration: 0.5, delay: 0.3 }}
       >
         <div className="px-5 py-4 border-b border-gray-100/50 flex items-center gap-2">
-          <Users size={16} className="text-[#1a6b3c]" />
+          <Users size={16} className="text-[#164e63]" />
           <h3 className="font-semibold text-gray-700 text-sm">Registered Users</h3>
         </div>
         <table className="w-full">
@@ -99,7 +99,7 @@ export default function AdminDashboard() {
             {MOCK_USERS.map((u, idx) => (
               <motion.tr
                 key={u.id}
-                className="hover:bg-[#1a6b3c]/3 transition-colors"
+                className="hover:bg-[#164e63]/3 transition-colors"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.35 + idx * 0.04 }}
@@ -107,11 +107,11 @@ export default function AdminDashboard() {
                 <td className="px-5 py-3 font-medium text-gray-800">{u.name}</td>
                 <td className="px-5 py-3 text-gray-500">{u.email}</td>
                 <td className="px-5 py-3">
-                  <span className="text-xs font-semibold bg-[#1a6b3c]/10 text-[#1a6b3c] px-2.5 py-0.5 rounded-lg capitalize">{u.role}</span>
+                  <span className="text-xs font-semibold bg-[#164e63]/10 text-[#164e63] px-2.5 py-0.5 rounded-lg capitalize">{u.role}</span>
                 </td>
                 <td className="px-5 py-3 text-gray-400 text-xs max-w-40 truncate">{u.department}</td>
                 <td className="px-5 py-3">
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-lg ${u.isActive ? 'bg-green-100/80 text-green-700' : 'bg-red-100/80 text-red-600'}`}>
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-lg ${u.isActive ? 'bg-cyan-100/80 text-cyan-700' : 'bg-red-100/80 text-red-600'}`}>
                     {u.isActive ? 'Active' : 'Inactive'}
                   </span>
                 </td>
@@ -129,7 +129,7 @@ export default function AdminDashboard() {
         transition={{ duration: 0.5, delay: 0.45 }}
       >
         <div className="px-5 py-4 border-b border-gray-100/50 flex items-center gap-2">
-          <FileStack size={16} className="text-[#1a6b3c]" />
+          <FileStack size={16} className="text-[#164e63]" />
           <h3 className="font-semibold text-gray-700 text-sm">All Applications</h3>
         </div>
         {isLoading ? <div className="p-4"><SkeletonLoader variant="table" /></div> :
@@ -149,7 +149,7 @@ export default function AdminDashboard() {
               {applications.map((a, idx) => (
                 <motion.tr
                   key={a.id}
-                  className="hover:bg-[#1a6b3c]/3 transition-colors"
+                  className="hover:bg-[#164e63]/3 transition-colors"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.5 + idx * 0.04 }}
@@ -159,7 +159,7 @@ export default function AdminDashboard() {
                   <td className="px-5 py-3 text-gray-500 text-xs">{a.proponentName}</td>
                   <td className="px-5 py-3"><StatusBadge status={a.status} /></td>
                   <td className="px-5 py-3">
-                    <span className="text-xs font-semibold bg-[#f7941d]/10 text-[#f7941d] px-2 py-0.5 rounded-lg">Cat. {a.projectCategory}</span>
+                    <span className="text-xs font-semibold bg-[#25c9d0]/10 text-[#25c9d0] px-2 py-0.5 rounded-lg">Cat. {a.projectCategory}</span>
                   </td>
                 </motion.tr>
               ))}

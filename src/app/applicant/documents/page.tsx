@@ -57,7 +57,7 @@ function DocumentsPageContent() {
                 <div className="glass-card-strong p-4">
                   <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Select Application</label>
                   <select
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c]"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63]"
                     value={selectedAppId}
                     onChange={(e) => { setSelectedAppId(e.target.value); setUploadSuccess(''); setUploadError(''); }}
                   >
@@ -74,14 +74,14 @@ function DocumentsPageContent() {
                     <h3 className="font-semibold text-gray-700 mb-4">Upload Files</h3>
 
                     {uploadSuccess && (
-                      <div className="mb-4 flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 text-sm">
+                      <div className="mb-4 flex items-center gap-2 bg-cyan-50 border border-cyan-200 text-cyan-700 rounded-lg px-4 py-3 text-sm">
                         <CheckCircle size={16} /> {uploadSuccess}
                       </div>
                     )}
                     {uploadError && <ErrorMessage message={uploadError} className="mb-4" />}
 
-                    <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-10 cursor-pointer transition-all ${uploading ? 'border-gray-200 bg-gray-50' : 'border-[#1a6b3c]/40 hover:border-[#1a6b3c] hover:bg-green-50'}`}>
-                      <Upload size={32} className={uploading ? 'text-gray-300' : 'text-[#1a6b3c]'} />
+                    <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-10 cursor-pointer transition-all ${uploading ? 'border-gray-200 bg-gray-50' : 'border-[#164e63]/40 hover:border-[#164e63] hover:bg-cyan-50'}`}>
+                      <Upload size={32} className={uploading ? 'text-gray-300' : 'text-[#164e63]'} />
                       <p className="mt-3 text-sm font-semibold text-gray-600">
                         {uploading ? 'Uploading…' : 'Click to upload or drag & drop'}
                       </p>
@@ -103,7 +103,7 @@ function DocumentsPageContent() {
                         <div className="space-y-2">
                           {selectedApp.documents.map((doc) => (
                             <div key={doc.id} className="flex items-center gap-3 bg-gray-50 rounded-lg px-3 py-2.5 border border-gray-100">
-                              <FileText size={16} className="text-[#1a6b3c] flex-shrink-0" />
+                              <FileText size={16} className="text-[#164e63] flex-shrink-0" />
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-gray-700 truncate">{doc.name}</p>
                                 <p className="text-xs text-gray-400">{(doc.size / 1024 / 1024).toFixed(2)} MB &bull; {new Date(doc.uploadedAt).toLocaleDateString('en-IN')}</p>

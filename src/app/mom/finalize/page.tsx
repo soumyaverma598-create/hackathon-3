@@ -90,7 +90,7 @@ function MomFinalizePageContent() {
   if (!user) return null;
 
   const eligible = applications.filter((a) => ['referred', 'mom_draft', 'finalized'].includes(a.status));
-  const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c] transition-all";
+  const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] transition-all";
 
   return (
     <PageShell role="mom">
@@ -99,7 +99,7 @@ function MomFinalizePageContent() {
 
             <div className="glass-card-strong p-4 mb-4">
               <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Select Application</label>
-              <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c]" value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)}>
+              <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63]" value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)}>
                 <option value="">-- Select application --</option>
                 {eligible.map((a) => <option key={a.id} value={a.id}>{a.applicationNumber} — {a.projectName}</option>)}
               </select>
@@ -108,12 +108,12 @@ function MomFinalizePageContent() {
             {err && <ErrorMessage message={err} className="mb-4" />}
 
             {success && (
-              <div className="mb-4 flex items-start gap-2 bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 text-sm font-semibold">
+              <div className="mb-4 flex items-start gap-2 bg-cyan-50 border border-cyan-200 text-cyan-700 rounded-xl px-4 py-3 text-sm font-semibold">
                 <CheckCircle size={16} className="mt-0.5 flex-shrink-0" />
                 <div>
                   <p>{success}</p>
                   {certUrl && (
-                    <a href={certUrl} className="flex items-center gap-1 text-green-700 underline mt-1 text-xs" target="_blank">
+                    <a href={certUrl} className="flex items-center gap-1 text-cyan-700 underline mt-1 text-xs" target="_blank">
                       <FileDown size={12} /> Download EC Certificate
                     </a>
                   )}
@@ -138,7 +138,7 @@ function MomFinalizePageContent() {
                 {/* MoM Editor */}
                 <div className="glass-card-strong p-5">
                   <h3 className="font-semibold text-gray-700 mb-4 flex items-center gap-2">
-                    <ScrollText size={16} className="text-[#1a6b3c]" /> Minutes of Meeting
+                    <ScrollText size={16} className="text-[#164e63]" /> Minutes of Meeting
                   </h3>
                   <div className="grid grid-cols-2 gap-3 mb-3">
                     <div>
@@ -160,7 +160,7 @@ function MomFinalizePageContent() {
                       placeholder="Paste or type the full Minutes of Meeting here..."
                     />
                   </div>
-                  <button onClick={doSave} disabled={loading || !selectedAppId} className="px-4 py-2 rounded-lg text-sm font-semibold text-white disabled:opacity-50" style={{ background: 'linear-gradient(135deg, #1a6b3c, #256b45)' }}>
+                  <button onClick={doSave} disabled={loading || !selectedAppId} className="px-4 py-2 rounded-lg text-sm font-semibold text-white disabled:opacity-50" style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}>
                     {loading ? 'Saving…' : 'Save MoM'}
                   </button>
                 </div>
@@ -182,7 +182,7 @@ function MomFinalizePageContent() {
                         onClick={doFinalize}
                         disabled={loading || !selectedAppId}
                         className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white disabled:opacity-50 transition-all shadow-md"
-                        style={{ background: 'linear-gradient(135deg, #1a6b3c, #f7941d)' }}
+                        style={{ background: 'linear-gradient(135deg, #164e63, #25c9d0)' }}
                       >
                         <Stamp size={15} /> {loading ? 'Finalizing…' : 'Finalize & Issue EC Certificate'}
                       </button>
@@ -191,7 +191,7 @@ function MomFinalizePageContent() {
                     {selectedApp.status === 'finalized' && (
                       <button
                         onClick={async () => { const c = await downloadCertificate(selectedApp.id); window.open(c.url); }}
-                        className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-green-600 hover:bg-green-700 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-cyan-600 hover:bg-cyan-700 transition-colors"
                       >
                         <FileDown size={15} /> Download EC Certificate
                       </button>
@@ -199,7 +199,7 @@ function MomFinalizePageContent() {
                   </div>
 
                   {selectedApp.status === 'finalized' && (
-                    <div className="mt-4 flex items-center gap-2 text-green-700 text-sm font-semibold bg-green-50 border border-green-200 rounded-lg px-4 py-2.5">
+                    <div className="mt-4 flex items-center gap-2 text-cyan-700 text-sm font-semibold bg-cyan-50 border border-cyan-200 rounded-lg px-4 py-2.5">
                       <CheckCircle size={16} /> EC Certificate has been issued. Finalized on {selectedApp.finalizedAt ? new Date(selectedApp.finalizedAt).toLocaleDateString('en-IN') : '—'}.
                     </div>
                   )}

@@ -64,9 +64,9 @@ function ApplicantEDSPageContent() {
   if (!user) return null;
 
   const edsBadge: Record<EDSQuery['status'], string> = {
-    open: 'bg-orange-100 text-orange-700',
+    open: 'bg-sky-100 text-sky-700',
     responded: 'bg-blue-100 text-blue-700',
-    closed: 'bg-green-100 text-green-700',
+    closed: 'bg-cyan-100 text-cyan-700',
   };
 
   return (
@@ -78,7 +78,7 @@ function ApplicantEDSPageContent() {
             <div className="glass-card-strong p-4 mb-4">
               <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Select Application</label>
               <select
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c]"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63]"
                 value={selectedAppId}
                 onChange={(e) => setSelectedAppId(e.target.value)}
               >
@@ -103,7 +103,7 @@ function ApplicantEDSPageContent() {
                        onClick={() => setExpandedId(expandedId === q.id ? null : q.id)}
                      >
                        <div className="flex items-start gap-3 flex-1 min-w-0">
-                         <MessageSquare size={18} className="text-[#f7941d] mt-0.5 flex-shrink-0" />
+                         <MessageSquare size={18} className="text-[#25c9d0] mt-0.5 flex-shrink-0" />
                          <div className="min-w-0">
                            <span className="text-xs font-mono text-gray-400">{q.queryNumber}</span>
                            <p className="font-semibold text-gray-700 text-sm">{q.subject}</p>
@@ -117,8 +117,8 @@ function ApplicantEDSPageContent() {
 
                      {expandedId === q.id && (
                        <div className="px-5 pb-5 border-t border-gray-50">
-                         <div className="bg-orange-50 rounded-lg p-3 mt-3 mb-4">
-                           <p className="text-xs font-semibold text-orange-600 mb-1">Query Description</p>
+                         <div className="bg-sky-50 rounded-lg p-3 mt-3 mb-4">
+                           <p className="text-xs font-semibold text-sky-600 mb-1">Query Description</p>
                            <p className="text-sm text-gray-700 leading-relaxed">{q.description}</p>
                            <p className="text-xs text-gray-400 mt-2">Raised by {q.raisedBy} on {new Date(q.raisedAt).toLocaleDateString('en-IN')}</p>
                          </div>
@@ -132,7 +132,7 @@ function ApplicantEDSPageContent() {
                          )}
 
                          {successMsg[q.id] && (
-                           <p className="text-sm text-green-600 font-semibold mb-3">{successMsg[q.id]}</p>
+                           <p className="text-sm text-cyan-600 font-semibold mb-3">{successMsg[q.id]}</p>
                          )}
 
                          {q.status === 'open' && (
@@ -142,7 +142,7 @@ function ApplicantEDSPageContent() {
                              </label>
                              <textarea
                                rows={4}
-                               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c] resize-none"
+                               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] resize-none"
                                placeholder="Type your detailed response here..."
                                value={responses[q.id] ?? ''}
                                onChange={(e) => setResponses((r) => ({ ...r, [q.id]: e.target.value }))}
@@ -151,7 +151,7 @@ function ApplicantEDSPageContent() {
                                onClick={() => handleRespond(q.id)}
                                disabled={submitting[q.id] || !responses[q.id]?.trim()}
                                className="mt-2 flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-50"
-                               style={{ background: 'linear-gradient(135deg, #1a6b3c, #256b45)' }}
+                               style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}
                              >
                                <Send size={14} /> {submitting[q.id] ? 'Submitting…' : 'Submit Response'}
                              </button>

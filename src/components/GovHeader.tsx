@@ -93,54 +93,50 @@ export default function GovHeader() {
   };
 
   return (
-    <header className="w-full animate-fade-slide-up relative z-50">
-      {/* Top shimmer accent bar */}
+    <header className="sticky top-0 z-50 px-4 pt-4 animate-fade-slide-up">
       <div
-        className="h-1 w-full"
+        className="glass-dark rounded-2xl border shadow-[0_16px_40px_rgba(4,18,34,0.35)] overflow-hidden"
         style={{
-          background: 'linear-gradient(90deg, #f7941d, #ffb84d, #f7941d)',
-          backgroundSize: '200% 100%',
-          animation: 'shimmer 3.5s linear infinite',
-        }}
-      />
-
-      {/* Main header — glassmorphic dark glass */}
-      <div
-        className="glass-dark"
-        style={{
-          background: 'rgba(15, 74, 42, 0.92)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          background: 'linear-gradient(135deg, rgba(7,34,53,0.97), rgba(11,52,79,0.95))',
+          borderColor: 'rgba(122,232,239,0.24)',
         }}
       >
-        <div className="flex items-center justify-between px-6 py-3">
+        <div
+          className="h-[2px] w-full"
+          style={{
+            background: 'linear-gradient(90deg, rgba(37,201,208,0.25), rgba(122,232,239,0.75), rgba(37,201,208,0.25))',
+            backgroundSize: '200% 100%',
+            animation: 'shimmer 3.5s linear infinite',
+          }}
+        />
+
+        <div className="flex items-center justify-between px-5 py-3">
           {/* Left: Emblem + Title */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 min-w-0">
             {/* National Emblem */}
-            <div className="w-11 h-11 bg-white/95 rounded-full flex items-center justify-center shadow-lg flex-shrink-0 animate-pulse-soft ring-2 ring-white/10">
+            <div className="w-11 h-11 bg-white/95 rounded-full flex items-center justify-center shadow-lg flex-shrink-0 ring-2 ring-white/24">
               <svg className="w-9 h-9" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" suppressHydrationWarning>
-                <circle cx="32" cy="32" r="30" fill="#fff" stroke="#1a6b3c" strokeWidth="2"/>
+                <circle cx="32" cy="32" r="30" fill="#fff" stroke="#164e63" strokeWidth="2"/>
                 <g className="animate-spin-slow" style={{ transformOrigin: '32px 32px' }} suppressHydrationWarning>
-                  <circle cx="32" cy="32" r="14" fill="none" stroke="#f7941d" strokeWidth="2"/>
+                  <circle cx="32" cy="32" r="14" fill="none" stroke="#25c9d0" strokeWidth="2"/>
                   {Array.from({ length: 24 }).map((_, i) => {
                     const angle = (i / 24) * 2 * Math.PI;
                     const r = (n: number) => Math.round(n * 1000) / 1000;
-                    return <line key={i} x1={r(32 + 14 * Math.cos(angle))} y1={r(32 + 14 * Math.sin(angle))} x2={r(32 + 17 * Math.cos(angle))} y2={r(32 + 17 * Math.sin(angle))} stroke="#f7941d" strokeWidth="1" suppressHydrationWarning />;
+                    return <line key={i} x1={r(32 + 14 * Math.cos(angle))} y1={r(32 + 14 * Math.sin(angle))} x2={r(32 + 17 * Math.cos(angle))} y2={r(32 + 17 * Math.sin(angle))} stroke="#25c9d0" strokeWidth="1" suppressHydrationWarning />;
                   })}
                 </g>
-                <text x="32" y="36" fontSize="12" fontWeight="bold" fill="#1a6b3c" textAnchor="middle">अशोक</text>
+                <text x="32" y="36" fontSize="12" fontWeight="bold" fill="#164e63" textAnchor="middle">अशोक</text>
               </svg>
             </div>
 
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h1 className="text-white text-xl font-bold tracking-wide">PARIVESH 3.0</h1>
+                <h1 className="text-white text-lg sm:text-xl font-bold tracking-wide truncate">PARIVESH 3.0</h1>
                 <Shield
-                  className="text-[#f7941d] w-4 h-4 transition-all duration-300 hover:scale-125 hover:drop-shadow-[0_0_6px_rgba(247,148,29,0.9)]"
+                  className="text-[#25c9d0] w-4 h-4 transition-all duration-300 hover:scale-125 hover:drop-shadow-[0_0_6px_rgba(37,201,208,0.9)]"
                 />
               </div>
-              <p className="text-green-200/70 text-xs">
+              <p className="text-cyan-200/80 text-[11px] sm:text-xs truncate">
                 Ministry of Environment, Forest and Climate Change &bull; GoI
               </p>
             </div>
@@ -148,19 +144,19 @@ export default function GovHeader() {
 
           {/* Right: user info + notifications + logout */}
           {user && (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               {/* Notification bell */}
               <div className="relative" ref={notifRef}>
                 <button
                   onClick={handleBellClick}
-                  className="relative p-2.5 rounded-xl hover:bg-white/10 transition-all duration-200 hover:scale-105"
+                  className="relative p-2.5 rounded-xl bg-white/16 hover:bg-white/28 border border-white/24 transition-all duration-200 hover:scale-105"
                 >
                   <Bell
                     className="text-white/80 w-5 h-5 transition-transform"
                     style={bellAnimating ? { animation: 'wiggle 0.5s ease-in-out' } : undefined}
                   />
                   {unread > 0 && (
-                    <span className="absolute top-1 right-1 bg-[#f7941d] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse-soft shadow-lg shadow-orange-500/30">
+                    <span className="absolute top-1 right-1 bg-[#25c9d0] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse-soft shadow-lg shadow-cyan-500/30">
                       {unread}
                     </span>
                   )}
@@ -173,7 +169,7 @@ export default function GovHeader() {
                       {unread > 0 && (
                         <button
                           onClick={() => { markAllRead(user.id); setShowNotifs(false); }}
-                          className="text-xs text-[#1a6b3c] hover:underline transition-colors font-medium"
+                          className="text-xs text-[#164e63] hover:underline transition-colors font-medium"
                         >
                           Mark all read
                         </button>
@@ -186,8 +182,8 @@ export default function GovHeader() {
                         notifications.map((n, idx) => (
                           <div
                             key={n.id}
-                            className={`px-4 py-3 border-b border-gray-50/50 hover:bg-[#1a6b3c]/5 cursor-pointer transition-colors animate-fade-slide-up ${
-                              !n.isRead ? 'bg-green-50/50' : ''
+                            className={`px-4 py-3 border-b border-gray-50/50 hover:bg-[#164e63]/5 cursor-pointer transition-colors animate-fade-slide-up ${
+                              !n.isRead ? 'bg-cyan-50/50' : ''
                             }`}
                             style={{ animationDelay: `${idx * 0.04}s` }}
                           >
@@ -208,21 +204,21 @@ export default function GovHeader() {
                 <button
                   type="button"
                   onClick={() => { setShowProfileMenu((s) => !s); setShowNotifs(false); }}
-                  className="flex items-center gap-2 rounded-xl px-3 py-2 hover:bg-white/10 transition-all duration-200"
+                  className="flex items-center gap-2 rounded-xl px-3 py-2 bg-white/16 hover:bg-white/28 border border-white/24 transition-all duration-200"
                 >
                   <div className="text-right hidden sm:block">
                     <p className="text-white text-sm font-semibold">{user.name}</p>
-                    <p className="text-green-200/60 text-xs">{user.designation}</p>
+                    <p className="text-cyan-200/60 text-xs">{user.designation}</p>
                   </div>
                   <span className={`${roleBadgeColors[user.role]} backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 transition-all hover:scale-105 shadow-sm`}>
                     {roleLabels[user.role]}
                   </span>
-                  <ChevronDown className={`text-green-200/60 w-4 h-4 transition-transform duration-300 ${showProfileMenu ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`text-cyan-200/75 w-4 h-4 transition-transform duration-300 ${showProfileMenu ? 'rotate-180' : ''}`} />
                 </button>
 
                 {showProfileMenu && (
                   <div className="absolute right-0 top-14 w-[21rem] glass-card-strong rounded-xl shadow-2xl z-50 animate-slide-down overflow-hidden">
-                    <div className="px-4 py-3 border-b border-gray-100/50 bg-gradient-to-r from-[#1a6b3c]/5 to-transparent">
+                    <div className="px-4 py-3 border-b border-gray-100/50 bg-gradient-to-r from-[#164e63]/5 to-transparent">
                       <p className="text-sm font-semibold text-gray-800">{user.name}</p>
                       <p className="text-xs text-gray-500 mt-0.5">{user.designation}</p>
                     </div>
@@ -240,7 +236,7 @@ export default function GovHeader() {
                         {QUICK_SWITCH_CREDENTIALS.map((item) => (
                           <div
                             key={item.email}
-                            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-100/50 hover:bg-[#1a6b3c]/5 hover:border-[#1a6b3c]/20 transition-all"
+                            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-100/50 hover:bg-[#164e63]/5 hover:border-[#164e63]/20 transition-all"
                           >
                             <button
                               type="button"
@@ -254,7 +250,7 @@ export default function GovHeader() {
                             <button
                               type="button"
                               onClick={() => handleCopyEmail(item.email)}
-                              className="text-[11px] font-semibold px-2 py-1 rounded-md border border-gray-200/50 text-gray-600 hover:text-[#1a6b3c] hover:border-[#1a6b3c]/40 transition-colors"
+                              className="text-[11px] font-semibold px-2 py-1 rounded-md border border-gray-200/50 text-gray-600 hover:text-[#164e63] hover:border-[#164e63]/40 transition-colors"
                               title="Copy email"
                             >
                               {copiedEmail === item.email ? 'Copied' : 'Copy'}
@@ -263,7 +259,7 @@ export default function GovHeader() {
                         ))}
                       </div>
                       {switchingTo && (
-                        <p className="text-[11px] text-[#1a6b3c] mt-2">Switching account...</p>
+                        <p className="text-[11px] text-[#164e63] mt-2">Switching account...</p>
                       )}
                     </div>
                   </div>
@@ -274,7 +270,7 @@ export default function GovHeader() {
               <button
                 onClick={() => logout()}
                 title="Logout"
-                className="flex items-center gap-1.5 bg-white/8 hover:bg-white/15 text-white/80 hover:text-white px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 border border-white/10 hover:border-white/20 hover:scale-105"
+                className="flex items-center gap-1.5 bg-white/16 hover:bg-white/30 text-white/90 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 border border-white/24 hover:border-white/36 hover:scale-105"
               >
                 <LogOut className="w-4 h-4" />
                 <span className="hidden sm:inline text-xs">Logout</span>
@@ -283,14 +279,6 @@ export default function GovHeader() {
           )}
         </div>
       </div>
-
-      {/* Bottom accent line with gradient */}
-      <div
-        className="h-[1px] w-full"
-        style={{
-          background: 'linear-gradient(90deg, transparent, rgba(247,148,29,0.4), rgba(26,107,60,0.3), transparent)',
-        }}
-      />
     </header>
   );
 }

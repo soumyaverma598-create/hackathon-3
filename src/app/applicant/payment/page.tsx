@@ -47,7 +47,7 @@ export default function PaymentPage() {
   const paidApps = applications.filter((a) => a.paymentStatus !== 'pending');
   const selectedApp = applications.find((a) => a.id === selectedAppId);
 
-  const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c] transition-all";
+  const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] transition-all";
 
   return (
     <PageShell role="applicant">
@@ -59,11 +59,11 @@ export default function PaymentPage() {
                 {/* Payment form */}
                 <div className="glass-card-strong p-6">
                   <h3 className="font-semibold text-gray-700 mb-4 flex items-center gap-2">
-                    <CreditCard size={18} className="text-[#1a6b3c]" /> Submit Payment Details
+                    <CreditCard size={18} className="text-[#164e63]" /> Submit Payment Details
                   </h3>
 
                   {success && (
-                    <div className="mb-4 flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 text-sm font-semibold">
+                    <div className="mb-4 flex items-center gap-2 bg-cyan-50 border border-cyan-200 text-cyan-700 rounded-lg px-4 py-3 text-sm font-semibold">
                       <CheckCircle size={16} /> {success}
                     </div>
                   )}
@@ -81,8 +81,8 @@ export default function PaymentPage() {
                     </div>
 
                     {selectedApp && (
-                      <div className="bg-[#1a6b3c]/5 rounded-lg p-3 text-sm text-gray-600 border border-[#1a6b3c]/10">
-                        <p className="font-semibold text-[#1a6b3c] mb-1 flex items-center gap-1"><IndianRupee size={14} /> Prescribed Fee</p>
+                      <div className="bg-[#164e63]/5 rounded-lg p-3 text-sm text-gray-600 border border-[#164e63]/10">
+                        <p className="font-semibold text-[#164e63] mb-1 flex items-center gap-1"><IndianRupee size={14} /> Prescribed Fee</p>
                         <p>Category {selectedApp.projectCategory} — Approx. ₹{selectedApp.projectCategory === 'A' ? '1,00,000' : selectedApp.projectCategory === 'B1' ? '50,000' : '25,000'}</p>
                         <p className="text-xs text-gray-400 mt-1">Pay via NEFT/RTGS/DD in favour of &quot;MoEFCC Fee Account&quot;</p>
                       </div>
@@ -101,7 +101,7 @@ export default function PaymentPage() {
                       type="submit"
                       disabled={submitting || !selectedAppId}
                       className="w-full flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-50"
-                      style={{ background: 'linear-gradient(135deg, #1a6b3c, #256b45)' }}
+                      style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}
                     >
                       <CreditCard size={16} /> {submitting ? 'Recording Payment…' : 'Submit Payment'}
                     </button>
@@ -121,7 +121,7 @@ export default function PaymentPage() {
                           </div>
                           <div className="text-right">
                             <p className="text-sm font-bold text-gray-800">₹{a.paymentAmount?.toLocaleString('en-IN') ?? '—'}</p>
-                            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${a.paymentStatus === 'verified' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${a.paymentStatus === 'verified' ? 'bg-cyan-100 text-cyan-700' : 'bg-blue-100 text-blue-700'}`}>
                               {a.paymentStatus}
                             </span>
                           </div>

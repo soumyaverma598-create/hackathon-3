@@ -226,7 +226,7 @@ export default function AdminUsersPage() {
               <button
                 type="button"
                 onClick={startCreate}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#1a6b3c] px-4 py-2 text-sm font-medium text-white hover:bg-[#14522e] gov-action-btn"
+                className="inline-flex items-center gap-2 rounded-lg bg-[#164e63] px-4 py-2 text-sm font-medium text-white hover:bg-[#0f4258] gov-action-btn"
               >
                 <Plus size={16} />
                 Add New User
@@ -262,7 +262,7 @@ export default function AdminUsersPage() {
                       type="text"
                       value={formState.name}
                       onChange={(event) => setFormState((previous) => ({ ...previous, name: event.target.value }))}
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#1a6b3c]"
+                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#164e63]"
                       required
                     />
                   </label>
@@ -273,7 +273,7 @@ export default function AdminUsersPage() {
                       type="email"
                       value={formState.email}
                       onChange={(event) => setFormState((previous) => ({ ...previous, email: event.target.value }))}
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#1a6b3c]"
+                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#164e63]"
                       required
                     />
                   </label>
@@ -283,7 +283,7 @@ export default function AdminUsersPage() {
                     <select
                       value={formState.role}
                       onChange={(event) => setFormState((previous) => ({ ...previous, role: event.target.value as UserRole }))}
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#1a6b3c]"
+                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#164e63]"
                     >
                       <option value="admin">Admin</option>
                       <option value="applicant">Applicant</option>
@@ -298,7 +298,7 @@ export default function AdminUsersPage() {
                       type="text"
                       value={formState.department}
                       onChange={(event) => setFormState((previous) => ({ ...previous, department: event.target.value }))}
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#1a6b3c]"
+                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#164e63]"
                       required
                     />
                   </label>
@@ -309,7 +309,7 @@ export default function AdminUsersPage() {
                       type="text"
                       value={formState.designation}
                       onChange={(event) => setFormState((previous) => ({ ...previous, designation: event.target.value }))}
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#1a6b3c]"
+                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#164e63]"
                       required
                     />
                   </label>
@@ -322,7 +322,7 @@ export default function AdminUsersPage() {
                       type="password"
                       value={formState.password}
                       onChange={(event) => setFormState((previous) => ({ ...previous, password: event.target.value }))}
-                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#1a6b3c]"
+                      className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-[#164e63]"
                       placeholder={formMode === 'create' ? 'Minimum 6 characters' : 'Leave blank to keep existing'}
                     />
                   </label>
@@ -336,7 +336,7 @@ export default function AdminUsersPage() {
                       type="checkbox"
                       checked={formState.isActive}
                       onChange={() => setFormState((previous) => ({ ...previous, isActive: !previous.isActive }))}
-                      className="h-4 w-4 rounded border-gray-300 text-[#1a6b3c] focus:ring-[#1a6b3c]"
+                      className="h-4 w-4 rounded border-gray-300 text-[#164e63] focus:ring-[#164e63]"
                     />
                   </label>
 
@@ -344,7 +344,7 @@ export default function AdminUsersPage() {
                     <button
                       type="submit"
                       disabled={isSaving}
-                      className="inline-flex items-center gap-2 rounded-lg bg-[#1a6b3c] px-4 py-2 text-sm font-medium text-white hover:bg-[#14522e] disabled:opacity-60 disabled:cursor-not-allowed gov-action-btn"
+                      className="inline-flex items-center gap-2 rounded-lg bg-[#164e63] px-4 py-2 text-sm font-medium text-white hover:bg-[#0f4258] disabled:opacity-60 disabled:cursor-not-allowed gov-action-btn"
                     >
                       <Save size={15} />
                       {isSaving ? 'Saving...' : formMode === 'create' ? 'Create User' : 'Save Changes'}
@@ -379,7 +379,7 @@ export default function AdminUsersPage() {
                       {(candidate.role === 'scrutiny' || candidate.role === 'mom') && (
                         <div className="shrink-0">
                           {approvedIds.has(candidate.id) ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 text-green-700 text-[11px] font-semibold px-2 py-0.5">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-cyan-100 text-cyan-700 text-[11px] font-semibold px-2 py-0.5">
                               <ShieldCheck size={11} /> Portal Access Granted
                             </span>
                           ) : (
@@ -387,7 +387,7 @@ export default function AdminUsersPage() {
                               type="button"
                               disabled={approvingUserId !== null}
                               onClick={() => handleApproveAccess(candidate)}
-                              className="inline-flex items-center gap-1 rounded-full bg-amber-100 text-amber-700 border border-amber-300 text-[11px] font-semibold px-2 py-0.5 hover:bg-amber-200 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                              className="inline-flex items-center gap-1 rounded-full bg-cyan-100 text-cyan-700 border border-cyan-300 text-[11px] font-semibold px-2 py-0.5 hover:bg-cyan-200 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                               <ShieldCheck size={11} />
                               {approvingUserId === candidate.id ? 'Approving...' : 'Approve Portal Access'}
@@ -409,8 +409,8 @@ export default function AdminUsersPage() {
                             onClick={() => assignTeamRole(candidate, teamRole)}
                             className={`rounded-md px-3 py-1.5 text-xs font-semibold border transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
                               isCurrent
-                                ? 'bg-[#1a6b3c] text-white border-[#1a6b3c]'
-                                : 'bg-white text-gray-700 border-gray-200 hover:border-[#1a6b3c] hover:text-[#1a6b3c]'
+                                ? 'bg-[#164e63] text-white border-[#164e63]'
+                                : 'bg-white text-gray-700 border-gray-200 hover:border-[#164e63] hover:text-[#164e63]'
                             }`}
                           >
                             {isCurrent ? `${RBAC_ROLE_POLICIES[teamRole].label} Assigned` : `Assign to ${RBAC_ROLE_POLICIES[teamRole].label}`}
@@ -421,7 +421,7 @@ export default function AdminUsersPage() {
 
                     {/* Warning for restricted-role users without portal access */}
                     {(candidate.role === 'scrutiny' || candidate.role === 'mom') && !approvedIds.has(candidate.id) && (
-                      <p className="mt-2 text-[11px] text-amber-700 bg-amber-50 border border-amber-100 rounded px-2 py-1">
+                      <p className="mt-2 text-[11px] text-cyan-700 bg-cyan-50 border border-cyan-100 rounded px-2 py-1">
                         ⚠ This user cannot sign in to the {RBAC_ROLE_POLICIES[candidate.role].label} portal until you grant portal access.
                       </p>
                     )}
@@ -432,7 +432,7 @@ export default function AdminUsersPage() {
 
             <div className="glass-card-strong overflow-hidden">
               <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
-                <Users size={16} className="text-[#1a6b3c]" />
+                <Users size={16} className="text-[#164e63]" />
                 <h3 className="font-semibold text-gray-700 text-sm">Registered Users</h3>
               </div>
 
@@ -463,7 +463,7 @@ export default function AdminUsersPage() {
                       <td className="px-5 py-3 font-medium text-gray-800">{u.name}</td>
                       <td className="px-5 py-3 text-gray-500">{u.email}</td>
                       <td className="px-5 py-3">
-                        <span className="text-xs font-semibold bg-[#1a6b3c]/10 text-[#1a6b3c] px-2 py-0.5 rounded-full capitalize">
+                        <span className="text-xs font-semibold bg-[#164e63]/10 text-[#164e63] px-2 py-0.5 rounded-full capitalize">
                           {u.role}
                         </span>
                       </td>
@@ -472,7 +472,7 @@ export default function AdminUsersPage() {
                       <td className="px-5 py-3">
                         <span
                           className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                            u.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
+                            u.isActive ? 'bg-cyan-100 text-cyan-700' : 'bg-red-100 text-red-600'
                           }`}
                         >
                           {u.isActive ? 'Active' : 'Inactive'}
