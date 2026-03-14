@@ -18,12 +18,10 @@ import PaymentModal from '@/components/ui/PaymentModal';
 import { getApplicationText } from '@/lib/translations';
 import { formatAppId } from '@/lib/utils';
 import { WorkflowApplication, ProjectCategory, EDSQuery } from '@/types/workflow';
-import { uploadDocuments, getEDSQueries, respondToEDS } from '@/lib/api';
+import { getEDSQueries, respondToEDS } from '@/lib/api';
 import {
   Send,
   CheckCircle,
-  FileText,
-  Upload,
   MessageSquare,
   CreditCard,
   ChevronLeft,
@@ -124,14 +122,13 @@ const Field = memo(function Field({ label, id, children }: { label: string; id: 
 
 // ── Wizard step definitions ──────────────────────────────────────────────────
 
-type WizardStep = 1 | 2 | 3 | 4 | 5;
+type WizardStep = 1 | 2 | 3 | 4;
 
 const WIZARD_STEPS: { step: WizardStep; label: string }[] = [
   { step: 1, label: 'Application Details' },
-  { step: 2, label: 'Upload Documents' },
-  { step: 3, label: 'EDS Queries' },
-  { step: 4, label: 'Payment' },
-  { step: 5, label: 'Submit' },
+  { step: 2, label: 'EDS Queries' },
+  { step: 3, label: 'Payment' },
+  { step: 4, label: 'Submit' },
 ];
 
 // ── Step progress bar ────────────────────────────────────────────────────────
@@ -265,12 +262,7 @@ function ApplyWizardContent() {
   const [step1Success, setStep1Success] = useState('');
   const userFormInitialized = useRef(false);
 
-  // Step 2: upload state
-  const [uploading, setUploading] = useState(false);
-  const [uploadSuccess, setUploadSuccess] = useState('');
-  const [uploadError, setUploadError] = useState('');
-
-  // Step 3: EDS state
+  // Step 2: EDS state
   const [edsQueries, setEdsQueries] = useState<EDSQuery[]>([]);
   const [edsLoading, setEdsLoading] = useState(false);
   const [edsError, setEdsError] = useState('');
@@ -312,9 +304,9 @@ function ApplyWizardContent() {
     }
   }, [user, router]);
 
-  // Load EDS when on step 3
+  // Load EDS when on step 2
   useEffect(() => {
-    if (step === 3 && savedAppId) {
+    if (step === 2 && savedAppId) {
       setEdsLoading(true); setEdsError('');
       getEDSQueries(savedAppId).then((qs) => setEdsQueries(qs)).catch((e) => setEdsError(e.message ?? 'Failed to load queries')).finally(() => setEdsLoading(false));
     }
@@ -324,10 +316,9 @@ function ApplyWizardContent() {
   const completedSteps: WizardStep[] = [];
   if (savedAppId && currentApp) {
     completedSteps.push(1);
-    if (currentApp.documents.length > 0) completedSteps.push(2);
-    completedSteps.push(3);
-    if (currentApp.paymentStatus === 'paid' || currentApp.paymentStatus === 'verified') completedSteps.push(4);
-    if (currentApp.status !== 'draft') completedSteps.push(5);
+    completedSteps.push(2);
+    if (currentApp.paymentStatus === 'paid' || currentApp.paymentStatus === 'verified') completedSteps.push(3);
+    if (currentApp.status !== 'draft') completedSteps.push(4);
   }
 
   const isPaid = currentApp?.paymentStatus === 'paid' || currentApp?.paymentStatus === 'verified';
@@ -386,22 +377,7 @@ function ApplyWizardContent() {
     } catch { /* error from store */ }
   }, [createApp, form, user]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Step 2: file upload
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || !savedAppId) return;
-    const fd = new FormData();
-    Array.from(e.target.files).forEach((f) => fd.append('documents', f));
-    setUploading(true); setUploadError(''); setUploadSuccess('');
-    try {
-      await uploadDocuments(savedAppId, fd);
-      setUploadSuccess(`${e.target.files.length} file(s) uploaded successfully.`);
-      if (user) fetchByProponent(user.email);
-    } catch (err) {
-      setUploadError(err instanceof Error ? err.message : 'Upload failed');
-    } finally { setUploading(false); }
-  };
-
-  // Step 3: EDS respond
+  // Step 2: EDS respond
   const handleRespond = async (queryId: string) => {
     if (!responses[queryId]?.trim() || !savedAppId) return;
     setEdsSubmitting((s) => ({ ...s, [queryId]: true }));
@@ -819,58 +795,8 @@ function ApplyWizardContent() {
         </div>
       )}
 
-      {/* ═══ STEP 2 — Upload Documents ═══ */}
+      {/* ═══ STEP 2 — EDS Queries ═══ */}
       {step === 2 && (
-        <div>
-          {!savedAppId ? noAppWarning : (
-            <>
-              <div className="glass-card-strong p-6 mb-4">
-                <h3 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                  <Upload size={16} /> Upload Supporting Documents
-                </h3>
-                <p className="text-xs text-gray-400 mb-5">Upload scanned copies of all documents listed in Step 1. Accepted: PDF, JPG, PNG (max 10 MB each).</p>
-                <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-xl p-8 cursor-pointer hover:border-[#164e63]/40 transition-colors">
-                  <Upload size={28} className="text-gray-300 mb-3" />
-                  <span className="text-sm text-gray-500 font-medium">Click to select files</span>
-                  <span className="text-xs text-gray-400 mt-1">or drag & drop here</span>
-                  <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png" className="hidden" onChange={handleUpload} disabled={uploading} />
-                </label>
-                {uploading && <p className="text-sm text-[#164e63] mt-3">Uploading…</p>}
-                {uploadError && <p className="text-sm text-red-600 mt-3">{uploadError}</p>}
-                {uploadSuccess && <p className="text-sm text-green-600 mt-3 font-semibold">{uploadSuccess}</p>}
-              </div>
-
-              {currentApp && currentApp.documents.length > 0 && (
-                <div className="glass-card-strong p-5 mb-4">
-                  <h4 className="text-sm font-semibold text-gray-600 mb-3 flex items-center gap-2">
-                    <FileText size={14} /> Uploaded Documents
-                  </h4>
-                  <ul className="space-y-2">
-                    {currentApp.documents.map((doc) => (
-                      <li key={doc.id} className="flex items-center gap-2 text-sm bg-gray-50 rounded-lg px-3 py-2">
-                        <CheckCircle size={14} className="text-green-500 flex-shrink-0" />
-                        <span className="truncate text-gray-700">{doc.name}</span>
-                        <span className="ml-auto text-[10px] text-gray-400 font-mono">{doc.type}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              <NavButtons
-                step={2}
-                onBack={() => goToStep(1)}
-                onNext={() => goToStep(3)}
-                nextLabel="Continue to EDS"
-                nextDisabled={!completedSteps.includes(2) && !uploadSuccess}
-              />
-            </>
-          )}
-        </div>
-      )}
-
-      {/* ═══ STEP 3 — EDS Queries ═══ */}
-      {step === 3 && (
         <div>
           {!savedAppId ? noAppWarning : (
             <>
@@ -931,14 +857,14 @@ function ApplyWizardContent() {
                   </div>
                 )}
               </div>
-              <NavButtons step={3} onBack={() => goToStep(2)} onNext={() => goToStep(4)} nextLabel="Continue to Payment" />
+              <NavButtons step={2} onBack={() => goToStep(1)} onNext={() => goToStep(3)} nextLabel="Continue to Payment" />
             </>
           )}
         </div>
       )}
 
-      {/* ═══ STEP 4 — Payment ═══ */}
-      {step === 4 && (
+      {/* ═══ STEP 3 — Payment ═══ */}
+      {step === 3 && (
         <div>
           {!savedAppId ? noAppWarning : (
             <>
@@ -977,14 +903,14 @@ function ApplyWizardContent() {
                   </div>
                 )}
               </div>
-              <NavButtons step={4} onBack={() => goToStep(3)} onNext={() => goToStep(5)} nextLabel="Continue to Submit" nextDisabled={!isPaid} />
+              <NavButtons step={3} onBack={() => goToStep(2)} onNext={() => goToStep(4)} nextLabel="Continue to Submit" nextDisabled={!isPaid} />
             </>
           )}
         </div>
       )}
 
-      {/* ═══ STEP 5 — Submit ═══ */}
-      {step === 5 && (
+      {/* ═══ STEP 4 — Submit ═══ */}
+      {step === 4 && (
         <div>
           {!savedAppId ? noAppWarning : (
             <>
@@ -996,7 +922,7 @@ function ApplyWizardContent() {
                 </p>
                 <p className="text-sm text-gray-500 mb-6">Project: <span className="font-semibold">{currentApp?.projectName}</span></p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 text-left">
-                  {WIZARD_STEPS.filter((s) => s.step !== 5).map(({ step: s, label }) => (
+                  {WIZARD_STEPS.filter((s) => s.step !== 4).map(({ step: s, label }) => (
                     <div key={s} className={`rounded-xl border p-3 text-xs ${completedSteps.includes(s) ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}`}>
                       <div className={`font-bold mb-1 ${completedSteps.includes(s) ? 'text-green-700' : 'text-amber-700'}`}>
                         {completedSteps.includes(s) ? '✓' : '!'} Step {s}
@@ -1016,7 +942,7 @@ function ApplyWizardContent() {
                   </button>
                 )}
               </div>
-              <NavButtons step={5} onBack={() => goToStep(4)} />
+              <NavButtons step={4} onBack={() => goToStep(3)} />
             </>
           )}
         </div>

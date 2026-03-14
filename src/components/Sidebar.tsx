@@ -50,9 +50,8 @@ const navMap: Record<UserRole, NavItem[]> = {
       labelKey: 'navNewApplication',
       icon: <FilePlus size={18} />,
       subItems: [
-        { href: '/applicant/apply?step=2', labelKey: 'navUploadDocuments', icon: <FileText size={15} />, stepNum: 2 },
-        { href: '/applicant/apply?step=3', labelKey: 'navEdsQueries', icon: <MessageSquareWarning size={15} />, stepNum: 3 },
-        { href: '/applicant/apply?step=4', labelKey: 'navPayment', icon: <CreditCard size={15} />, stepNum: 4 },
+        { href: '/applicant/apply?step=2', labelKey: 'navEdsQueries', icon: <MessageSquareWarning size={15} />, stepNum: 2 },
+        { href: '/applicant/apply?step=3', labelKey: 'navPayment', icon: <CreditCard size={15} />, stepNum: 3 },
       ],
     },
   ],
