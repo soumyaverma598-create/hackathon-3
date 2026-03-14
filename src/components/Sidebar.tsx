@@ -56,13 +56,10 @@ export default function Sidebar({ role }: { role: UserRole }) {
 
   return (
     <aside
-      className="w-64 md:w-68 shrink-0 pl-4 pr-2 py-4"
-      style={{
-        minHeight: 'calc(100vh - 84px)',
-      }}
+      className="w-64 md:w-68 shrink-0 pl-0 pr-0 pt-0 pb-0 h-full"
     >
       <div
-        className="h-full rounded-3xl border border-white/24 bg-slate-950/72 backdrop-blur-xl shadow-[0_14px_34px_rgba(5,19,36,0.32)] flex flex-col"
+        className="h-full rounded-r-3xl rounded-l-none border border-white/24 border-t-0 border-l-0 bg-slate-950/72 backdrop-blur-xl shadow-[0_14px_34px_rgba(5,19,36,0.32)] flex flex-col"
       >
         <nav className="flex-1 py-5 overflow-y-auto">
         <div className="px-5 mb-4">

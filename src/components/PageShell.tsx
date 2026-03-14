@@ -32,16 +32,16 @@ export default function PageShell({ role, children }: PageShellProps) {
   if (!user) return null;
 
   return (
-    <div className="flex flex-col min-h-screen relative">
+    <div className="flex flex-col h-screen overflow-hidden relative">
       {/* Dynamic animated background */}
       <DynamicBackground />
 
       {/* Content overlay */}
-      <div className="relative z-10 flex flex-col min-h-screen">
+      <div className="relative z-10 flex flex-col h-screen overflow-hidden">
         <GovHeader />
-        <div className="flex flex-1">
+        <div className="flex flex-1 min-h-0">
           <Sidebar role={role} />
-          <main className="flex-1 p-6 overflow-auto">
+          <main className="flex-1 min-h-0 px-6 pb-6 pt-3 overflow-y-auto overflow-x-hidden">
             <AnimatePresence mode="sync" initial={false}>
               <motion.div
                 key={pathname}
