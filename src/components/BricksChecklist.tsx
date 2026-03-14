@@ -1,9 +1,9 @@
 'use client';
 
 import { useLanguageStore } from '@/store/languageStore';
-import { getApplicationText, getBricksDocumentLabel, getUiText, translations, Language } from '@/lib/translations';
-import { CheckCircle2, Circle } from 'lucide-react';
+import { getApplicationText, translations, Language } from '@/lib/translations';
 import { memo } from 'react';
+import ChecklistItemWithUpload from '@/components/ChecklistItemWithUpload';
 
 type BricksDocumentKey = keyof typeof translations.en.application.bricksDocuments;
 
@@ -50,9 +50,11 @@ const BRICKS_DOCUMENTS: Document[] = [
 interface BricksChecklistProps {
   checkedItems: Record<string, boolean>;
   onToggle: (id: string) => void;
+  uploadedFiles: Record<string, string>;
+  onFileSelect: (id: string, file: File | null) => void;
 }
 
-const BricksChecklist = memo(function BricksChecklist({ checkedItems, onToggle }: BricksChecklistProps) {
+const BricksChecklist = memo(function BricksChecklist({ checkedItems, onToggle, uploadedFiles, onFileSelect }: BricksChecklistProps) {
   const { language } = useLanguageStore();
 
   const allChecked = BRICKS_DOCUMENTS.every(doc => checkedItems[doc.id]);
@@ -66,7 +68,7 @@ const BricksChecklist = memo(function BricksChecklist({ checkedItems, onToggle }
           📋 {getApplicationText('bricksChecklist', language)}
         </h3>
         <p className="text-xs text-gray-500 mt-1.5">
-          {checkedCount} / {BRICKS_DOCUMENTS.length} {getUiText('documentsChecked', language)}
+          {checkedCount} / {BRICKS_DOCUMENTS.length} {language === 'en' ? 'documents checked' : 'दस्तावेज़ जांचे गए'}
         </p>
       </div>
 
@@ -87,33 +89,25 @@ const BricksChecklist = memo(function BricksChecklist({ checkedItems, onToggle }
       </div>
 
       {/* Documents List */}
-      <div className="divide-y divide-gray-100">
+      <div className="space-y-2 px-5 py-4">
         {BRICKS_DOCUMENTS.map((doc, idx) => {
           const isChecked = checkedItems[doc.id] || false;
           const labelKey = doc.labelKey as keyof typeof translations.en.application.bricksDocuments;
-          const docLabel = getBricksDocumentLabel(labelKey, language);
+          const docLabel = translations[language].application.bricksDocuments[labelKey];
 
           return (
-            <div
+            <ChecklistItemWithUpload
               key={doc.id}
-              className="px-5 py-3.5 hover:bg-cyan-50/30 transition-colors group cursor-pointer"
-              onClick={() => onToggle(doc.id)}
-            >
-              <label className="flex items-start gap-3 cursor-pointer">
-                <div className="mt-0.5">
-                  {isChecked ? (
-                    <CheckCircle2 className="w-5 h-5 text-[#25c9d0] flex-shrink-0" />
-                  ) : (
-                    <Circle className="w-5 h-5 text-gray-300 flex-shrink-0 group-hover:text-gray-400" />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <p className={`text-sm font-medium transition-colors ${isChecked ? 'text-[#164e63]' : 'text-gray-700'}`}>
-                    {idx + 1}. {docLabel}
-                  </p>
-                </div>
-              </label>
-            </div>
+              id={doc.id}
+              label={docLabel}
+              index={idx}
+              checked={isChecked}
+              onToggle={onToggle}
+              uploadedFileName={uploadedFiles[doc.id]}
+              onFileSelect={onFileSelect}
+              checkedClassName="bg-cyan-50 border-[#164e63]/40"
+              uncheckedClassName="bg-white border-gray-200 hover:border-[#164e63]/30"
+            />
           );
         })}
       </div>
@@ -121,7 +115,7 @@ const BricksChecklist = memo(function BricksChecklist({ checkedItems, onToggle }
       {/* Completion Message */}
       {allChecked && (
         <div className="px-5 py-3.5 bg-green-50 border-t border-green-200 text-green-800 text-sm font-medium flex items-center gap-2">
-          ✓ {getUiText('allDocumentsVerified', language)}
+          ✓ {language === 'en' ? 'All documents verified! Ready to submit.' : 'सभी दस्तावेज़ सत्यापित! जमा करने के लिए तैयार।'}
         </div>
       )}
     </div>
