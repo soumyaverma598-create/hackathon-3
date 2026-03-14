@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Bell, Database, Settings, ShieldCheck } from 'lucide-react';
-import GovHeader from '@/components/GovHeader';
-import Sidebar from '@/components/Sidebar';
+import PageShell from '@/components/PageShell';
 import { useAuthStore } from '@/store/authStore';
 import { useAdminSettingsStore } from '@/store/adminSettingsStore';
 import { AdminSettingsSection } from '@/types/settings';
@@ -118,13 +117,8 @@ export default function AdminSettingsDetailPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <GovHeader />
-      <div className="flex flex-1">
-        <Sidebar role="admin" />
-
-        <main className="flex-1 p-6 overflow-auto">
-          <div className="max-w-5xl mx-auto space-y-6">
+    <PageShell role="admin">
+          <div className="space-y-6">
             <Link
               href="/admin/settings"
               className="inline-flex items-center gap-2 text-sm font-medium text-[#1a6b3c] hover:text-[#14522e] animate-gov-enter"
@@ -133,7 +127,7 @@ export default function AdminSettingsDetailPage() {
               Back to Settings
             </Link>
 
-            <section className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 animate-gov-enter gov-surface-hover" style={{ animationDelay: '0.06s' }}>
+            <section className="glass-card-strong p-6 animate-gov-enter gov-surface-hover" style={{ animationDelay: '0.06s' }}>
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-lg bg-[#1a6b3c]/10 flex items-center justify-center">
                   <Icon size={18} className="text-[#1a6b3c] animate-pulse-soft" />
@@ -370,8 +364,6 @@ export default function AdminSettingsDetailPage() {
               )}
             </section>
           </div>
-        </main>
-      </div>
-    </div>
+    </PageShell>
   );
 }

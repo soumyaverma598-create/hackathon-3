@@ -1,11 +1,11 @@
 'use client';
+export const dynamic = 'force-dynamic';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useWorkflowStore } from '@/store/workflowStore';
-import GovHeader from '@/components/GovHeader';
-import Sidebar from '@/components/Sidebar';
+import PageShell from '@/components/PageShell';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import ErrorMessage from '@/components/ErrorMessage';
 import EmptyState from '@/components/EmptyState';
@@ -13,7 +13,7 @@ import { getEDSQueries, raiseEDSQuery, closeEDSQuery } from '@/lib/api';
 import { EDSQuery } from '@/types/workflow';
 import { Plus, CheckCheck, ChevronDown, ChevronUp, MessageSquareWarning } from 'lucide-react';
 
-export default function ScrutinyEDSPage() {
+function ScrutinyEDSPageContent() {
   const { user } = useAuthStore();
   const { applications, fetchAll } = useWorkflowStore();
   const router = useRouter();
@@ -70,16 +70,11 @@ export default function ScrutinyEDSPage() {
   const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c]";
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <GovHeader />
-      <div className="flex flex-1">
-        <Sidebar role="scrutiny" />
-        <main className="flex-1 p-6 overflow-auto">
-          <div className="max-w-3xl mx-auto">
+    <PageShell role="scrutiny">
             <div className="flex items-center justify-between mb-5">
               <div>
-                <h2 className="text-2xl font-bold text-gray-800">EDS Management</h2>
-                <p className="text-gray-400 text-sm">Raise and manage Environmental Data Sheet queries</p>
+                <h2 className="page-heading" style={{marginBottom:0}}>EDS Management</h2>
+                <p className="page-subheading">Raise and manage Environmental Data Sheet queries</p>
               </div>
               {selectedAppId && (
                 <button onClick={() => setRaiseMode(!raiseMode)} className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white" style={{ background: 'linear-gradient(135deg, #f7941d, #e07a10)' }}>
@@ -88,7 +83,7 @@ export default function ScrutinyEDSPage() {
               )}
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 mb-4">
+            <div className="glass-card-strong p-4 mb-4">
               <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Select Application</label>
               <select className={inputCls} value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)}>
                 <option value="">-- Select application --</option>
@@ -156,9 +151,15 @@ export default function ScrutinyEDSPage() {
                  ))}
                </div>
              )}
-          </div>
-        </main>
-      </div>
-    </div>
+    </PageShell>
   );
 }
+
+export default function ScrutinyEDSPage() {
+  return (
+    <Suspense fallback={<SkeletonLoader variant="detail" />}>
+      <ScrutinyEDSPageContent />
+    </Suspense>
+  );
+}
+

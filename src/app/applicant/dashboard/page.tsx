@@ -1,32 +1,36 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useWorkflowStore } from '@/store/workflowStore';
-import { useNotificationStore } from '@/store/notificationStore';
-import GovHeader from '@/components/GovHeader';
-import Sidebar from '@/components/Sidebar';
+import PageShell from '@/components/PageShell';
 import StatusBadge from '@/components/StatusBadge';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import EmptyState from '@/components/EmptyState';
 import ErrorMessage from '@/components/ErrorMessage';
 import Link from 'next/link';
 import { FilePlus, FolderOpen, TrendingUp, Clock } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+} satisfies import('framer-motion').Variants;
 
 export default function ApplicantDashboard() {
   const { user } = useAuthStore();
   const { applications, isLoading, error, fetchByProponent } = useWorkflowStore();
-  const { startPolling, stopPolling } = useNotificationStore();
-  const router = useRouter();
 
   useEffect(() => {
-    if (!user) { router.replace('/login'); return; }
-    if (user.role !== 'applicant') { router.replace('/login'); return; }
-    fetchByProponent(user.email);
-    startPolling(user.id);
-    return () => stopPolling();
-  }, [user]);
+    if (user && user.role === 'applicant') {
+      fetchByProponent(user.email);
+    }
+  }, [user, fetchByProponent]);
 
   if (!user) return null;
 
@@ -37,106 +41,123 @@ export default function ApplicantDashboard() {
     pending: applications.filter((a) => a.status === 'draft').length,
   };
 
+  const statCards = [
+    { label: 'Total Applications', value: stats.total, icon: <FolderOpen size={20} />, gradient: 'from-blue-500 to-indigo-600' },
+    { label: 'Active', value: stats.active, icon: <TrendingUp size={20} />, gradient: 'from-orange-500 to-amber-600' },
+    { label: 'EC Granted', value: stats.granted, icon: <FilePlus size={20} />, gradient: 'from-emerald-500 to-teal-600' },
+    { label: 'Draft', value: stats.pending, icon: <Clock size={20} />, gradient: 'from-gray-500 to-slate-600' },
+  ];
+
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <GovHeader />
-      <div className="flex flex-1">
-        <Sidebar role="applicant" />
-        <main className="flex-1 p-6 overflow-auto">
-          <div className="max-w-5xl mx-auto">
-            <div className="flex items-center justify-between mb-6 animate-fade-slide-left" style={{ animationDelay: '0.05s' }}>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-800">My Applications</h2>
-                <p className="text-gray-500 text-sm mt-0.5">Track your Environmental Clearance applications</p>
-              </div>
-              <Link
-                href="/applicant/apply"
-                className="flex items-center gap-2 text-sm font-semibold text-white px-4 py-2.5 rounded-lg shadow transition-all hover:scale-105 hover:shadow-lg active:scale-95"
-                style={{ background: 'linear-gradient(135deg, #1a6b3c, #256b45)' }}
-              >
-                <FilePlus size={16} /> New Application
-              </Link>
-            </div>
+    <PageShell role="applicant">
+      {/* Header */}
+      <motion.div
+        className="flex items-center justify-between mb-8"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div>
+          <h2 className="page-heading">My Applications</h2>
+          <p className="page-subheading">Track your Environmental Clearance applications</p>
+        </div>
+        <Link
+          href="/applicant/apply"
+          className="group flex items-center gap-2 text-sm font-semibold text-white px-5 py-2.5 rounded-xl shadow-lg transition-all hover:scale-105 hover:shadow-xl active:scale-95"
+          style={{
+            background: 'linear-gradient(135deg, #1a6b3c, #256b45)',
+            boxShadow: '0 4px 16px rgba(26,107,60,0.25)',
+          }}
+        >
+          <FilePlus size={16} /> New Application
+        </Link>
+      </motion.div>
 
-            {/* Stats row */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              {[
-                { label: 'Total Applications', value: stats.total, icon: <FolderOpen size={20} />, color: 'text-blue-600', bg: 'bg-blue-50' },
-                { label: 'Active', value: stats.active, icon: <TrendingUp size={20} />, color: 'text-orange-600', bg: 'bg-orange-50' },
-                { label: 'EC Granted', value: stats.granted, icon: <FilePlus size={20} />, color: 'text-green-600', bg: 'bg-green-50' },
-                { label: 'Draft', value: stats.pending, icon: <Clock size={20} />, color: 'text-gray-600', bg: 'bg-gray-50' },
-              ].map((stat, idx) => (
-                <div key={stat.label} className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm card-hover animate-fade-slide-up" style={{ animationDelay: `${0.1 + idx * 0.08}s` }}>
-                  <div className={`w-9 h-9 ${stat.bg} ${stat.color} rounded-lg flex items-center justify-center mb-2 transition-transform duration-300 hover:scale-110`}>
-                    {stat.icon}
+      {/* Stats row */}
+      <motion.div
+        className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {statCards.map((stat) => (
+          <motion.div key={stat.label} variants={itemVariants} className="stat-card group">
+            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center mb-3 text-white shadow-md group-hover:scale-110 transition-transform duration-300`}>
+              {stat.icon}
+            </div>
+            <p className="text-3xl font-extrabold text-gray-800 mb-0.5">{stat.value}</p>
+            <p className="text-xs text-gray-400 font-medium">{stat.label}</p>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      {/* Applications list */}
+      {isLoading ? (
+        <SkeletonLoader />
+      ) : error ? (
+        <ErrorMessage message={error} onRetry={() => user && fetchByProponent(user.email)} />
+      ) : applications.length === 0 ? (
+        <EmptyState
+          title="No applications yet"
+          message="Start by creating your first Environmental Clearance application."
+          action={
+            <Link href="/applicant/apply" className="inline-flex items-center gap-2 bg-[#1a6b3c] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#0f4a2a] transition-colors shadow-md">
+              Create Application
+            </Link>
+          }
+        />
+      ) : (
+        <motion.div
+          className="space-y-3"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {applications.map((app) => (
+            <motion.div
+              key={app.id}
+              variants={itemVariants}
+              className="glass-card p-5 hover:shadow-lg"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <span className="text-xs font-mono text-gray-400">{app.applicationNumber}</span>
+                    <span className="text-xs text-gray-300">|</span>
+                    <span className="text-xs font-semibold text-[#f7941d]">{app.projectCategory} Category</span>
                   </div>
-                  <p className="text-2xl font-bold text-gray-800 animate-count-fade" style={{ animationDelay: `${0.2 + idx * 0.08}s` }}>{stat.value}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{stat.label}</p>
+                  <h3 className="font-semibold text-gray-800 truncate">{app.projectName}</h3>
+                  <p className="text-sm text-gray-400 mt-0.5">{app.stateUT} &bull; {app.projectSector}</p>
                 </div>
-              ))}
-            </div>
-
-            {/* Applications list */}
-            {isLoading ? (
-              <SkeletonLoader />
-            ) : error ? (
-              <ErrorMessage message={error} onRetry={() => user && fetchByProponent(user.email)} />
-            ) : applications.length === 0 ? (
-              <EmptyState
-                title="No applications yet"
-                message="Start by creating your first Environmental Clearance application."
-                action={
-                  <Link href="/applicant/apply" className="bg-[#1a6b3c] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#0f4a2a] transition-colors">
-                    Create Application
-                  </Link>
-                }
-              />
-            ) : (
-              <div className="space-y-3">
-                {applications.map((app, idx) => (
-                  <div key={app.id} className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm card-hover animate-fade-slide-up" style={{ animationDelay: `${0.38 + idx * 0.06}s` }}>
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap mb-1">
-                          <span className="text-xs font-mono text-gray-400">{app.applicationNumber}</span>
-                          <span className="text-xs text-gray-300">|</span>
-                          <span className="text-xs font-semibold text-[#f7941d]">{app.projectCategory} Category</span>
-                        </div>
-                        <h3 className="font-semibold text-gray-800 truncate">{app.projectName}</h3>
-                        <p className="text-sm text-gray-400 mt-0.5">{app.stateUT} &bull; {app.projectSector}</p>
-                      </div>
-                      <StatusBadge status={app.status} />
-                    </div>
-
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-50">
-                      <div className="flex gap-4 text-xs text-gray-400">
-                        <span>Applied: {app.submittedAt ? new Date(app.submittedAt).toLocaleDateString('en-IN') : 'Not submitted'}</span>
-                        <span>
-                          Payment:{' '}
-                          <span className={app.paymentStatus === 'paid' || app.paymentStatus === 'verified' ? 'text-green-600 font-semibold' : 'text-orange-500 font-semibold'}>
-                            {app.paymentStatus}
-                          </span>
-                        </span>
-                        {app.edsQueries.filter((q) => q.status === 'open').length > 0 && (
-                          <span className="text-orange-600 font-semibold">
-                            {app.edsQueries.filter((q) => q.status === 'open').length} EDS open
-                          </span>
-                        )}
-                      </div>
-                      <Link
-                        href={`/applicant/eds?id=${app.id}`}
-                        className="text-xs text-[#1a6b3c] font-semibold hover:underline"
-                      >
-                        View Details →
-                      </Link>
-                    </div>
-                  </div>
-                ))}
+                <StatusBadge status={app.status} />
               </div>
-            )}
-          </div>
-        </main>
-      </div>
-    </div>
+
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100/50">
+                <div className="flex gap-4 text-xs text-gray-400">
+                  <span>Applied: {app.submittedAt ? new Date(app.submittedAt).toLocaleDateString('en-IN') : 'Not submitted'}</span>
+                  <span>
+                    Payment:{' '}
+                    <span className={app.paymentStatus === 'paid' || app.paymentStatus === 'verified' ? 'text-green-600 font-semibold' : 'text-orange-500 font-semibold'}>
+                      {app.paymentStatus}
+                    </span>
+                  </span>
+                  {app.edsQueries.filter((q) => q.status === 'open').length > 0 && (
+                    <span className="text-orange-600 font-semibold">
+                      {app.edsQueries.filter((q) => q.status === 'open').length} EDS open
+                    </span>
+                  )}
+                </div>
+                <Link
+                  href={`/applicant/eds?id=${app.id}`}
+                  className="text-xs text-[#1a6b3c] font-semibold hover:underline"
+                >
+                  View Details →
+                </Link>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      )}
+    </PageShell>
   );
 }

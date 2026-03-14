@@ -1,11 +1,11 @@
 'use client';
+export const dynamic = 'force-dynamic';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useWorkflowStore } from '@/store/workflowStore';
-import GovHeader from '@/components/GovHeader';
-import Sidebar from '@/components/Sidebar';
+import PageShell from '@/components/PageShell';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import ErrorMessage from '@/components/ErrorMessage';
 import StatusBadge from '@/components/StatusBadge';
@@ -14,7 +14,7 @@ import { WorkflowStatus } from '@/types/workflow';
 import { ChevronLeft, CheckCircle, AlertTriangle, FileText } from 'lucide-react';
 import Link from 'next/link';
 
-export default function ScrutinyReviewPage() {
+function ScrutinyReviewPageContent() {
   const { user } = useAuthStore();
   const { currentApplication: app, fetchById, updateStatus, isLoading, error } = useWorkflowStore();
   const router = useRouter();
@@ -41,17 +41,12 @@ export default function ScrutinyReviewPage() {
   if (!user) return null;
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <GovHeader />
-      <div className="flex flex-1">
-        <Sidebar role="scrutiny" />
-        <main className="flex-1 p-6 overflow-auto">
-          <div className="max-w-4xl mx-auto">
+    <PageShell role="scrutiny">
             <div className="flex items-center gap-3 mb-5">
               <Link href="/scrutiny/dashboard" className="text-gray-400 hover:text-[#1a6b3c] transition-colors">
                 <ChevronLeft size={20} />
               </Link>
-              <h2 className="text-xl font-bold text-gray-800">Application Review</h2>
+              <h2 className="page-heading" style={{marginBottom:0}}>Application Review</h2>
             </div>
 
             {isLoading && !app ? <SkeletonLoader variant="detail" /> :
@@ -67,7 +62,7 @@ export default function ScrutinyReviewPage() {
                 <WorkflowProgress currentStatus={app.status} />
 
                 {/* App Details */}
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+                <div className="glass-card-strong p-5">
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <p className="font-mono text-xs text-gray-400">{app.applicationNumber}</p>
@@ -132,7 +127,7 @@ export default function ScrutinyReviewPage() {
                 </div>
 
                 {/* Actions */}
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+                <div className="glass-card-strong p-5">
                   <h4 className="font-semibold text-gray-700 mb-3">Scrutiny Actions</h4>
                   <div className="mb-3">
                     <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Remarks</label>
@@ -168,9 +163,15 @@ export default function ScrutinyReviewPage() {
                 </div>
               </div>
              )}
-          </div>
-        </main>
-      </div>
-    </div>
+    </PageShell>
   );
 }
+
+export default function ScrutinyReviewPage() {
+  return (
+    <Suspense fallback={<SkeletonLoader variant="detail" />}>
+      <ScrutinyReviewPageContent />
+    </Suspense>
+  );
+}
+

@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Settings, ShieldCheck, Bell, Database, ChevronRight } from 'lucide-react';
-import GovHeader from '@/components/GovHeader';
-import Sidebar from '@/components/Sidebar';
+import PageShell from '@/components/PageShell';
 import { useAuthStore } from '@/store/authStore';
 import { useAdminSettingsStore } from '@/store/adminSettingsStore';
 
@@ -69,15 +68,9 @@ export default function AdminSettingsPage() {
   ] as const;
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <GovHeader />
-      <div className="flex flex-1">
-        <Sidebar role="admin" />
-
-        <main className="flex-1 p-6 overflow-auto">
-          <div className="max-w-5xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-800 mb-1 animate-gov-enter">Settings</h2>
-            <p className="text-gray-500 text-sm mb-6 animate-gov-enter" style={{ animationDelay: '0.05s' }}>Configure admin preferences for PARIVESH 3.0.</p>
+    <PageShell role="admin">
+            <h2 className="page-heading animate-gov-enter">Settings</h2>
+            <p className="page-subheading mb-6 animate-gov-enter" style={{ animationDelay: '0.05s' }}>Configure admin preferences for PARIVESH 3.0.</p>
 
             {settings ? (
               <p className="text-xs text-gray-400 mb-4 animate-gov-enter" style={{ animationDelay: '0.08s' }}>Last updated: {new Date(settings.updatedAt).toLocaleString()}</p>
@@ -97,7 +90,7 @@ export default function AdminSettingsPage() {
                   <Link
                     key={section.href}
                     href={section.href}
-                    className="group bg-white rounded-xl border border-gray-100 shadow-sm p-5 focus:outline-none focus:ring-2 focus:ring-[#1a6b3c]/20 animate-gov-enter gov-surface-hover"
+                    className="group glass-card-strong p-5 focus:outline-none focus:ring-2 focus:ring-[#1a6b3c]/20 animate-gov-enter gov-surface-hover"
                     style={{ animationDelay: `${0.1 + idx * 0.06}s` }}
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -119,9 +112,6 @@ export default function AdminSettingsPage() {
             {isLoading && !settings ? (
               <div className="mt-4 text-sm text-gray-500 animate-gov-enter" style={{ animationDelay: '0.2s' }}>Loading settings...</div>
             ) : null}
-          </div>
-        </main>
-      </div>
-    </div>
+    </PageShell>
   );
 }

@@ -1,11 +1,11 @@
 'use client';
+export const dynamic = 'force-dynamic';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useWorkflowStore } from '@/store/workflowStore';
-import GovHeader from '@/components/GovHeader';
-import Sidebar from '@/components/Sidebar';
+import PageShell from '@/components/PageShell';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import ErrorMessage from '@/components/ErrorMessage';
 import EmptyState from '@/components/EmptyState';
@@ -14,7 +14,7 @@ import { getEDSQueries, respondToEDS } from '@/lib/api';
 import { EDSQuery } from '@/types/workflow';
 import { MessageSquare, Send, ChevronDown, ChevronUp } from 'lucide-react';
 
-export default function ApplicantEDSPage() {
+function ApplicantEDSPageContent() {
   const { user } = useAuthStore();
   const { applications, fetchByProponent } = useWorkflowStore();
   const router = useRouter();
@@ -70,17 +70,12 @@ export default function ApplicantEDSPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <GovHeader />
-      <div className="flex flex-1">
-        <Sidebar role="applicant" />
-        <main className="flex-1 p-6 overflow-auto">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-800 mb-1">EDS Queries</h2>
-            <p className="text-gray-400 text-sm mb-6">Respond to Environmental Data Sheet queries raised by the scrutiny officer</p>
+    <PageShell role="applicant">
+            <h2 className="page-heading">EDS Queries</h2>
+            <p className="page-subheading mb-6">Respond to Environmental Data Sheet queries raised by the scrutiny officer</p>
 
             {/* Application Selector */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 mb-4">
+            <div className="glass-card-strong p-4 mb-4">
               <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Select Application</label>
               <select
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c]"
@@ -102,7 +97,7 @@ export default function ApplicantEDSPage() {
              ) : (
                <div className="space-y-3">
                  {queries.map((q) => (
-                   <div key={q.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                   <div key={q.id} className="glass-card-strong overflow-hidden">
                      <div
                        className="flex items-start justify-between gap-3 px-5 py-4 cursor-pointer hover:bg-gray-50"
                        onClick={() => setExpandedId(expandedId === q.id ? null : q.id)}
@@ -168,9 +163,15 @@ export default function ApplicantEDSPage() {
                  ))}
                </div>
              )}
-          </div>
-        </main>
-      </div>
-    </div>
+    </PageShell>
   );
 }
+
+export default function ApplicantEDSPage() {
+  return (
+    <Suspense fallback={<SkeletonLoader variant="detail" />}>
+      <ApplicantEDSPageContent />
+    </Suspense>
+  );
+}
+

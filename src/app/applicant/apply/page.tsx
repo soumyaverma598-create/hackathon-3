@@ -4,8 +4,7 @@ import { memo, ReactNode, useCallback, useEffect, useRef, useState } from 'react
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useWorkflowStore } from '@/store/workflowStore';
-import GovHeader from '@/components/GovHeader';
-import Sidebar from '@/components/Sidebar';
+import PageShell from '@/components/PageShell';
 import { WorkflowApplication, ProjectCategory } from '@/types/workflow';
 import { Send } from 'lucide-react';
 
@@ -115,14 +114,9 @@ export default function ApplyPage() {
   if (!user) return null;
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <GovHeader />
-      <div className="flex flex-1">
-        <Sidebar role="applicant" />
-        <main className="flex-1 p-6 overflow-auto">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-800 mb-1">New Application</h2>
-            <p className="text-gray-400 text-sm mb-6">Fill in all details for Environmental Clearance under EIA Notification, 2006</p>
+    <PageShell role="applicant">
+            <h2 className="page-heading">New Application</h2>
+            <p className="page-subheading mb-6">Fill in all details for Environmental Clearance under EIA Notification, 2006</p>
 
             {success && (
               <div className="mb-4 bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 text-sm font-semibold">{success}</div>
@@ -130,7 +124,7 @@ export default function ApplyPage() {
 
             <form onSubmit={(e) => handleSubmit(e, false)} className="space-y-6">
               {/* Project Details */}
-              <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+              <div className="glass-card-strong p-6">
                 <h3 className="font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
                   <span className="w-6 h-6 bg-[#1a6b3c] text-white text-xs rounded-full flex items-center justify-center font-bold">1</span>
                   Project Details
@@ -296,9 +290,6 @@ export default function ApplyPage() {
                 </button>
               </div>
             </form>
-          </div>
-        </main>
-      </div>
-    </div>
+    </PageShell>
   );
 }

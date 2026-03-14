@@ -1,17 +1,17 @@
 'use client';
+export const dynamic = 'force-dynamic';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useWorkflowStore } from '@/store/workflowStore';
-import GovHeader from '@/components/GovHeader';
-import Sidebar from '@/components/Sidebar';
+import PageShell from '@/components/PageShell';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import ErrorMessage from '@/components/ErrorMessage';
 import StatusBadge from '@/components/StatusBadge';
 import { Send, CheckCircle } from 'lucide-react';
 
-export default function ScrutinyReferPage() {
+function ScrutinyReferPageContent() {
   const { user } = useAuthStore();
   const { applications, fetchAll, updateStatus, isLoading, error } = useWorkflowStore();
   const router = useRouter();
@@ -44,14 +44,9 @@ export default function ScrutinyReferPage() {
   const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c]";
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <GovHeader />
-      <div className="flex flex-1">
-        <Sidebar role="scrutiny" />
-        <main className="flex-1 p-6 overflow-auto">
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-800 mb-1">Refer to EAC</h2>
-            <p className="text-gray-400 text-sm mb-6">Refer application to Expert Appraisal Committee for technical assessment</p>
+    <PageShell role="scrutiny">
+            <h2 className="page-heading">Refer to EAC</h2>
+            <p className="page-subheading mb-6">Refer application to Expert Appraisal Committee for technical assessment</p>
 
             {isLoading ? <SkeletonLoader /> : error ? <ErrorMessage message={error} /> : (
               <div className="space-y-4">
@@ -61,7 +56,7 @@ export default function ScrutinyReferPage() {
                   </div>
                 )}
 
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+                <div className="glass-card-strong p-5">
                   <form onSubmit={handleRefer} className="space-y-4">
                     <div>
                       <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">Application to Refer *</label>
@@ -110,7 +105,7 @@ export default function ScrutinyReferPage() {
 
                 {/* Already referred */}
                 {applications.filter((a) => a.status === 'referred').length > 0 && (
-                  <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                  <div className="glass-card-strong p-4">
                     <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Previously Referred</h4>
                     <div className="divide-y divide-gray-50">
                       {applications.filter((a) => a.status === 'referred').map((a) => (
@@ -127,9 +122,15 @@ export default function ScrutinyReferPage() {
                 )}
               </div>
             )}
-          </div>
-        </main>
-      </div>
-    </div>
+    </PageShell>
   );
 }
+
+export default function ScrutinyReferPage() {
+  return (
+    <Suspense fallback={<SkeletonLoader variant="detail" />}>
+      <ScrutinyReferPageContent />
+    </Suspense>
+  );
+}
+

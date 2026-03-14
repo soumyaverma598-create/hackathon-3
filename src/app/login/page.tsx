@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { Eye, EyeOff, LogIn, Shield, Leaf } from 'lucide-react';
-import SplashOverlay from '@/components/SplashOverlay';
+import DynamicBackground from '@/components/DynamicBackground';
 
 const ROLE_HINTS = [
   { email: 'admin@moef.gov.in', password: 'admin123', role: 'Admin' },
@@ -28,9 +28,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
-  const [splashDone, setSplashDone] = useState(false);
   const [loginMode, setLoginMode] = useState<'official' | 'applicant'>('official');
   const [socialAuthLoading, setSocialAuthLoading] = useState<string | null>(null);
   const [otpMode, setOtpMode] = useState(false);
@@ -41,15 +38,7 @@ export default function LoginPage() {
   const { login, user, isLoading, error, clearError } = useAuthStore();
   const router = useRouter();
 
-  useEffect(() => { setMounted(true); }, []);
-
-  const handleSplashFinished = useCallback(() => {
-    setShowSplash(false);
-    setSplashDone(true);
-  }, []);
-
-  // Extra delay offset for login animations while splash is playing
-  const d = splashDone ? 0 : 3.5;
+  const d = 0;
 
   // Redirect if already logged in
   useEffect(() => {
@@ -121,8 +110,8 @@ export default function LoginPage() {
 
   return (
     <>
-    {showSplash && <SplashOverlay onFinished={handleSplashFinished} />}
-    <div className="min-h-screen flex" style={{ background: 'linear-gradient(135deg, #0f4a2a 0%, #1a6b3c 50%, #0d3d24 100%)' }}>
+    <div className="min-h-screen flex relative" style={{ background: 'linear-gradient(135deg, #0f4a2a 0%, #1a6b3c 50%, #0d3d24 100%)' }}>
+      <DynamicBackground variant="landing" />
       {/* Left branding panel */}
       <div className="hidden lg:flex flex-col justify-center items-center w-1/2 p-12 relative overflow-hidden">
 

@@ -1,17 +1,17 @@
 'use client';
+export const dynamic = 'force-dynamic';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useWorkflowStore } from '@/store/workflowStore';
-import GovHeader from '@/components/GovHeader';
-import Sidebar from '@/components/Sidebar';
+import PageShell from '@/components/PageShell';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import ErrorMessage from '@/components/ErrorMessage';
 import { Upload, FileText, Trash2, CheckCircle } from 'lucide-react';
 import { uploadDocuments } from '@/lib/api';
 
-export default function DocumentsPage() {
+function DocumentsPageContent() {
   const { user } = useAuthStore();
   const { applications, isLoading, error, fetchByProponent, fetchAll } = useWorkflowStore();
   const router = useRouter();
@@ -47,19 +47,14 @@ export default function DocumentsPage() {
   const selectedApp = applications.find((a) => a.id === selectedAppId);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <GovHeader />
-      <div className="flex flex-1">
-        <Sidebar role="applicant" />
-        <main className="flex-1 p-6 overflow-auto">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-800 mb-1">Upload Documents</h2>
-            <p className="text-gray-400 text-sm mb-6">Upload EIA report, site plan, ToR, and other supporting documents</p>
+    <PageShell role="applicant">
+            <h2 className="page-heading">Upload Documents</h2>
+            <p className="page-subheading mb-6">Upload EIA report, site plan, ToR, and other supporting documents</p>
 
             {isLoading ? <SkeletonLoader /> : error ? <ErrorMessage message={error} /> : (
               <div className="space-y-4">
                 {/* Select Application */}
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+                <div className="glass-card-strong p-4">
                   <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Select Application</label>
                   <select
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c]"
@@ -75,7 +70,7 @@ export default function DocumentsPage() {
 
                 {/* Upload zone */}
                 {selectedAppId && (
-                  <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+                  <div className="glass-card-strong p-6">
                     <h3 className="font-semibold text-gray-700 mb-4">Upload Files</h3>
 
                     {uploadSuccess && (
@@ -125,9 +120,14 @@ export default function DocumentsPage() {
                 )}
               </div>
             )}
-          </div>
-        </main>
-      </div>
-    </div>
+    </PageShell>
+  );
+}
+
+export default function DocumentsPage() {
+  return (
+    <Suspense fallback={<SkeletonLoader variant="detail" />}>
+      <DocumentsPageContent />
+    </Suspense>
   );
 }

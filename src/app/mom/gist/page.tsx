@@ -1,11 +1,11 @@
 'use client';
+export const dynamic = 'force-dynamic';
 
-import { useEffect, useState, useMemo } from 'react';
+import { Suspense, useEffect, useState, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useWorkflowStore } from '@/store/workflowStore';
-import GovHeader from '@/components/GovHeader';
-import Sidebar from '@/components/Sidebar';
+import PageShell from '@/components/PageShell';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import ErrorMessage from '@/components/ErrorMessage';
 import { generateGist, getGist } from '@/lib/api';
@@ -45,7 +45,7 @@ const GistField = ({
   );
 };
 
-export default function GistPage() {
+function GistPageContent() {
   const { user } = useAuthStore();
   const { applications, fetchAll, isLoading, error } = useWorkflowStore();
   const router = useRouter();
@@ -88,16 +88,11 @@ export default function GistPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <GovHeader />
-      <div className="flex flex-1">
-        <Sidebar role="mom" />
-        <main className="flex-1 p-6 overflow-auto">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-800 mb-1">Generate Gist</h2>
-            <p className="text-gray-400 text-sm mb-6">Auto-generate and edit the project summary gist for EAC appraisal</p>
+    <PageShell role="mom">
+            <h2 className="page-heading">Generate Gist</h2>
+            <p className="page-subheading mb-6">Auto-generate and edit the project summary gist for EAC appraisal</p>
 
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 mb-4">
+            <div className="glass-card-strong p-4 mb-4">
               <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Select Application</label>
               <select
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c]"
@@ -128,7 +123,7 @@ export default function GistPage() {
             {fetchingGist && <SkeletonLoader variant="detail" />}
 
             {gist && (
-              <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-5">
+              <div className="glass-card-strong p-6 space-y-5">
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-gray-800 flex items-center gap-2"><BookOpen size={18} className="text-[#1a6b3c]" /> Project Gist</h3>
                   <div className="flex items-center gap-2">
@@ -201,9 +196,15 @@ export default function GistPage() {
                 />
               </div>
             )}
-          </div>
-        </main>
-      </div>
-    </div>
+    </PageShell>
   );
 }
+
+export default function GistPage() {
+  return (
+    <Suspense fallback={<SkeletonLoader variant="detail" />}>
+      <GistPageContent />
+    </Suspense>
+  );
+}
+

@@ -1,32 +1,36 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useWorkflowStore } from '@/store/workflowStore';
-import { useNotificationStore } from '@/store/notificationStore';
-import GovHeader from '@/components/GovHeader';
-import Sidebar from '@/components/Sidebar';
+import PageShell from '@/components/PageShell';
 import StatusBadge from '@/components/StatusBadge';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import ErrorMessage from '@/components/ErrorMessage';
 import EmptyState from '@/components/EmptyState';
 import Link from 'next/link';
 import { Calendar, CheckCircle, BookOpen } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+} satisfies import('framer-motion').Variants;
 
 export default function MomDashboard() {
   const { user } = useAuthStore();
   const { applications, fetchAll, isLoading, error } = useWorkflowStore();
-  const { startPolling, stopPolling } = useNotificationStore();
-  const router = useRouter();
 
   useEffect(() => {
-    if (!user) { router.replace('/login'); return; }
-    if (user.role !== 'mom') { router.replace('/login'); return; }
-    fetchAll();
-    startPolling(user.id);
-    return () => stopPolling();
-  }, [user]);
+    if (user && user.role === 'mom') {
+      fetchAll();
+    }
+  }, [user, fetchAll]);
 
   if (!user) return null;
 
@@ -34,88 +38,118 @@ export default function MomDashboard() {
   const momDraft = applications.filter((a) => a.status === 'mom_draft');
   const finalized = applications.filter((a) => a.status === 'finalized');
 
+  const statCards = [
+    { label: 'Pending EAC Appraisal', value: referred.length, icon: <Calendar size={20} />, gradient: 'from-purple-500 to-violet-600' },
+    { label: 'MoM In Draft', value: momDraft.length, icon: <BookOpen size={20} />, gradient: 'from-indigo-500 to-blue-600' },
+    { label: 'EC Granted', value: finalized.length, icon: <CheckCircle size={20} />, gradient: 'from-emerald-500 to-teal-600' },
+  ];
+
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <GovHeader />
-      <div className="flex flex-1">
-        <Sidebar role="mom" />
-        <main className="flex-1 p-6 overflow-auto">
-          <div className="max-w-5xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-800 mb-1">MoM Secretariat Dashboard</h2>
-            <p className="text-gray-400 text-sm mb-6">Manage appraisal minutes and issue Environmental Clearance certificates</p>
+    <PageShell role="mom">
+      {/* Page heading */}
+      <motion.div
+        className="mb-8"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="page-heading">MoM Secretariat Dashboard</h2>
+        <p className="page-subheading">Manage appraisal minutes and issue Environmental Clearance certificates</p>
+      </motion.div>
 
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              {[
-                { label: 'Pending EAC Appraisal', value: referred.length, icon: <Calendar size={20} />, color: 'text-purple-600', bg: 'bg-purple-50' },
-                { label: 'MoM In Draft', value: momDraft.length, icon: <BookOpen size={20} />, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-                { label: 'EC Granted', value: finalized.length, icon: <CheckCircle size={20} />, color: 'text-green-600', bg: 'bg-green-50' },
-              ].map((s) => (
-                <div key={s.label} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
-                  <div className={`w-9 h-9 ${s.bg} ${s.color} rounded-lg flex items-center justify-center mb-2`}>{s.icon}</div>
-                  <p className="text-2xl font-bold text-gray-800">{s.value}</p>
-                  <p className="text-xs text-gray-400">{s.label}</p>
-                </div>
-              ))}
+      {/* Stats */}
+      <motion.div
+        className="grid grid-cols-3 gap-4 mb-8"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        {statCards.map((stat) => (
+          <motion.div key={stat.label} variants={itemVariants} className="stat-card group">
+            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center mb-3 text-white shadow-md group-hover:scale-110 transition-transform duration-300`}>
+              {stat.icon}
             </div>
+            <p className="text-3xl font-extrabold text-gray-800 mb-0.5">{stat.value}</p>
+            <p className="text-xs text-gray-400 font-medium">{stat.label}</p>
+          </motion.div>
+        ))}
+      </motion.div>
 
-            {isLoading ? <SkeletonLoader variant="table" /> :
-             error ? <ErrorMessage message={error} onRetry={fetchAll} /> : (
-              <div className="space-y-4">
-                {/* Referred applications */}
-                {referred.length > 0 && (
-                  <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                    <div className="px-5 py-3 border-b border-gray-100 bg-purple-50">
-                      <h3 className="font-semibold text-purple-800 text-sm">Referred — Awaiting EAC Appraisal</h3>
-                    </div>
-                    <div className="divide-y divide-gray-50">
-                      {referred.map((a) => (
-                        <Link key={a.id} href={`/mom/gist?id=${a.id}`} className="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors block">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-gray-800 truncate">{a.projectName}</p>
-                            <p className="text-xs text-gray-400">{a.applicationNumber} &bull; {a.stateUT} &bull; Cat {a.projectCategory}</p>
-                            {a.meetingDate && <p className="text-xs text-purple-600 font-semibold mt-0.5">EAC Meeting: {new Date(a.meetingDate).toLocaleDateString('en-IN')} &bull; {a.meetingNumber}</p>}
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <StatusBadge status={a.status} />
-                            <span className="text-xs font-semibold text-[#1a6b3c] hover:underline whitespace-nowrap">Generate Gist →</span>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* MoM draft */}
-                {momDraft.length > 0 && (
-                  <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                    <div className="px-5 py-3 border-b border-gray-100 bg-indigo-50">
-                      <h3 className="font-semibold text-indigo-800 text-sm">MoM Draft — Pending Finalization</h3>
-                    </div>
-                    <div className="divide-y divide-gray-50">
-                      {momDraft.map((a) => (
-                        <Link key={a.id} href={`/mom/finalize?id=${a.id}`} className="flex items-center gap-4 px-5 py-3 hover:bg-gray-50 transition-colors block">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-gray-800 truncate">{a.projectName}</p>
-                            <p className="text-xs text-gray-400">{a.applicationNumber}</p>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <StatusBadge status={a.status} />
-                            <span className="text-xs font-semibold text-indigo-600 hover:underline whitespace-nowrap">Finalize →</span>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {referred.length === 0 && momDraft.length === 0 && (
-                  <EmptyState title="No pending cases" message="All referred applications appear here. Check back after scrutiny refers cases to EAC." />
-                )}
+      {/* Applications */}
+      {isLoading ? <SkeletonLoader variant="table" /> :
+        error ? <ErrorMessage message={error} onRetry={fetchAll} /> : (
+        <motion.div
+          className="space-y-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          {/* Referred applications */}
+          {referred.length > 0 && (
+            <div className="glass-card-strong overflow-hidden">
+              <div className="px-5 py-4 border-b border-gray-100/50" style={{ background: 'linear-gradient(135deg, rgba(147,51,234,0.05), transparent)' }}>
+                <h3 className="font-semibold text-purple-800 text-sm">Referred — Awaiting EAC Appraisal</h3>
               </div>
-            )}
-          </div>
-        </main>
-      </div>
-    </div>
+              <div className="divide-y divide-gray-50/50">
+                {referred.map((a, idx) => (
+                  <motion.div
+                    key={a.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.35 + idx * 0.05 }}
+                  >
+                    <Link href={`/mom/gist?id=${a.id}`} className="flex items-center gap-4 px-5 py-3.5 hover:bg-[#1a6b3c]/3 transition-colors block">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-gray-800 truncate">{a.projectName}</p>
+                        <p className="text-xs text-gray-400">{a.applicationNumber} &bull; {a.stateUT} &bull; Cat {a.projectCategory}</p>
+                        {a.meetingDate && <p className="text-xs text-purple-600 font-semibold mt-0.5">EAC Meeting: {new Date(a.meetingDate).toLocaleDateString('en-IN')} &bull; {a.meetingNumber}</p>}
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <StatusBadge status={a.status} />
+                        <span className="text-xs font-semibold text-[#1a6b3c] hover:underline whitespace-nowrap">Generate Gist →</span>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* MoM draft */}
+          {momDraft.length > 0 && (
+            <div className="glass-card-strong overflow-hidden">
+              <div className="px-5 py-4 border-b border-gray-100/50" style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.05), transparent)' }}>
+                <h3 className="font-semibold text-indigo-800 text-sm">MoM Draft — Pending Finalization</h3>
+              </div>
+              <div className="divide-y divide-gray-50/50">
+                {momDraft.map((a, idx) => (
+                  <motion.div
+                    key={a.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.35 + idx * 0.05 }}
+                  >
+                    <Link href={`/mom/finalize?id=${a.id}`} className="flex items-center gap-4 px-5 py-3.5 hover:bg-[#1a6b3c]/3 transition-colors block">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-gray-800 truncate">{a.projectName}</p>
+                        <p className="text-xs text-gray-400">{a.applicationNumber}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <StatusBadge status={a.status} />
+                        <span className="text-xs font-semibold text-indigo-600 hover:underline whitespace-nowrap">Finalize →</span>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {referred.length === 0 && momDraft.length === 0 && (
+            <EmptyState title="No pending cases" message="All referred applications appear here. Check back after scrutiny refers cases to EAC." />
+          )}
+        </motion.div>
+      )}
+    </PageShell>
   );
 }

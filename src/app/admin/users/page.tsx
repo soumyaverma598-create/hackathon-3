@@ -2,8 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import GovHeader from '@/components/GovHeader';
-import Sidebar from '@/components/Sidebar';
+import PageShell from '@/components/PageShell';
 import { useAuthStore } from '@/store/authStore';
 import { approveRestrictedAccess, createUser, fetchUsers, updateUser } from '@/lib/api';
 import { AdminCreateUserInput, AdminUpdateUserInput, User, UserRole } from '@/types/auth';
@@ -219,15 +218,9 @@ export default function AdminUsersPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <GovHeader />
-      <div className="flex flex-1">
-        <Sidebar role="admin" />
-
-        <main className="flex-1 p-6 overflow-auto">
-          <div className="max-w-5xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-800 mb-1">User Management</h2>
-            <p className="text-gray-500 text-sm mb-6">Manage all registered users in PARIVESH 3.0.</p>
+    <PageShell role="admin">
+            <h2 className="page-heading">User Management</h2>
+            <p className="page-subheading mb-6">Manage all registered users in PARIVESH 3.0.</p>
 
             <div className="mb-4 flex justify-end">
               <button
@@ -247,7 +240,7 @@ export default function AdminUsersPage() {
             ) : null}
 
             {showForm ? (
-              <section className="mb-5 rounded-xl border border-gray-100 bg-white p-5 shadow-sm animate-gov-enter">
+              <section className="mb-5 glass-card-strong p-5 animate-gov-enter">
                 <div className="mb-4 flex items-center justify-between">
                   <h3 className="text-base font-semibold text-gray-800">
                     {formMode === 'create' ? 'Add User Credentials' : `Edit Credentials - ${selectedUser?.name ?? ''}`}
@@ -361,7 +354,7 @@ export default function AdminUsersPage() {
               </section>
             ) : null}
 
-            <section className="mb-5 rounded-xl border border-gray-100 bg-white p-5 shadow-sm animate-gov-enter">
+            <section className="mb-5 glass-card-strong p-5 animate-gov-enter">
               <div className="mb-4">
                 <h3 className="text-base font-semibold text-gray-800">Central RBAC Team Assignment</h3>
                 <p className="text-xs text-gray-500 mt-1">
@@ -437,7 +430,7 @@ export default function AdminUsersPage() {
               </div>
             </section>
 
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="glass-card-strong overflow-hidden">
               <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
                 <Users size={16} className="text-[#1a6b3c]" />
                 <h3 className="font-semibold text-gray-700 text-sm">Registered Users</h3>
@@ -500,9 +493,6 @@ export default function AdminUsersPage() {
                 </tbody>
               </table>
             </div>
-          </div>
-        </main>
-      </div>
-    </div>
+    </PageShell>
   );
 }

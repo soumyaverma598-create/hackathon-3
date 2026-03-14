@@ -1,11 +1,11 @@
 'use client';
+export const dynamic = 'force-dynamic';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useWorkflowStore } from '@/store/workflowStore';
-import GovHeader from '@/components/GovHeader';
-import Sidebar from '@/components/Sidebar';
+import PageShell from '@/components/PageShell';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import ErrorMessage from '@/components/ErrorMessage';
 import WorkflowProgress from '@/components/WorkflowProgress';
@@ -13,7 +13,7 @@ import StatusBadge from '@/components/StatusBadge';
 import { getMom, editMom, generateMomDoc, finalizeMom, downloadCertificate } from '@/lib/api';
 import { CheckCircle, FileDown, ScrollText, Stamp } from 'lucide-react';
 
-export default function MomFinalizePage() {
+function MomFinalizePageContent() {
   const { user } = useAuthStore();
   const { applications, fetchAll, isLoading, error: storeError } = useWorkflowStore();
   const router = useRouter();
@@ -93,16 +93,11 @@ export default function MomFinalizePage() {
   const inputCls = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c] transition-all";
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      <GovHeader />
-      <div className="flex flex-1">
-        <Sidebar role="mom" />
-        <main className="flex-1 p-6 overflow-auto">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-800 mb-1">Finalize & Issue EC</h2>
-            <p className="text-gray-400 text-sm mb-6">Edit Minutes of Meeting, generate MoM document, and issue Environmental Clearance certificate</p>
+    <PageShell role="mom">
+            <h2 className="page-heading">Finalize & Issue EC</h2>
+            <p className="page-subheading mb-6">Edit Minutes of Meeting, generate MoM document, and issue Environmental Clearance certificate</p>
 
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 mb-4">
+            <div className="glass-card-strong p-4 mb-4">
               <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Select Application</label>
               <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6b3c]" value={selectedAppId} onChange={(e) => setSelectedAppId(e.target.value)}>
                 <option value="">-- Select application --</option>
@@ -141,7 +136,7 @@ export default function MomFinalizePage() {
                 </div>
 
                 {/* MoM Editor */}
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+                <div className="glass-card-strong p-5">
                   <h3 className="font-semibold text-gray-700 mb-4 flex items-center gap-2">
                     <ScrollText size={16} className="text-[#1a6b3c]" /> Minutes of Meeting
                   </h3>
@@ -171,7 +166,7 @@ export default function MomFinalizePage() {
                 </div>
 
                 {/* Actions */}
-                <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+                <div className="glass-card-strong p-5">
                   <h3 className="font-semibold text-gray-700 mb-4">Issue Environmental Clearance</h3>
                   <div className="flex flex-wrap gap-3">
                     <button
@@ -211,9 +206,15 @@ export default function MomFinalizePage() {
                 </div>
               </div>
             ) : null}
-          </div>
-        </main>
-      </div>
-    </div>
+    </PageShell>
   );
 }
+
+export default function MomFinalizePage() {
+  return (
+    <Suspense fallback={<SkeletonLoader variant="detail" />}>
+      <MomFinalizePageContent />
+    </Suspense>
+  );
+}
+
