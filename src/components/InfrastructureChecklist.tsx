@@ -57,6 +57,14 @@ const InfrastructureChecklist = memo(function InfrastructureChecklist({ checkedI
 
   const allChecked = INFRASTRUCTURE_DOCUMENTS.every(doc => checkedItems[doc.id]);
   const checkedCount = Object.values(checkedItems).filter(Boolean).length;
+  const handleToggleAll = () => {
+    const nextCheckedState = !allChecked;
+    INFRASTRUCTURE_DOCUMENTS.forEach((doc) => {
+      if ((checkedItems[doc.id] || false) !== nextCheckedState) {
+        onToggle(doc.id);
+      }
+    });
+  };
 
   return (
     <div className="glass-card-strong rounded-lg overflow-hidden">
@@ -68,6 +76,15 @@ const InfrastructureChecklist = memo(function InfrastructureChecklist({ checkedI
         <p className="text-xs text-gray-500 mt-1.5">
           {checkedCount} / {INFRASTRUCTURE_DOCUMENTS.length} {language === 'en' ? 'documents checked' : 'दस्तावेज़ जांचे गए'}
         </p>
+        <button
+          type="button"
+          onClick={handleToggleAll}
+          className="mt-3 text-xs font-semibold text-[#164e63] hover:text-[#0e3b4d] underline underline-offset-2"
+        >
+          {allChecked
+            ? (language === 'en' ? 'Clear All' : 'सभी हटाएं')
+            : (language === 'en' ? 'Select All' : 'सभी चुनें')}
+        </button>
       </div>
 
       {/* Progress Bar */}

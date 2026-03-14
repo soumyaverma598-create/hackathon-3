@@ -97,6 +97,14 @@ const PROJECT_COMPLIANCE_AFFIDAVIT_ITEMS = [
   'Inspecting officers will be allowed access to the site.',
 ] as const;
 
+const MANDATORY_REQUIRED_DOC_IDS = REQUIRED_DOCS.filter((doc) => doc.required).map((doc) => doc.id);
+const OPTIONAL_REQUIRED_DOC_IDS = REQUIRED_DOCS.filter((doc) => !doc.required).map((doc) => doc.id);
+const SAND_AFFIDAVIT_IDS = SAND_AFFIDAVIT_ITEMS.map((_, index) => `sandAffidavit-${index + 1}`);
+const LIMESTONE_AFFIDAVIT_IDS = LIMESTONE_AFFIDAVIT_ITEMS.map((_, index) => `limestoneAffidavit-${index + 1}`);
+const BRICKS_AFFIDAVIT_IDS = PROJECT_COMPLIANCE_AFFIDAVIT_ITEMS.map((_, index) => `bricksAffidavit-${index + 1}`);
+const INFRASTRUCTURE_AFFIDAVIT_IDS = PROJECT_COMPLIANCE_AFFIDAVIT_ITEMS.map((_, index) => `infrastructureAffidavit-${index + 1}`);
+const INDUSTRY_AFFIDAVIT_IDS = PROJECT_COMPLIANCE_AFFIDAVIT_ITEMS.map((_, index) => `industryAffidavit-${index + 1}`);
+
 type FormData = Omit<
   WorkflowApplication,
   'id' | 'applicationNumber' | 'status' | 'createdAt' | 'updatedAt' | 'submittedAt' | 'finalizedAt' | 'edsQueries' | 'documents' | 'paymentStatus' | 'scrutinyAssignedTo' | 'gist' | 'momContent'
@@ -275,6 +283,7 @@ function ApplyWizardContent() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paySuccess, setPaySuccess] = useState('');
   const [payError, setPayError] = useState('');
+  const [isPaymentConfirmed, setIsPaymentConfirmed] = useState(false);
 
   // Step 5 state
   const [submitSuccess, setSubmitSuccess] = useState('');
@@ -348,6 +357,14 @@ function ApplyWizardContent() {
   const handleInfrastructureAffidavitUpload = useCallback((id: string, file: File | null) => setInfrastructureAffidavitUploads((p) => ({ ...p, [id]: file?.name ?? '' })), []);
   const toggleIndustryAffidavit = useCallback((id: string) => setIndustryAffidavitChecks((p) => ({ ...p, [id]: !p[id] })), []);
   const handleIndustryAffidavitUpload = useCallback((id: string, file: File | null) => setIndustryAffidavitUploads((p) => ({ ...p, [id]: file?.name ?? '' })), []);
+  const toggleAllForIds = useCallback((ids: string[], checkedMap: Record<string, boolean>, toggleFn: (id: string) => void) => {
+    const shouldCheckAll = !ids.every((id) => checkedMap[id]);
+    ids.forEach((id) => {
+      if ((checkedMap[id] || false) !== shouldCheckAll) {
+        toggleFn(id);
+      }
+    });
+  }, []);
 
   // Validation
   const mandatoryDocsChecked = REQUIRED_DOCS.filter((d) => d.required).every((d) => docChecks[d.id]);
@@ -415,6 +432,7 @@ function ApplyWizardContent() {
     if (user) wipeProgress(user.email);
     setSavedAppId(null); setCurrentApp(null);
     setForm({ ...INITIAL }); setDocChecks({}); setDocUploads({});
+    setIsPaymentConfirmed(false);
     setSelectedApplicationType(''); setStep1Success('');
     router.push('/applicant/apply?step=1');
   };
@@ -495,6 +513,13 @@ function ApplyWizardContent() {
                   <div className="px-4 py-3 border-b border-cyan-100 bg-cyan-50/70">
                     <p className="text-sm font-semibold text-[#164e63]">Sand Mining Affidavits (Mandatory)</p>
                     <p className="text-xs text-gray-600 mt-1">Please confirm each affidavit point before submitting this Sand Mining application.</p>
+                    <button
+                      type="button"
+                      onClick={() => toggleAllForIds(SAND_AFFIDAVIT_IDS, sandAffidavitChecks, toggleSandAffidavit)}
+                      className="mt-2 text-xs font-semibold text-[#164e63] hover:text-[#0e3b4d] underline underline-offset-2"
+                    >
+                      {SAND_AFFIDAVIT_IDS.every((id) => sandAffidavitChecks[id]) ? 'Clear All' : 'Select All'}
+                    </button>
                   </div>
                   <div className="divide-y divide-gray-100">
                     {SAND_AFFIDAVIT_ITEMS.map((item, index) => {
@@ -518,6 +543,13 @@ function ApplyWizardContent() {
                   <div className="px-4 py-3 border-b border-cyan-100 bg-cyan-50/70">
                     <p className="text-sm font-semibold text-[#164e63]">Limestone Mining Affidavits (Mandatory)</p>
                     <p className="text-xs text-gray-600 mt-1">Please confirm each affidavit point before submitting this Limestone Mining application.</p>
+                    <button
+                      type="button"
+                      onClick={() => toggleAllForIds(LIMESTONE_AFFIDAVIT_IDS, limestoneAffidavitChecks, toggleLimestoneAffidavit)}
+                      className="mt-2 text-xs font-semibold text-[#164e63] hover:text-[#0e3b4d] underline underline-offset-2"
+                    >
+                      {LIMESTONE_AFFIDAVIT_IDS.every((id) => limestoneAffidavitChecks[id]) ? 'Clear All' : 'Select All'}
+                    </button>
                   </div>
                   <div className="divide-y divide-gray-100">
                     {LIMESTONE_AFFIDAVIT_ITEMS.map((item, index) => {
@@ -541,6 +573,13 @@ function ApplyWizardContent() {
                   <div className="px-4 py-3 border-b border-cyan-100 bg-cyan-50/70">
                     <p className="text-sm font-semibold text-[#164e63]">Bricks Manufacturing Affidavits (Mandatory)</p>
                     <p className="text-xs text-gray-600 mt-1">Please confirm each affidavit point before submitting.</p>
+                    <button
+                      type="button"
+                      onClick={() => toggleAllForIds(BRICKS_AFFIDAVIT_IDS, bricksAffidavitChecks, toggleBricksAffidavit)}
+                      className="mt-2 text-xs font-semibold text-[#164e63] hover:text-[#0e3b4d] underline underline-offset-2"
+                    >
+                      {BRICKS_AFFIDAVIT_IDS.every((id) => bricksAffidavitChecks[id]) ? 'Clear All' : 'Select All'}
+                    </button>
                   </div>
                   <div className="divide-y divide-gray-100">
                     {PROJECT_COMPLIANCE_AFFIDAVIT_ITEMS.map((item, index) => {
@@ -570,6 +609,13 @@ function ApplyWizardContent() {
                     <div className="px-4 py-3 border-b border-cyan-100 bg-cyan-50/70">
                       <p className="text-sm font-semibold text-[#164e63]">Infrastructure Development Affidavits (Mandatory)</p>
                       <p className="text-xs text-gray-600 mt-1">Please confirm each affidavit point before submitting this Infrastructure Development application.</p>
+                      <button
+                        type="button"
+                        onClick={() => toggleAllForIds(INFRASTRUCTURE_AFFIDAVIT_IDS, infrastructureAffidavitChecks, toggleInfrastructureAffidavit)}
+                        className="mt-2 text-xs font-semibold text-[#164e63] hover:text-[#0e3b4d] underline underline-offset-2"
+                      >
+                        {INFRASTRUCTURE_AFFIDAVIT_IDS.every((id) => infrastructureAffidavitChecks[id]) ? 'Clear All' : 'Select All'}
+                      </button>
                     </div>
                     <div className="divide-y divide-gray-100">
                       {PROJECT_COMPLIANCE_AFFIDAVIT_ITEMS.map((item, index) => {
@@ -604,6 +650,13 @@ function ApplyWizardContent() {
                     <div className="px-4 py-3 border-b border-cyan-100 bg-cyan-50/70">
                       <p className="text-sm font-semibold text-[#164e63]">Industrial Project Affidavits (Mandatory)</p>
                       <p className="text-xs text-gray-600 mt-1">Please confirm each affidavit point before submitting this Industrial Project application.</p>
+                      <button
+                        type="button"
+                        onClick={() => toggleAllForIds(INDUSTRY_AFFIDAVIT_IDS, industryAffidavitChecks, toggleIndustryAffidavit)}
+                        className="mt-2 text-xs font-semibold text-[#164e63] hover:text-[#0e3b4d] underline underline-offset-2"
+                      >
+                        {INDUSTRY_AFFIDAVIT_IDS.every((id) => industryAffidavitChecks[id]) ? 'Clear All' : 'Select All'}
+                      </button>
                     </div>
                     <div className="divide-y divide-gray-100">
                       {PROJECT_COMPLIANCE_AFFIDAVIT_ITEMS.map((item, index) => {
@@ -733,7 +786,16 @@ function ApplyWizardContent() {
                 </h3>
                 <p className="text-xs text-gray-400 mb-4">Confirm that the following documents are ready. All mandatory items must be acknowledged before submission.</p>
 
-                <p className="ui-section-title-text mb-2">Mandatory Documents</p>
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <p className="ui-section-title-text">Mandatory Documents</p>
+                  <button
+                    type="button"
+                    onClick={() => toggleAllForIds(MANDATORY_REQUIRED_DOC_IDS, docChecks, toggleDoc)}
+                    className="text-xs font-semibold text-[#164e63] hover:text-[#0e3b4d] underline underline-offset-2"
+                  >
+                    {MANDATORY_REQUIRED_DOC_IDS.every((id) => docChecks[id]) ? 'Clear All' : 'Select All'}
+                  </button>
+                </div>
                 <div className="space-y-2 mb-5">
                   {REQUIRED_DOCS.filter(d => d.required).map(doc => (
                     <ChecklistItemWithUpload
@@ -749,7 +811,16 @@ function ApplyWizardContent() {
                   ))}
                 </div>
 
-                <p className="ui-section-title-text mb-2">Conditional / Optional Documents</p>
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <p className="ui-section-title-text">Conditional / Optional Documents</p>
+                  <button
+                    type="button"
+                    onClick={() => toggleAllForIds(OPTIONAL_REQUIRED_DOC_IDS, docChecks, toggleDoc)}
+                    className="text-xs font-semibold text-[#164e63] hover:text-[#0e3b4d] underline underline-offset-2"
+                  >
+                    {OPTIONAL_REQUIRED_DOC_IDS.every((id) => docChecks[id]) ? 'Clear All' : 'Select All'}
+                  </button>
+                </div>
                 <div className="space-y-2">
                   {REQUIRED_DOCS.filter(d => !d.required).map(doc => (
                     <ChecklistItemWithUpload
@@ -902,8 +973,20 @@ function ApplyWizardContent() {
                     </button>
                   </div>
                 )}
+
+                <label className={`mt-4 flex items-start gap-3 rounded-lg border px-3 py-3 ${isPaid ? 'border-cyan-200 bg-cyan-50/50' : 'border-gray-200 bg-white'}`}>
+                  <input
+                    type="checkbox"
+                    checked={isPaymentConfirmed}
+                    onChange={(event) => setIsPaymentConfirmed(event.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-gray-300 text-[#164e63] focus:ring-[#164e63]"
+                  />
+                  <span className="text-sm text-gray-700">
+                    I confirm that payment has been completed.
+                  </span>
+                </label>
               </div>
-              <NavButtons step={3} onBack={() => goToStep(2)} onNext={() => goToStep(4)} nextLabel="Continue to Submit" nextDisabled={!isPaid} />
+              <NavButtons step={3} onBack={() => goToStep(2)} onNext={() => goToStep(4)} nextLabel="Continue to Submit" nextDisabled={!isPaymentConfirmed} />
             </>
           )}
         </div>
@@ -935,7 +1018,7 @@ function ApplyWizardContent() {
                 {submitSuccess ? (
                   <p className="text-green-700 font-semibold text-sm">{submitSuccess} Redirecting…</p>
                 ) : (
-                  <button type="button" onClick={handleFinalSubmit} disabled={!isPaid || isLoading}
+                  <button type="button" onClick={handleFinalSubmit} disabled={!isPaymentConfirmed || isLoading}
                     className="flex items-center gap-2 mx-auto justify-center px-8 py-3 rounded-xl text-sm font-bold text-white disabled:opacity-50"
                     style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}>
                     <Send size={16} /> Submit Application

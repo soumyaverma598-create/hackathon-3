@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { X, CreditCard, AlertCircle, CheckCircle } from 'lucide-react';
+import { USE_MOCK, createPaymentOrder, verifyPayment } from '@/lib/api';
 
 interface PaymentModalProps {
   applicationId: string;
@@ -41,6 +42,11 @@ export default function PaymentModal({
       setLoading(true);
       setError(null);
 
+      if (USE_MOCK) {
+        onSuccess(`mock_pay_${Date.now()}`);
+        return;
+      }
+
       // Load Razorpay script
       const scriptLoaded = await loadRazorpayScript();
       if (!scriptLoaded) {
@@ -50,25 +56,7 @@ export default function PaymentModal({
       }
 
       // Create payment order
-      const response = await fetch('/api/payment/create-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`,
-        },
-        body: JSON.stringify({
-          applicationId,
-          amount,
-        }),
-      });
-
-      const result = await response.json();
-      
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to create payment order');
-      }
-
-      const { orderId, keyId } = result.data;
+      const { orderId, keyId } = await createPaymentOrder(applicationId, amount);
 
       // Open Razorpay checkout
       const options = {
@@ -83,27 +71,14 @@ export default function PaymentModal({
             setProcessing(true);
             
             // Verify payment on backend
-            const verifyResponse = await fetch('/api/payment/verify', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('auth-token')}`,
-              },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                application_id: applicationId,
-              }),
+            const verifyResult = await verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              application_id: applicationId,
             });
 
-            const verifyResult = await verifyResponse.json();
-            
-            if (verifyResult.success) {
-              onSuccess(verifyResult.data.paymentId);
-            } else {
-              throw new Error(verifyResult.error || 'Payment verification failed');
-            }
+            onSuccess(verifyResult.paymentId);
           } catch (err) {
             console.error('Payment verification error:', err);
             onFailure(err instanceof Error ? err.message : 'Payment verification failed');
