@@ -88,29 +88,29 @@ export default function AdminDashboard() {
         <table className="w-full">
           <thead className="ui-table-head">
             <tr>
-              <th className="text-left px-5 py-3">Name</th>
-              <th className="text-left px-5 py-3">Email</th>
-              <th className="text-left px-5 py-3">Role</th>
-              <th className="text-left px-5 py-3">Department</th>
-              <th className="text-left px-5 py-3">Status</th>
+              <th className="text-left px-5 py-3 ui-col-a">Name</th>
+              <th className="text-left px-5 py-3 ui-col-b">Email</th>
+              <th className="text-left px-5 py-3 ui-col-a">Role</th>
+              <th className="text-left px-5 py-3 ui-col-b">Department</th>
+              <th className="text-left px-5 py-3 ui-col-a">Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50/50 text-sm">
             {MOCK_USERS.map((u, idx) => (
               <motion.tr
                 key={u.id}
-                className="hover:bg-[#164e63]/3 transition-colors"
+                className="ui-row-hover"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.35 + idx * 0.04 }}
               >
-                <td className="px-5 py-3 font-medium text-gray-800">{u.name}</td>
-                <td className="px-5 py-3 text-gray-500">{u.email}</td>
-                <td className="px-5 py-3">
+                <td className="px-5 py-3 font-medium text-gray-800 ui-col-a">{u.name}</td>
+                <td className="px-5 py-3 text-gray-500 ui-col-b">{u.email}</td>
+                <td className="px-5 py-3 ui-col-a">
                   <span className="text-xs font-semibold bg-[#164e63]/10 text-[#164e63] px-2.5 py-0.5 rounded-lg capitalize">{u.role}</span>
                 </td>
-                <td className="px-5 py-3 text-gray-400 text-xs max-w-40 truncate">{u.department}</td>
-                <td className="px-5 py-3">
+                <td className="px-5 py-3 text-gray-400 text-xs max-w-40 truncate ui-col-b">{u.department}</td>
+                <td className="px-5 py-3 ui-col-a">
                   <span className={`text-xs font-semibold px-2 py-0.5 rounded-lg ${u.isActive ? 'bg-cyan-100/80 text-cyan-700' : 'bg-red-100/80 text-red-600'}`}>
                     {u.isActive ? 'Active' : 'Inactive'}
                   </span>
@@ -138,27 +138,27 @@ export default function AdminDashboard() {
           <table className="w-full">
             <thead className="ui-table-head">
               <tr>
-                <th className="text-left px-5 py-3">App No.</th>
-                <th className="text-left px-5 py-3">Project</th>
-                <th className="text-left px-5 py-3">Proponent</th>
-                <th className="text-left px-5 py-3">Status</th>
-                <th className="text-left px-5 py-3">Category</th>
+                <th className="text-left px-5 py-3 ui-col-a">App No.</th>
+                <th className="text-left px-5 py-3 ui-col-b">Project</th>
+                <th className="text-left px-5 py-3 ui-col-a">Proponent</th>
+                <th className="text-left px-5 py-3 ui-col-b">Status</th>
+                <th className="text-left px-5 py-3 ui-col-a">Category</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50/50 text-sm">
               {applications.map((a, idx) => (
                 <motion.tr
                   key={a.id}
-                  className="hover:bg-[#164e63]/3 transition-colors"
+                  className="ui-row-hover"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.5 + idx * 0.04 }}
                 >
-                  <td className="px-5 py-3 font-mono text-xs text-gray-500">{a.applicationNumber}</td>
-                  <td className="px-5 py-3 font-medium text-gray-800 max-w-48 truncate">{a.projectName}</td>
-                  <td className="px-5 py-3 text-gray-500 text-xs">{a.proponentName}</td>
-                  <td className="px-5 py-3"><StatusBadge status={a.status} /></td>
-                  <td className="px-5 py-3">
+                  <td className="px-5 py-3 font-mono text-xs text-gray-500 ui-col-a">{a.applicationNumber}</td>
+                  <td className="px-5 py-3 font-medium text-gray-800 max-w-48 truncate ui-col-b">{a.projectName}</td>
+                  <td className="px-5 py-3 text-gray-500 text-xs ui-col-a">{a.proponentName}</td>
+                  <td className="px-5 py-3 ui-col-b"><StatusBadge status={a.status} /></td>
+                  <td className="px-5 py-3 ui-col-a">
                     <span className="text-xs font-semibold bg-[#25c9d0]/10 text-[#25c9d0] px-2 py-0.5 rounded-lg">Cat. {a.projectCategory}</span>
                   </td>
                 </motion.tr>

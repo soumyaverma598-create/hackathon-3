@@ -439,13 +439,13 @@ export default function AdminUsersPage() {
               <table className="w-full">
                 <thead className="ui-table-head">
                   <tr>
-                    <th className="text-left px-5 py-3">Name</th>
-                    <th className="text-left px-5 py-3">Email</th>
-                    <th className="text-left px-5 py-3">Role</th>
-                    <th className="text-left px-5 py-3">Department</th>
-                    <th className="text-left px-5 py-3">Designation</th>
-                    <th className="text-left px-5 py-3">Status</th>
-                    <th className="text-left px-5 py-3">Action</th>
+                    <th className="text-left px-5 py-3 ui-col-a">Name</th>
+                    <th className="text-left px-5 py-3 ui-col-b">Email</th>
+                    <th className="text-left px-5 py-3 ui-col-a">Role</th>
+                    <th className="text-left px-5 py-3 ui-col-b">Department</th>
+                    <th className="text-left px-5 py-3 ui-col-a">Designation</th>
+                    <th className="text-left px-5 py-3 ui-col-b">Status</th>
+                    <th className="text-left px-5 py-3 ui-col-a">Action</th>
                   </tr>
                 </thead>
 
@@ -459,17 +459,17 @@ export default function AdminUsersPage() {
                       <td className="px-5 py-4 text-gray-500" colSpan={7}>No users found.</td>
                     </tr>
                   ) : users.map((u) => (
-                    <tr key={u.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-5 py-3 font-medium text-gray-800">{u.name}</td>
-                      <td className="px-5 py-3 text-gray-500">{u.email}</td>
-                      <td className="px-5 py-3">
+                    <tr key={u.id} className="ui-row-hover">
+                      <td className="px-5 py-3 font-medium text-gray-800 ui-col-a">{u.name}</td>
+                      <td className="px-5 py-3 text-gray-500 ui-col-b">{u.email}</td>
+                      <td className="px-5 py-3 ui-col-a">
                         <span className="text-xs font-semibold bg-[#164e63]/10 text-[#164e63] px-2 py-0.5 rounded-full capitalize">
                           {u.role}
                         </span>
                       </td>
-                      <td className="px-5 py-3 text-gray-500 text-xs">{u.department}</td>
-                      <td className="px-5 py-3 text-gray-500 text-xs">{u.designation}</td>
-                      <td className="px-5 py-3">
+                      <td className="px-5 py-3 text-gray-500 text-xs ui-col-b">{u.department}</td>
+                      <td className="px-5 py-3 text-gray-500 text-xs ui-col-a">{u.designation}</td>
+                      <td className="px-5 py-3 ui-col-b">
                         <span
                           className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
                             u.isActive ? 'bg-cyan-100 text-cyan-700' : 'bg-red-100 text-red-600'
@@ -478,7 +478,7 @@ export default function AdminUsersPage() {
                           {u.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-5 py-3 ui-col-a">
                         <button
                           type="button"
                           onClick={() => startEdit(u)}

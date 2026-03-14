@@ -91,40 +91,40 @@ export default function ScrutinyDashboard() {
           <table className="w-full">
             <thead className="ui-table-head">
               <tr>
-                <th className="text-left px-5 py-3">App No.</th>
-                <th className="text-left px-5 py-3">Project</th>
-                <th className="text-left px-5 py-3">Category</th>
-                <th className="text-left px-5 py-3">Status</th>
-                <th className="text-left px-5 py-3">EDS Open</th>
-                <th className="text-left px-5 py-3">Action</th>
+                <th className="text-left px-5 py-3 ui-col-a">App No.</th>
+                <th className="text-left px-5 py-3 ui-col-b">Project</th>
+                <th className="text-left px-5 py-3 ui-col-a">Category</th>
+                <th className="text-left px-5 py-3 ui-col-b">Status</th>
+                <th className="text-left px-5 py-3 ui-col-a">EDS Open</th>
+                <th className="text-left px-5 py-3 ui-col-b">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50/50 text-sm">
               {applications.map((a, idx) => (
                 <motion.tr
                   key={a.id}
-                  className="hover:bg-[#164e63]/3 transition-colors"
+                  className="ui-row-hover"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.35 + idx * 0.04 }}
                 >
-                  <td className="px-5 py-3 font-mono text-xs text-gray-500">{a.applicationNumber}</td>
-                  <td className="px-5 py-3 font-medium text-gray-800 max-w-48">
+                  <td className="px-5 py-3 font-mono text-xs text-gray-500 ui-col-a">{a.applicationNumber}</td>
+                  <td className="px-5 py-3 font-medium text-gray-800 max-w-48 ui-col-b">
                     <p className="truncate">{a.projectName}</p>
                     <p className="text-xs text-gray-400">{a.stateUT}</p>
                   </td>
-                  <td className="px-5 py-3">
+                  <td className="px-5 py-3 ui-col-a">
                     <span className="text-xs font-bold text-[#25c9d0] bg-[#25c9d0]/10 px-2 py-0.5 rounded-lg">Cat {a.projectCategory}</span>
                   </td>
-                  <td className="px-5 py-3"><StatusBadge status={a.status} /></td>
-                  <td className="px-5 py-3 text-center">
+                  <td className="px-5 py-3 ui-col-b"><StatusBadge status={a.status} /></td>
+                  <td className="px-5 py-3 text-center ui-col-a">
                     {a.edsQueries.filter((q) => q.status === 'open').length > 0 ? (
                       <span className="text-xs font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-lg">
                         {a.edsQueries.filter((q) => q.status === 'open').length} open
                       </span>
                     ) : <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-5 py-3">
+                  <td className="px-5 py-3 ui-col-b">
                     <Link href={`/scrutiny/review?id=${a.id}`} className="text-xs font-semibold text-[#164e63] hover:underline">Review →</Link>
                   </td>
                 </motion.tr>

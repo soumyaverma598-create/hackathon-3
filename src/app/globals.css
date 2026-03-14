@@ -135,6 +135,19 @@ body {
   background: rgba(243, 249, 253, 0.9);
 }
 
+.ui-col-a {
+  background: rgba(236, 246, 252, 0.72);
+}
+
+.ui-col-b {
+  background: rgba(228, 241, 250, 0.74);
+}
+
+.ui-row-hover:hover > td {
+  background: #dceff9;
+  transition: background-color 0.18s ease;
+}
+
 * {
   box-sizing: border-box;
 }
