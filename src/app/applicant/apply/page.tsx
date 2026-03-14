@@ -107,7 +107,7 @@ type FormData = Omit<
 const INITIAL: Partial<FormData> = {
   projectName: '', proponentName: '', proponentPhone: '',
   projectCategory: 'B1', projectSector: '', stateUT: '', district: '',
-  projectCost: 0, projectArea: 0,
+  projectCost: undefined, projectArea: undefined,
 };
 
 const inputCls =
@@ -371,7 +371,7 @@ function ApplyWizardContent() {
   const allIndustryAffidavitsChecked = selectedApplicationType !== 'industry' || PROJECT_COMPLIANCE_AFFIDAVIT_ITEMS.every((_, i) => industryAffidavitChecks[`industryAffidavit-${i + 1}`]);
   const allMandatoryChecked = mandatoryDocsChecked && allSandDocsChecked && allSandAffidavitsChecked && allLimestoneDocsChecked && allLimestoneAffidavitsChecked && allBricksDocsChecked && allBricksAffidavitsChecked && allInfrastructureDocsChecked && allInfrastructureAffidavitsChecked && allIndustryAffidavitsChecked;
 
-  const setField = useCallback((field: keyof FormData, value: string | number | ProjectCategory) => {
+  const setField = useCallback((field: keyof FormData, value: string | number | ProjectCategory | undefined) => {
     setForm((f) => ({ ...f, [field]: value }));
   }, []);
 
@@ -687,10 +687,29 @@ function ApplyWizardContent() {
                     </select>
                   </Field>
                   <Field label="Project Cost (INR) *" id="projectCost">
-                    <input id="projectCost" type="number" className={inputCls} value={form.projectCost ?? ''} onChange={(e) => setField('projectCost', Number(e.target.value))} required min={0} placeholder="e.g. 450000000" />
+                    <input
+                      id="projectCost"
+                      type="number"
+                      className={inputCls}
+                      value={form.projectCost ?? ''}
+                      onChange={(e) => setField('projectCost', e.target.value === '' ? undefined : Number(e.target.value))}
+                      required
+                      min={0}
+                      placeholder="e.g. 450000000"
+                    />
                   </Field>
                   <Field label="Project Area (hectares) *" id="projectArea">
-                    <input id="projectArea" type="number" className={inputCls} value={form.projectArea ?? ''} onChange={(e) => setField('projectArea', Number(e.target.value))} required min={0} step="0.01" placeholder="e.g. 250" />
+                    <input
+                      id="projectArea"
+                      type="number"
+                      className={inputCls}
+                      value={form.projectArea ?? ''}
+                      onChange={(e) => setField('projectArea', e.target.value === '' ? undefined : Number(e.target.value))}
+                      required
+                      min={0}
+                      step="0.01"
+                      placeholder="e.g. 250"
+                    />
                   </Field>
                 </div>
               </div>

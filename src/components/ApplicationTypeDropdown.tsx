@@ -41,10 +41,6 @@ const ApplicationTypeDropdown = memo(function ApplicationTypeDropdown({ value, o
 
   return (
     <div className="relative">
-      <label className="ui-label">
-        {getApplicationText('selectApplicationType', language)}
-        <span className="text-red-500">*</span>
-      </label>
       <div className="relative">
         <select
           value={value}
