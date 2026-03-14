@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 import GovHeader from '@/components/GovHeader';
 import Sidebar from '@/components/Sidebar';
 import { useAuthStore } from '@/store/authStore';
-import { createUser, fetchUsers, updateUser } from '@/lib/api';
+import { approveRestrictedAccess, createUser, fetchUsers, updateUser } from '@/lib/api';
 import { AdminCreateUserInput, AdminUpdateUserInput, User, UserRole } from '@/types/auth';
-import { Plus, Save, UserRoundPen, Users, X } from 'lucide-react';
+import { Plus, Save, ShieldCheck, UserRoundPen, Users, X } from 'lucide-react';
+import { RBAC_ROLE_POLICIES, TEAM_ROLES, canAssignTeamRole } from '@/lib/rbac';
 
 type FormMode = 'create' | 'edit';
 
@@ -37,6 +38,9 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [assigningUserId, setAssigningUserId] = useState<string | null>(null);
+  const [approvingUserId, setApprovingUserId] = useState<string | null>(null);
+  const [approvedIds, setApprovedIds] = useState<Set<string>>(() => new Set(['u3', 'u4']));
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [formMode, setFormMode] = useState<FormMode>('create');
@@ -46,6 +50,11 @@ export default function AdminUsersPage() {
   const selectedUser = useMemo(
     () => users.find((u) => u.id === selectedUserId) ?? null,
     [selectedUserId, users]
+  );
+
+  const assignmentCandidates = useMemo(
+    () => users.filter((u) => u.role !== 'admin'),
+    [users]
   );
 
   const loadUsers = async () => {
@@ -165,6 +174,47 @@ export default function AdminUsersPage() {
       setError(err instanceof Error ? err.message : 'Unable to save user changes.');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleApproveAccess = async (targetUser: User) => {
+    if (!user) return;
+    setError(null);
+    setApprovingUserId(targetUser.id);
+    try {
+      await approveRestrictedAccess(targetUser.id);
+      setApprovedIds((prev) => new Set([...prev, targetUser.id]));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to approve access.');
+    } finally {
+      setApprovingUserId(null);
+    }
+  };
+
+  const assignTeamRole = async (targetUser: User, targetRole: UserRole) => {
+    if (!user) return;
+    if (!canAssignTeamRole(user.role, targetUser.role, targetRole)) {
+      setError('You are not allowed to perform this assignment.');
+      return;
+    }
+
+    setError(null);
+    setAssigningUserId(targetUser.id);
+    try {
+      const updated = await updateUser(targetUser.id, {
+        role: targetRole,
+        department:
+          targetRole === 'scrutiny'
+            ? 'Scrutiny Division'
+            : targetRole === 'mom'
+              ? 'MoM Secretariat'
+              : targetUser.department,
+      });
+      setUsers((previous) => previous.map((item) => (item.id === updated.id ? updated : item)));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to assign team role.');
+    } finally {
+      setAssigningUserId(null);
     }
   };
 
@@ -310,6 +360,82 @@ export default function AdminUsersPage() {
                 </form>
               </section>
             ) : null}
+
+            <section className="mb-5 rounded-xl border border-gray-100 bg-white p-5 shadow-sm animate-gov-enter">
+              <div className="mb-4">
+                <h3 className="text-base font-semibold text-gray-800">Central RBAC Team Assignment</h3>
+                <p className="text-xs text-gray-500 mt-1">
+                  Assign users to Scrutiny or MoM teams via centralized role-based access control.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {assignmentCandidates.length === 0 ? (
+                  <p className="text-sm text-gray-500">No non-admin users available for assignment.</p>
+                ) : assignmentCandidates.map((candidate) => (
+                  <div key={candidate.id} className="rounded-lg border border-gray-100 bg-gray-50 p-4">
+                    <div className="mb-3 flex items-start justify-between gap-2">
+                      <div>
+                        <p className="text-sm font-semibold text-gray-800">{candidate.name}</p>
+                        <p className="text-xs text-gray-500">{candidate.email}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">
+                          Current Role: <span className="font-medium text-gray-700">{RBAC_ROLE_POLICIES[candidate.role].label}</span>
+                        </p>
+                      </div>
+                      {/* Portal access approval badge */}
+                      {(candidate.role === 'scrutiny' || candidate.role === 'mom') && (
+                        <div className="shrink-0">
+                          {approvedIds.has(candidate.id) ? (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-green-100 text-green-700 text-[11px] font-semibold px-2 py-0.5">
+                              <ShieldCheck size={11} /> Portal Access Granted
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              disabled={approvingUserId !== null}
+                              onClick={() => handleApproveAccess(candidate)}
+                              className="inline-flex items-center gap-1 rounded-full bg-amber-100 text-amber-700 border border-amber-300 text-[11px] font-semibold px-2 py-0.5 hover:bg-amber-200 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                            >
+                              <ShieldCheck size={11} />
+                              {approvingUserId === candidate.id ? 'Approving...' : 'Approve Portal Access'}
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {TEAM_ROLES.map((teamRole) => {
+                        const isCurrent = candidate.role === teamRole;
+                        const disabled = assigningUserId !== null || !canAssignTeamRole(user.role, candidate.role, teamRole);
+                        return (
+                          <button
+                            key={teamRole}
+                            type="button"
+                            disabled={disabled || isCurrent}
+                            onClick={() => assignTeamRole(candidate, teamRole)}
+                            className={`rounded-md px-3 py-1.5 text-xs font-semibold border transition-colors disabled:opacity-60 disabled:cursor-not-allowed ${
+                              isCurrent
+                                ? 'bg-[#1a6b3c] text-white border-[#1a6b3c]'
+                                : 'bg-white text-gray-700 border-gray-200 hover:border-[#1a6b3c] hover:text-[#1a6b3c]'
+                            }`}
+                          >
+                            {isCurrent ? `${RBAC_ROLE_POLICIES[teamRole].label} Assigned` : `Assign to ${RBAC_ROLE_POLICIES[teamRole].label}`}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Warning for restricted-role users without portal access */}
+                    {(candidate.role === 'scrutiny' || candidate.role === 'mom') && !approvedIds.has(candidate.id) && (
+                      <p className="mt-2 text-[11px] text-amber-700 bg-amber-50 border border-amber-100 rounded px-2 py-1">
+                        ⚠ This user cannot sign in to the {RBAC_ROLE_POLICIES[candidate.role].label} portal until you grant portal access.
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
 
             <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2">

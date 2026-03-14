@@ -25,6 +25,12 @@ let passwords = { ...MOCK_PASSWORDS };
 let applications = [...MOCK_APPLICATIONS];
 let notifications = [...MOCK_NOTIFICATIONS];
 
+// Pre-approved user IDs for restricted portals (Scrutiny / MoM).
+// Any email NOT in this set whose matching user has role scrutiny/mom
+// is treated as unauthorised and blocked from signing in.
+const RESTRICTED_ROLES = new Set(['scrutiny', 'mom']);
+const APPROVED_RESTRICTED_IDS = new Set(['u3', 'u4']); // pre-seeded accounts
+
 const delay = (ms = 300) => new Promise((res) => setTimeout(res, ms));
 
 type ApiResponse<T> = { success: true; data: T } | { success: false; error: string };
@@ -40,9 +46,77 @@ export async function mockLoginUser(
   if (!user || passwords[email] !== password) {
     return { success: false, error: 'Invalid email or password.' };
   }
+
+  // Block unapproved access to restricted portals (Scrutiny / MoM)
+  if (RESTRICTED_ROLES.has(user.role) && !APPROVED_RESTRICTED_IDS.has(user.id)) {
+    // Push a real-time alert to all admin users
+    const adminUsers = users.filter((u) => u.role === 'admin');
+    const now = new Date().toISOString();
+    const roleLabel = user.role === 'scrutiny' ? 'Scrutiny' : 'MoM';
+    adminUsers.forEach((admin) => {
+      notifications = [
+        {
+          id: `notif-block-${Date.now()}-${admin.id}`,
+          userId: admin.id,
+          title: `⚠ Unauthorised ${roleLabel} Portal Access Attempt`,
+          message: `User "${user.name}" (${user.email}) attempted to sign in to the ${roleLabel} portal without admin approval. Please review and assign access via User Management if needed.`,
+          type: 'warning' as const,
+          isRead: false,
+          createdAt: now,
+          applicationId: undefined,
+        },
+        ...notifications,
+      ];
+    });
+    return {
+      success: false,
+      error:
+        `Access to the ${roleLabel} portal is restricted. Your sign-in attempt has been flagged and the administrator has been notified. Please contact admin@moef.gov.in for access approval.`,
+    };
+  }
+
   // Mock JWT — base64 encoded user id
   const token = `mock-jwt-${btoa(user.id + ':' + Date.now())}`;
   return { success: true, data: { token, user } };
+}
+
+/** Admin can call this to approve a restricted-role user and add them to the allowed set */
+export async function mockApproveRestrictedAccess(
+  userId: string
+): Promise<ApiResponse<{ approved: boolean }>> {
+  await delay();
+  const target = users.find((u) => u.id === userId);
+  if (!target) return { success: false, error: 'User not found.' };
+  if (!RESTRICTED_ROLES.has(target.role))
+    return { success: false, error: 'User does not have a restricted role.' };
+  APPROVED_RESTRICTED_IDS.add(userId);
+  return { success: true, data: { approved: true } };
+}
+
+/** Push an admin-directed notification programmatically */
+export async function mockPushAdminAlert(
+  title: string,
+  message: string
+): Promise<ApiResponse<{ pushed: number }>> {
+  await delay();
+  const adminUsers = users.filter((u) => u.role === 'admin');
+  const now = new Date().toISOString();
+  adminUsers.forEach((admin) => {
+    notifications = [
+      {
+        id: `notif-alert-${Date.now()}-${admin.id}`,
+        userId: admin.id,
+        title,
+        message,
+        type: 'warning' as const,
+        isRead: false,
+        createdAt: now,
+        applicationId: undefined,
+      },
+      ...notifications,
+    ];
+  });
+  return { success: true, data: { pushed: adminUsers.length } };
 }
 
 export async function mockGetCurrentUser(token: string): Promise<ApiResponse<User>> {

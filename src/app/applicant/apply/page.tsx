@@ -9,6 +9,22 @@ import Sidebar from '@/components/Sidebar';
 import { WorkflowApplication, ProjectCategory } from '@/types/workflow';
 import { Send } from 'lucide-react';
 
+const REQUIRED_DOCS = [
+  { id: 'form1',        label: 'Form 1 / Form 1A',                            desc: 'Duly filled and signed application form as per EIA Notification 2006',    required: true },
+  { id: 'pfr',          label: 'Pre-Feasibility Report (PFR)',                 desc: 'Brief description of the project, site selection, and alternatives',      required: true },
+  { id: 'eia',          label: 'Environmental Impact Assessment (EIA) Report', desc: 'Detailed EIA report prepared by an accredited EIA Consultant',            required: true },
+  { id: 'emp',          label: 'Environment Management Plan (EMP)',            desc: 'Comprehensive environmental mitigation and monitoring plan',               required: true },
+  { id: 'ph',           label: 'Public Hearing / Consultation Report',         desc: 'Proceedings of public hearing conducted by SPCB / UTPCC',                required: true },
+  { id: 'location',     label: 'Site Location Map & Topo Sheet',               desc: 'Survey of India topo sheet (1:50,000) with site demarcated',              required: true },
+  { id: 'land',         label: 'Land Ownership / Lease Documents',             desc: 'Revenue records, lease deed, or allotment letter for project land',       required: true },
+  { id: 'spcb',         label: 'NOC from State Pollution Control Board',       desc: 'No-Objection Certificate from SPCB / UTPCC',                             required: true },
+  { id: 'incorporate',  label: 'Company Incorporation / Auth Certificate',     desc: 'Certificate of Incorporation, MoA & AoA, or Partnership deed',           required: true },
+  { id: 'proponent_id', label: 'Proponent Identity Proof (Aadhaar / PAN)',     desc: 'Self-attested copy of Aadhaar or PAN of authorised signatory',           required: true },
+  { id: 'forest',       label: 'Forest Clearance (if applicable)',             desc: 'Stage I approval under Forest (Conservation) Act, 1980',                 required: false },
+  { id: 'crz',          label: 'CRZ Clearance (if applicable)',                desc: 'Coastal Regulation Zone clearance from MoEFCC / State CRZ Authority',    required: false },
+  { id: 'risk',         label: 'Risk Assessment Report (if applicable)',       desc: 'Quantitative risk assessment for hazardous / chemical industry projects', required: false },
+];
+
 const SECTORS = ['Cement', 'Mining', 'Power', 'Road / Highway', 'Thermal Power Plant', 'River Valley / Hydro Power', 'Chemical / Petrochemical', 'Iron & Steel', 'Port & Harbour', 'Tourism / Hospitality', 'Others'];
 const STATES = ['Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal', 'Delhi', 'Jammu & Kashmir', 'Ladakh'];
 
@@ -49,7 +65,14 @@ export default function ApplyPage() {
   const router = useRouter();
   const [form, setForm] = useState<Partial<FormData>>({ ...INITIAL });
   const [success, setSuccess] = useState('');
+  const [docChecks, setDocChecks] = useState<Record<string, boolean>>({});
   const userFormInitialized = useRef(false);
+
+  const toggleDoc = useCallback((id: string) => {
+    setDocChecks(prev => ({ ...prev, [id]: !prev[id] }));
+  }, []);
+
+  const allMandatoryChecked = REQUIRED_DOCS.filter(d => d.required).every(d => docChecks[d.id]);
 
   useEffect(() => {
     if (!user) { router.replace('/login'); return; }
@@ -184,6 +207,71 @@ export default function ApplyPage() {
                 </div>
               </div>
 
+              {/* Required Documents Checklist */}
+              <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+                <h3 className="font-semibold text-gray-700 mb-1 pb-2 border-b border-gray-100 flex items-center gap-2">
+                  <span className="w-6 h-6 bg-[#1a6b3c] text-white text-xs rounded-full flex items-center justify-center font-bold">4</span>
+                  Required Documents Checklist
+                </h3>
+                <p className="text-xs text-gray-400 mb-4">Confirm that the following documents are ready. All mandatory items must be acknowledged before submission.</p>
+
+                <p className="text-xs font-bold text-red-600 uppercase tracking-wide mb-2">Mandatory Documents</p>
+                <div className="space-y-2 mb-5">
+                  {REQUIRED_DOCS.filter(d => d.required).map(doc => (
+                    <label
+                      key={doc.id}
+                      className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all select-none ${
+                        docChecks[doc.id]
+                          ? 'bg-green-50 border-[#1a6b3c]/40'
+                          : 'bg-gray-50 border-gray-200 hover:border-[#1a6b3c]/30'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={!!docChecks[doc.id]}
+                        onChange={() => toggleDoc(doc.id)}
+                        className="mt-0.5 w-4 h-4 accent-[#1a6b3c] shrink-0 cursor-pointer"
+                      />
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-gray-800">{doc.label}</p>
+                        <p className="text-xs text-gray-500 leading-relaxed mt-0.5">{doc.desc}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">Conditional / Optional Documents</p>
+                <div className="space-y-2">
+                  {REQUIRED_DOCS.filter(d => !d.required).map(doc => (
+                    <label
+                      key={doc.id}
+                      className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all select-none ${
+                        docChecks[doc.id]
+                          ? 'bg-blue-50 border-blue-300'
+                          : 'bg-gray-50 border-gray-200 hover:border-blue-200'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={!!docChecks[doc.id]}
+                        onChange={() => toggleDoc(doc.id)}
+                        className="mt-0.5 w-4 h-4 accent-blue-600 shrink-0 cursor-pointer"
+                      />
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-gray-700">{doc.label}</p>
+                        <p className="text-xs text-gray-500 leading-relaxed mt-0.5">{doc.desc}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+
+                {!allMandatoryChecked && (
+                  <p className="mt-4 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                    ⚠ Please acknowledge all <strong>mandatory documents</strong> before submitting the application.
+                  </p>
+                )}
+              </div>
+
               {error && (
                 <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">{error}</div>
               )}
@@ -199,8 +287,9 @@ export default function ApplyPage() {
                 </button>
                 <button
                   type="submit"
-                  disabled={isLoading}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-50"
+                  disabled={isLoading || !allMandatoryChecked}
+                  title={!allMandatoryChecked ? 'Acknowledge all mandatory documents first' : ''}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ background: 'linear-gradient(135deg, #1a6b3c, #256b45)' }}
                 >
                   {isLoading ? 'Submitting…' : <><Send size={15} /> Submit Application</>}

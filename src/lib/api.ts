@@ -479,3 +479,33 @@ export async function updateAdminSettingsSection<T extends AdminSettingsSection>
     body: JSON.stringify(payload),
   });
 }
+
+// ──────────────────────────────────────────────────────────────────────────────
+// RBAC ACCESS CONTROL
+// ──────────────────────────────────────────────────────────────────────────────
+
+/** Grant a scrutiny/MoM user explicit login access (adds them to the approved set). */
+export async function approveRestrictedAccess(
+  userId: string
+): Promise<{ approved: boolean }> {
+  if (USE_MOCK) {
+    return fromMock(mock.mockApproveRestrictedAccess(userId));
+  }
+  return apiFetch<{ approved: boolean }>(`/users/${userId}/approve-restricted`, {
+    method: 'POST',
+  });
+}
+
+/** Push an alert notification to all admin accounts. */
+export async function pushAdminAlert(
+  title: string,
+  message: string
+): Promise<{ pushed: number }> {
+  if (USE_MOCK) {
+    return fromMock(mock.mockPushAdminAlert(title, message));
+  }
+  return apiFetch<{ pushed: number }>('/notifications/admin-alert', {
+    method: 'POST',
+    body: JSON.stringify({ title, message }),
+  });
+}

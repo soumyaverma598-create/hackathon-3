@@ -5,6 +5,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useNotificationStore } from '@/store/notificationStore';
 import { useState, useRef, useEffect } from 'react';
 import { UserRole } from '@/types/auth';
+import { useRouter } from 'next/navigation';
 
 const roleLabels: Record<UserRole, string> = {
   admin: 'System Admin',
@@ -20,31 +21,75 @@ const roleBadgeColors: Record<UserRole, string> = {
   mom: 'bg-indigo-700',
 };
 
+const QUICK_SWITCH_CREDENTIALS = [
+  { label: 'Admin', email: 'admin@moef.gov.in', password: 'admin123', role: 'admin' as UserRole },
+  { label: 'Applicant', email: 'proponent@company.com', password: 'proponent123', role: 'applicant' as UserRole },
+  { label: 'Scrutiny', email: 'scrutiny@moef.gov.in', password: 'scrutiny123', role: 'scrutiny' as UserRole },
+  { label: 'MoM', email: 'mom@moef.gov.in', password: 'mom123', role: 'mom' as UserRole },
+];
+
 export default function GovHeader() {
-  const { user, logout } = useAuthStore();
+  const { user, logout, login } = useAuthStore();
   const { notifications, markAllRead } = useNotificationStore();
   const [showNotifs, setShowNotifs] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [bellAnimating, setBellAnimating] = useState(false);
+  const [switchingTo, setSwitchingTo] = useState<string | null>(null);
+  const [copiedEmail, setCopiedEmail] = useState<string | null>(null);
   const notifRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const unread = notifications.filter((n) => !n.isRead).length;
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    if (!showNotifs) return;
+    if (!showNotifs && !showProfileMenu) return;
     const handler = (e: MouseEvent) => {
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
         setShowNotifs(false);
       }
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setShowProfileMenu(false);
+      }
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
-  }, [showNotifs]);
+  }, [showNotifs, showProfileMenu]);
 
   const handleBellClick = () => {
     setBellAnimating(true);
     setTimeout(() => setBellAnimating(false), 600);
     setShowNotifs(!showNotifs);
+    setShowProfileMenu(false);
+  };
+
+  const handleQuickSwitch = async (email: string, password: string, role: UserRole) => {
+    setSwitchingTo(email);
+    try {
+      await login(email, password);
+      const routes: Record<UserRole, string> = {
+        admin: '/admin/dashboard',
+        applicant: '/applicant/dashboard',
+        scrutiny: '/scrutiny/dashboard',
+        mom: '/mom/dashboard',
+      };
+      setShowProfileMenu(false);
+      setShowNotifs(false);
+      router.push(routes[role]);
+    } finally {
+      setSwitchingTo(null);
+    }
+  };
+
+  const handleCopyEmail = async (email: string) => {
+    try {
+      await navigator.clipboard.writeText(email);
+      setCopiedEmail(email);
+      window.setTimeout(() => setCopiedEmail(null), 1200);
+    } catch {
+      setCopiedEmail(null);
+    }
   };
 
   return (
@@ -148,16 +193,71 @@ export default function GovHeader() {
               )}
             </div>
 
-            {/* User info */}
-            <div className="flex items-center gap-2">
-              <div className="text-right hidden sm:block">
-                <p className="text-white text-sm font-semibold">{user.name}</p>
-                <p className="text-green-200 text-xs">{user.designation}</p>
-              </div>
-              <span className={`${roleBadgeColors[user.role]} text-white text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1 transition-all hover:scale-105`}>
-                {roleLabels[user.role]}
-              </span>
-              <ChevronDown className="text-green-200 w-4 h-4 transition-transform duration-300 hover:rotate-180" />
+            {/* User info + profile dropdown */}
+            <div className="relative" ref={profileRef}>
+              <button
+                type="button"
+                onClick={() => { setShowProfileMenu((s) => !s); setShowNotifs(false); }}
+                className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-white/10 transition-colors"
+              >
+                <div className="text-right hidden sm:block">
+                  <p className="text-white text-sm font-semibold">{user.name}</p>
+                  <p className="text-green-200 text-xs">{user.designation}</p>
+                </div>
+                <span className={`${roleBadgeColors[user.role]} text-white text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1 transition-all hover:scale-105`}>
+                  {roleLabels[user.role]}
+                </span>
+                <ChevronDown className={`text-green-200 w-4 h-4 transition-transform duration-300 ${showProfileMenu ? 'rotate-180' : ''}`} />
+              </button>
+
+              {showProfileMenu && (
+                <div className="absolute right-0 top-12 w-[21rem] bg-white rounded-lg shadow-2xl z-50 border border-gray-100 animate-slide-down overflow-hidden">
+                  <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
+                    <p className="text-sm font-semibold text-gray-800">{user.name}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{user.designation}</p>
+                  </div>
+
+                  <div className="px-4 py-3 border-b border-gray-100 space-y-1.5">
+                    <p className="text-[11px] uppercase tracking-wide text-gray-400 font-bold">Current Credentials</p>
+                    <p className="text-xs text-gray-700"><span className="text-gray-500">Email:</span> {user.email}</p>
+                    <p className="text-xs text-gray-700"><span className="text-gray-500">Department:</span> {user.department}</p>
+                    <p className="text-xs text-gray-700"><span className="text-gray-500">Role:</span> {roleLabels[user.role]}</p>
+                  </div>
+
+                  <div className="px-4 py-3">
+                    <p className="text-[11px] uppercase tracking-wide text-gray-400 font-bold mb-2">Quick Switch Credentials</p>
+                    <div className="space-y-2">
+                      {QUICK_SWITCH_CREDENTIALS.map((item) => (
+                        <div
+                          key={item.email}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-100 hover:bg-green-50 hover:border-[#1a6b3c]/30 transition-all"
+                        >
+                          <button
+                            type="button"
+                            onClick={() => handleQuickSwitch(item.email, item.password, item.role)}
+                            disabled={switchingTo !== null}
+                            className="flex-1 text-left disabled:opacity-60"
+                          >
+                            <p className="text-xs font-semibold text-gray-800">{item.label}</p>
+                            <p className="text-[11px] text-gray-500">{item.email}</p>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyEmail(item.email)}
+                            className="text-[11px] font-semibold px-2 py-1 rounded border border-gray-200 text-gray-600 hover:text-[#1a6b3c] hover:border-[#1a6b3c]/40 transition-colors"
+                            title="Copy email"
+                          >
+                            {copiedEmail === item.email ? 'Copied' : 'Copy'}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    {switchingTo && (
+                      <p className="text-[11px] text-[#1a6b3c] mt-2">Switching account...</p>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Logout */}

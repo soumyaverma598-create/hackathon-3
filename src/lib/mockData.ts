@@ -38,24 +38,6 @@ export const MOCK_USERS: User[] = [
     designation: 'Section Officer',
     isActive: true,
   },
-  {
-    id: 'u5',
-    name: 'Neha Verma',
-    email: 'admin.ops@moef.gov.in',
-    role: 'admin',
-    department: 'MoEFCC Operations Cell',
-    designation: 'Deputy Administrator',
-    isActive: true,
-  },
-  {
-    id: 'u6',
-    name: 'Amit Singh',
-    email: 'applicant2@company.com',
-    role: 'applicant',
-    department: 'Eco Infra Consultants',
-    designation: 'Project Lead',
-    isActive: true,
-  },
 ];
 
 export const MOCK_PASSWORDS: Record<string, string> = {
@@ -63,8 +45,6 @@ export const MOCK_PASSWORDS: Record<string, string> = {
   'proponent@company.com': 'proponent123',
   'scrutiny@moef.gov.in': 'scrutiny123',
   'mom@moef.gov.in': 'mom123',
-  'admin.ops@moef.gov.in': 'adminops123',
-  'applicant2@company.com': 'applicant123',
 };
 
 const baseEDS: EDSQuery[] = [
