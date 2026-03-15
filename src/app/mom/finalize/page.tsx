@@ -58,9 +58,10 @@ function MomFinalizePageContent() {
   };
 
   const doGenerate = async () => {
+    if (!selectedApp) return;
     setLoading(true); setErr(''); setSuccess('');
     try {
-      const result = await generateMomDoc(selectedAppId);
+      const result = await generateMomDoc(selectedAppId, selectedApp, { momContent, meetingDate, meetingNumber });
       if (result.url) {
         const a = document.createElement('a');
         a.href = result.url;
@@ -78,10 +79,12 @@ function MomFinalizePageContent() {
   };
 
   const doFinalize = async () => {
+    if (!selectedApp) return;
     if (!confirm(getUiText('confirmFinalize', language))) return;
+
     setLoading(true); setErr(''); setSuccess('');
     try {
-      await finalizeMom(selectedAppId);
+      await finalizeMom(selectedAppId, selectedApp);
       const cert = await downloadCertificate(selectedAppId);
       setCertUrl(cert.url);
       setSuccess(`EC Certificate issued! File: ${cert.filename}`);
@@ -223,4 +226,3 @@ export default function MomFinalizePage() {
     </Suspense>
   );
 }
-

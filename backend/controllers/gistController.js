@@ -46,7 +46,7 @@ const generate = async (req, res) => {
     return res.json({ success: true, data });
   } catch (err) {
     console.error('generateGist error:', err);
-    return res.status(500).json({ success: false, error: 'Server error' });
+    return res.status(500).json({ success: false, error: err.message || 'Server error' });
   }
 };
 
@@ -73,7 +73,7 @@ const getByApplicationId = async (req, res) => {
     return res.json({ success: true, data });
   } catch (err) {
     console.error('getGist error:', err);
-    return res.status(500).json({ success: false, error: 'Server error' });
+    return res.status(500).json({ success: false, error: err.message || 'Server error' });
   }
 };
 

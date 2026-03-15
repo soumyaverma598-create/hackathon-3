@@ -21,7 +21,7 @@ const getByApplicationId = async (req, res) => {
     return res.json({ success: true, data: result.rows.map(mapEDS) });
   } catch (err) {
     console.error('getEDS error:', err);
-    return res.status(500).json({ success: false, error: 'Server error' });
+    return res.status(500).json({ success: false, error: err.message || 'Server error' });
   }
 };
 
@@ -50,7 +50,7 @@ const create = async (req, res) => {
     return res.status(201).json({ success: true, data: mapEDS(rowRes.rows[0]) });
   } catch (err) {
     console.error('createEDS error:', err);
-    return res.status(500).json({ success: false, error: 'Server error' });
+    return res.status(500).json({ success: false, error: err.message || 'Server error' });
   }
 };
 
@@ -91,7 +91,7 @@ const update = async (req, res) => {
     return res.json({ success: true, data: mapEDS(rowRes.rows[0]) });
   } catch (err) {
     console.error('updateEDS error:', err);
-    return res.status(500).json({ success: false, error: 'Server error' });
+    return res.status(500).json({ success: false, error: err.message || 'Server error' });
   }
 };
 

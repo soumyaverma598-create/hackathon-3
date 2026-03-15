@@ -72,7 +72,7 @@ const getAll = async (req, res) => {
     return res.json({ success: true, data: apps });
   } catch (err) {
     console.error('getAll error:', err);
-    return res.status(500).json({ success: false, error: 'Server error' });
+    return res.status(500).json({ success: false, error: err.message || 'Server error' });
   }
 };
 
@@ -89,7 +89,7 @@ const getById = async (req, res) => {
     return res.json({ success: true, data: mapRowToApplication(row, edsRes.rows, docRes.rows) });
   } catch (err) {
     console.error('getById error:', err);
-    return res.status(500).json({ success: false, error: 'Server error' });
+    return res.status(500).json({ success: false, error: err.message || 'Server error' });
   }
 };
 
@@ -151,7 +151,7 @@ const create = async (req, res) => {
     return res.status(201).json({ success: true, data: mapRowToApplication(row, [], []) });
   } catch (err) {
     console.error('create error:', err);
-    return res.status(500).json({ success: false, error: 'Server error' });
+    return res.status(500).json({ success: false, error: err.message || 'Server error' });
   }
 };
 
@@ -189,7 +189,7 @@ const updateStatus = async (req, res) => {
     return res.json({ success: true, data: mapRowToApplication(updated.rows[0], edsRes.rows, docRes.rows) });
   } catch (err) {
     console.error('updateStatus error:', err);
-    return res.status(500).json({ success: false, error: 'Server error' });
+    return res.status(500).json({ success: false, error: err.message || 'Server error' });
   }
 };
 
@@ -222,7 +222,7 @@ const submitApplication = async (req, res) => {
     console.error('submitApplication error:', err);
     res.status(500).json({
       success: false,
-      error: 'Failed to submit application'
+      error: err.message || 'Failed to submit application'
     });
   }
 };

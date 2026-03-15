@@ -27,7 +27,7 @@ app.use('/auth', authRoutes);
 app.use('/applications', applicationRoutes);
 app.use('/notifications', notificationRoutes);
 app.use('/admin', adminRoutes);
-app.use('/api/payment', paymentRoutes);
+app.use('/payment', paymentRoutes);
 
 app.get('/', (req, res) => {
   res.send('PARIVESH 3.0 Backend API');

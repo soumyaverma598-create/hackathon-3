@@ -16,6 +16,11 @@ const { getByApplicationId: getEDS, create: createEDS, update: updateEDS } = req
 const { generate: generateGist, getByApplicationId: getGist } = require('../controllers/gistController');
 const { get: getMom, update: updateMom, generateDoc, finalize, downloadCertificate } = require('../controllers/momController');
 
+// Support Option B (unauthenticated pass-through) for specific PDF routes
+router.post('/:id/mom/generate', generateDoc);
+router.post('/:id/mom/finalize', finalize);
+router.get('/:id/certificate', downloadCertificate);
+
 router.use(verifyToken);
 
 router.get('/',    getAll);
@@ -42,9 +47,5 @@ router.post('/:id/gist', generateGist);
 
 router.get('/:id/mom',           getMom);
 router.put('/:id/mom',           updateMom);
-router.post('/:id/mom/generate', generateDoc);
-router.post('/:id/mom/finalize', finalize);
-
-router.get('/:id/certificate', downloadCertificate);
 
 module.exports = router;

@@ -49,7 +49,7 @@ const uploadDoc = async (req, res) => {
     });
   } catch (err) {
     console.error('uploadDoc error:', err);
-    return res.status(500).json({ success: false, error: 'Server error' });
+    return res.status(500).json({ success: false, error: err.message || 'Server error' });
   }
 };
 
@@ -69,7 +69,7 @@ const getByApplicationId = async (req, res) => {
     return res.json({ success: true, data });
   } catch (err) {
     console.error('getByApplicationId error:', err);
-    return res.status(500).json({ success: false, error: 'Server error' });
+    return res.status(500).json({ success: false, error: err.message || 'Server error' });
   }
 };
 

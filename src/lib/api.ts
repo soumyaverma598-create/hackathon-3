@@ -1,9 +1,8 @@
 /**
  * api.ts — unified API client
  *
- * Mock mode is enabled by default for local frontend development.
- * Set NEXT_PUBLIC_USE_MOCK=false in .env.local when the backend
- * at http://localhost:3002 is running and should be used instead.
+ * Set USE_MOCK = false (or NEXT_PUBLIC_USE_MOCK=false in .env.local)
+ * when Dev-2's backend at http://localhost:3002 is ready.
  */
 
 import { AdminCreateUserInput, AdminUpdateUserInput, User } from '@/types/auth';
@@ -22,9 +21,9 @@ import {
 import * as mock from './mockApi';
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Feature flag — use mock by default; set NEXT_PUBLIC_USE_MOCK=false for real backend
+// Feature flag — use real backend; set NEXT_PUBLIC_USE_MOCK=true for mock
 // ──────────────────────────────────────────────────────────────────────────────
-export const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK !== 'false';
+export const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK === 'true';
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
@@ -87,14 +86,41 @@ async function fromMock<T>(
 export async function loginUser(
   email: string,
   password: string
-): Promise<{ token: string; user: User }> {
+): Promise<{ token?: string; user?: User; require2FA?: boolean; email?: string }> {
   if (USE_MOCK) {
-    // TODO: remove mock fallback once /auth/login is live
+    // Falls back to mock
     return fromMock(mock.mockLoginUser(email, password));
   }
-  return apiFetch<{ token: string; user: User }>('/auth/login', {
+  return apiFetch<{ token?: string; user?: User; require2FA?: boolean; email?: string }>('/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, password }),
+  });
+}
+
+export async function googleLogin(
+  credential: string
+): Promise<{ require2FA: boolean; email: string }> {
+  if (USE_MOCK) {
+    // For mock, just simulate 2FA for the demo account
+    return { require2FA: true, email: 'proponent@company.com' };
+  }
+  return apiFetch<{ require2FA: boolean; email: string }>('/auth/google-login', {
+    method: 'POST',
+    body: JSON.stringify({ credential }),
+  });
+}
+
+export async function verify2faUser(
+  email: string,
+  otp: string
+): Promise<{ token: string; user: User }> {
+  if (USE_MOCK) {
+    // For mock, just return credentials for simplicity in this demo
+    return fromMock(mock.mockLoginUser(email, 'ignore_password'));
+  }
+  return apiFetch<{ token: string; user: User }>('/auth/verify-2fa', {
+    method: 'POST',
+    body: JSON.stringify({ email, otp }),
   });
 }
 
@@ -166,7 +192,7 @@ export async function fetchApplicationById(
     // TODO: remove mock fallback once GET /applications/:id is live
     return fromMock(mock.mockFetchApplicationById(id));
   }
-  return apiFetch<WorkflowApplication>(`/applications/${id}`);
+  return apiFetch<WorkflowApplication>(`/applications/${encodeURIComponent(id)}`);
 }
 
 export async function createApplication(
@@ -191,7 +217,7 @@ export async function updateApplicationStatus(
     // TODO: remove mock fallback once PUT /applications/:id/status is live
     return fromMock(mock.mockUpdateApplicationStatus(id, status, remarks));
   }
-  return apiFetch<WorkflowApplication>(`/applications/${id}/status`, {
+  return apiFetch<WorkflowApplication>(`/applications/${encodeURIComponent(id)}/status`, {
     method: 'PUT',
     body: JSON.stringify({ status, remarks }),
   });
@@ -213,7 +239,7 @@ export async function uploadDocuments(
     typeof window !== 'undefined'
       ? localStorage.getItem('auth-token')
       : null;
-  const res = await fetch(`${BASE_URL}/applications/${id}/documents`, {
+  const res = await fetch(`${BASE_URL}/applications/${encodeURIComponent(id)}/documents`, {
     method: 'POST',
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -241,13 +267,35 @@ export async function getDocuments(
     return fromMock(mock.mockGetDocuments(id));
   }
   return apiFetch<WorkflowApplication['documents']>(
-    `/applications/${id}/documents`
+    `/applications/${encodeURIComponent(id)}/documents`
   );
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
 // PAYMENT
 // ──────────────────────────────────────────────────────────────────────────────
+
+export async function createPaymentOrder(
+  applicationId: string,
+  amount: number
+): Promise<{ orderId: string; keyId: string }> {
+  return apiFetch<{ orderId: string; keyId: string }>('/payment/create-order', {
+    method: 'POST',
+    body: JSON.stringify({ applicationId, amount }),
+  });
+}
+
+export async function verifyPayment(paymentData: {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+  application_id: string;
+}): Promise<{ paymentId: string }> {
+  return apiFetch<{ paymentId: string }>('/payment/verify', {
+    method: 'POST',
+    body: JSON.stringify(paymentData),
+  });
+}
 
 export async function submitPayment(
   id: string,
@@ -257,7 +305,7 @@ export async function submitPayment(
     // TODO: remove mock fallback once POST /applications/:id/payment is live
     return fromMock(mock.mockSubmitPayment(id, paymentData));
   }
-  return apiFetch(`/applications/${id}/payment`, {
+  return apiFetch(`/applications/${encodeURIComponent(id)}/payment`, {
     method: 'POST',
     body: JSON.stringify({ amount: paymentData.amount, paymentMethod: 'online' }),
   });
@@ -272,7 +320,7 @@ export async function getEDSQueries(id: string): Promise<EDSQuery[]> {
     // TODO: remove mock fallback once GET /applications/:id/eds is live
     return fromMock(mock.mockGetEDSQueries(id));
   }
-  return apiFetch<EDSQuery[]>(`/applications/${id}/eds`);
+  return apiFetch<EDSQuery[]>(`/applications/${encodeURIComponent(id)}/eds`);
 }
 
 export async function raiseEDSQuery(
@@ -283,7 +331,7 @@ export async function raiseEDSQuery(
     // TODO: remove mock fallback once POST /applications/:id/eds is live
     return fromMock(mock.mockRaiseEDSQuery(id, queryData));
   }
-  return apiFetch<EDSQuery>(`/applications/${id}/eds`, {
+  return apiFetch<EDSQuery>(`/applications/${encodeURIComponent(id)}/eds`, {
     method: 'POST',
     body: JSON.stringify(queryData),
   });
@@ -298,7 +346,7 @@ export async function respondToEDS(
     // TODO: remove mock fallback once PUT /applications/:id/eds/:queryId is live
     return fromMock(mock.mockRespondToEDS(id, queryId, data));
   }
-  return apiFetch<EDSQuery>(`/applications/${id}/eds/${queryId}`, {
+  return apiFetch<EDSQuery>(`/applications/${encodeURIComponent(id)}/eds/${queryId}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   });
@@ -312,7 +360,7 @@ export async function closeEDSQuery(
     // TODO: remove mock fallback once PUT /applications/:id/eds/:queryId/close is live
     return fromMock(mock.mockCloseEDSQuery(id, queryId));
   }
-  return apiFetch<EDSQuery>(`/applications/${id}/eds/${queryId}/close`, {
+  return apiFetch<EDSQuery>(`/applications/${encodeURIComponent(id)}/eds/${queryId}/close`, {
     method: 'PUT',
   });
 }
@@ -326,7 +374,7 @@ export async function generateGist(id: string): Promise<GistContent> {
     // TODO: remove mock fallback once POST /applications/:id/gist is live
     return fromMock(mock.mockGenerateGist(id));
   }
-  return apiFetch<GistContent>(`/applications/${id}/gist`, {
+  return apiFetch<GistContent>(`/applications/${encodeURIComponent(id)}/gist`, {
     method: 'POST',
   });
 }
@@ -336,7 +384,7 @@ export async function getGist(id: string): Promise<GistContent | null> {
     // TODO: remove mock fallback once GET /applications/:id/gist is live
     return fromMock(mock.mockGetGist(id));
   }
-  return apiFetch<GistContent | null>(`/applications/${id}/gist`);
+  return apiFetch<GistContent | null>(`/applications/${encodeURIComponent(id)}/gist`);
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -350,7 +398,7 @@ export async function getMom(
     // TODO: remove mock fallback once GET /applications/:id/mom is live
     return fromMock(mock.mockGetMom(id));
   }
-  return apiFetch(`/applications/${id}/mom`);
+  return apiFetch(`/applications/${encodeURIComponent(id)}/mom`);
 }
 
 export async function editMom(
@@ -361,22 +409,26 @@ export async function editMom(
     // TODO: remove mock fallback once PUT /applications/:id/mom is live
     return fromMock(mock.mockEditMom(id, momData));
   }
-  return apiFetch<WorkflowApplication>(`/applications/${id}/mom`, {
+  return apiFetch<WorkflowApplication>(`/applications/${encodeURIComponent(id)}/mom`, {
     method: 'PUT',
     body: JSON.stringify(momData),
   });
 }
 
 export async function generateMomDoc(
-  id: string
+  id: string,
+  appData?: any,
+  momData?: any
 ): Promise<{ message: string; url?: string }> {
-  if (USE_MOCK) {
-    return fromMock(mock.mockGenerateMomDoc(id));
-  }
+  // Always use real backend for professional PDF generation even in mock mode
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth-token') : null;
-  const res = await fetch(`${BASE_URL}/applications/${id}/mom/generate`, {
+  const res = await fetch(`${BASE_URL}/applications/${encodeURIComponent(id)}/mom/generate`, {
     method: 'POST',
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ appData, momData }),
   });
   if (res.status === 401) {
     if (typeof window !== 'undefined') {
@@ -397,15 +449,21 @@ export async function generateMomDoc(
 }
 
 export async function finalizeMom(
-  id: string
+  id: string,
+  appData?: any
 ): Promise<WorkflowApplication> {
-  if (USE_MOCK) {
-    // TODO: remove mock fallback once POST /applications/:id/mom/finalize is live
-    return fromMock(mock.mockFinalizeMom(id));
-  }
-  return apiFetch<WorkflowApplication>(`/applications/${id}/mom/finalize`, {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('auth-token') : null;
+  const res = await fetch(`${BASE_URL}/applications/${encodeURIComponent(id)}/mom/finalize`, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify({ appData }),
   });
+  if (!res.ok) throw new Error(await res.text());
+  const json = await res.json();
+  return json.data as WorkflowApplication;
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -415,11 +473,9 @@ export async function finalizeMom(
 export async function downloadCertificate(
   id: string
 ): Promise<{ url: string; filename: string }> {
-  if (USE_MOCK) {
-    return fromMock(mock.mockDownloadCertificate(id));
-  }
+  // Always use real backend for professional PDF certificate even in mock mode
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth-token') : null;
-  const res = await fetch(`${BASE_URL}/applications/${id}/certificate`, {
+  const res = await fetch(`${BASE_URL}/applications/${encodeURIComponent(id)}/certificate`, {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
   if (res.status === 401) {
@@ -543,30 +599,3 @@ export async function pushAdminAlert(
     body: JSON.stringify({ title, message }),
   });
 }
-
-// Payment APIs
-export const createPaymentOrder = (applicationId: string, amount: number) =>
-  apiFetch<{ orderId: string; amount: number; currency: string; keyId: string }>('/api/payment/create-order', {
-    method: 'POST',
-    body: JSON.stringify({ applicationId, amount }),
-  });
-
-export const verifyPayment = (data: {
-  razorpay_order_id: string;
-  razorpay_payment_id: string;
-  razorpay_signature: string;
-  application_id: string;
-}) =>
-  apiFetch<{ message: string; paymentId: string; applicationId: string }>('/api/payment/verify', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
-
-export const getPaymentStatus = (applicationId: string) =>
-  apiFetch<{ 
-    status: string; 
-    amount: number; 
-    date: string; 
-    transactionId: string; 
-    orderId: string; 
-  }>(`/api/payment/status/${applicationId}`);

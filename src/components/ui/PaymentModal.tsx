@@ -32,6 +32,7 @@ export default function PaymentModal({
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [orderId, setOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     initializePayment();
@@ -56,7 +57,15 @@ export default function PaymentModal({
       }
 
       // Create payment order
-      const { orderId, keyId } = await createPaymentOrder(applicationId, amount);
+      const result = await createPaymentOrder(applicationId, amount);
+      const { orderId: serverOrderId, keyId, isMock } = result as any;
+      setOrderId(serverOrderId);
+
+      if (isMock) {
+        setLoading(false);
+        // We'll show a "Mock Payment" UI instead of calling Razorpay
+        return;
+      }
 
       // Open Razorpay checkout
       const options = {
@@ -113,8 +122,38 @@ export default function PaymentModal({
     } catch (err) {
       console.error('Payment initialization error:', err);
       setError(err instanceof Error ? err.message : 'Failed to initialize payment');
-    } finally {
       setLoading(false);
+    }
+  };
+
+  const handleMockPayment = async () => {
+    try {
+      setProcessing(true);
+      setError(null);
+      
+      // Use the order ID created by the backend
+      let currentOrderId = orderId;
+      if (!currentOrderId) {
+        // Create a mock order ID if not already set (e.g., if USE_MOCK was true from start)
+        const result = await createPaymentOrder(applicationId, amount);
+        currentOrderId = (result as any).orderId;
+        setOrderId(currentOrderId);
+      }
+      
+      // Verify payment on backend
+      const verifyResult = await verifyPayment({
+        razorpay_order_id: currentOrderId as string,
+        razorpay_payment_id: `pay_mock_${Date.now()}`,
+        razorpay_signature: 'mock_signature',
+        application_id: applicationId,
+      });
+
+      onSuccess(verifyResult.paymentId);
+    } catch (err) {
+      console.error('Mock payment error:', err);
+      setError(err instanceof Error ? err.message : 'Mock payment failed');
+    } finally {
+      setProcessing(false);
     }
   };
 
@@ -202,11 +241,16 @@ export default function PaymentModal({
                 <div className="flex items-start gap-3">
                   <CheckCircle size={20} className="text-green-500 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="text-green-800 font-medium">Secure Payment</p>
+                    <p className="text-green-800 font-medium">Demo/Mock Mode Active</p>
                     <p className="text-green-600 text-sm mt-1">
-                      Your payment is processed securely through Razorpay. 
-                      Test card: 4111 1111 1111 1111, OTP: 1234
+                      Placeholder keys detected. Please use the button below to simulate a successful payment for this demo.
                     </p>
+                    <button
+                      onClick={handleMockPayment}
+                      className="mt-3 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                    >
+                      Complete Simulated Payment <CheckCircle size={16} />
+                    </button>
                   </div>
                 </div>
               </div>
