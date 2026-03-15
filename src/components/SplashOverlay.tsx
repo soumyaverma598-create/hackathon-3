@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
+import BrandLogo from '@/components/BrandLogo';
 
 interface SplashOverlayProps {
   onFinished: () => void;
@@ -40,10 +41,10 @@ export default function SplashOverlay({ onFinished }: SplashOverlayProps) {
           <LayoutGroup>
             <motion.div
               layout
-              initial={{ opacity: 0, scale: 0.6, filter: 'blur(16px)' }}
-              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{
-                duration: 1.2,
+                duration: 0.8,
                 ease: [0.22, 1, 0.36, 1],
                 layout: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
               }}
@@ -51,44 +52,8 @@ export default function SplashOverlay({ onFinished }: SplashOverlayProps) {
                 if (phase === 'logo') setPhase('title');
               }}
             >
-              <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-2xl relative">
-                {/* Outer ring glow */}
-                <motion.div
-                  className="absolute inset-0 rounded-full"
-                  animate={{
-                    boxShadow: [
-                      '0 0 0px 0px rgba(247,148,29,0)',
-                      '0 0 30px 8px rgba(247,148,29,0.3)',
-                      '0 0 0px 0px rgba(247,148,29,0)',
-                    ],
-                  }}
-                  transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-                />
-                <svg className="w-28 h-28" viewBox="0 0 64 64" fill="none" suppressHydrationWarning>
-                  <circle cx="32" cy="32" r="30" fill="#fff" stroke="#164e63" strokeWidth="2" />
-                  <g className="animate-spin-slow" style={{ transformOrigin: '32px 32px' }} suppressHydrationWarning>
-                    <circle cx="32" cy="32" r="14" fill="none" stroke="#25c9d0" strokeWidth="2" />
-                    {Array.from({ length: 24 }).map((_, i) => {
-                      const angle = (i / 24) * 2 * Math.PI;
-                      const r = (n: number) => Math.round(n * 1000) / 1000;
-                      return (
-                        <line
-                          key={i}
-                          x1={r(32 + 14 * Math.cos(angle))}
-                          y1={r(32 + 14 * Math.sin(angle))}
-                          x2={r(32 + 18 * Math.cos(angle))}
-                          y2={r(32 + 18 * Math.sin(angle))}
-                          stroke="#25c9d0"
-                          strokeWidth="1"
-                          suppressHydrationWarning
-                        />
-                      );
-                    })}
-                  </g>
-                  <text x="32" y="36" fontSize="10" fontWeight="bold" fill="#164e63" textAnchor="middle">
-                    अशोक
-                  </text>
-                </svg>
+              <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-2xl relative overflow-hidden">
+                <BrandLogo className="w-32 h-32 scale-[1.1]" />
               </div>
             </motion.div>
 

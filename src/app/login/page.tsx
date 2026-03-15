@@ -7,6 +7,7 @@ import { useLanguageStore } from '@/store/languageStore';
 import { Eye, EyeOff, LogIn, Shield } from 'lucide-react';
 import DynamicBackground from '@/components/DynamicBackground';
 import LanguageSelector from '@/components/LanguageSelector';
+import BrandLogo from '@/components/BrandLogo';
 import { getText } from '@/lib/translations';
 
 const ROLE_HINTS = [
@@ -108,30 +109,10 @@ export default function LoginPage() {
 
           {/* Logo with pulse + slow-spin on the spokes */}
           <div
-            className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl animate-pulse-soft"
+            className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl overflow-hidden"
             style={{ animationDelay: `${d + 0}s` }}
           >
-            <svg className="w-20 h-20" viewBox="0 0 64 64" fill="none" suppressHydrationWarning>
-              <circle cx="32" cy="32" r="30" fill="#fff" stroke="#164e63" strokeWidth="2"/>
-              {/* suppressHydrationWarning prevents mismatch on floating-point SVG coords */}
-              <g className="animate-spin-slow" style={{ transformOrigin: '32px 32px' }} suppressHydrationWarning>
-                <circle cx="32" cy="32" r="14" fill="none" stroke="#25c9d0" strokeWidth="2"/>
-                {Array.from({ length: 24 }).map((_, i) => {
-                  const angle = (i / 24) * 2 * Math.PI;
-                  const r = (n: number) => Math.round(n * 1000) / 1000;
-                  return (
-                    <line
-                      key={i}
-                      x1={r(32 + 14 * Math.cos(angle))} y1={r(32 + 14 * Math.sin(angle))}
-                      x2={r(32 + 18 * Math.cos(angle))} y2={r(32 + 18 * Math.sin(angle))}
-                      stroke="#25c9d0" strokeWidth="1"
-                      suppressHydrationWarning
-                    />
-                  );
-                })}
-              </g>
-              <text x="32" y="36" fontSize="10" fontWeight="bold" fill="#164e63" textAnchor="middle">अशोक</text>
-            </svg>
+            <BrandLogo className="w-24 h-24 scale-[1.08]" />
           </div>
 
           <h1

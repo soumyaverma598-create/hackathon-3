@@ -8,6 +8,7 @@ import { useState, useRef, useEffect } from 'react';
 import { UserRole } from '@/types/auth';
 import { useRouter } from 'next/navigation';
 import { getRoleText, getHeaderText, getCommonText } from '@/lib/translations';
+import BrandLogo from '@/components/BrandLogo';
 
 const roleBadgeColors: Record<UserRole, string> = {
   admin: 'bg-red-600/80',
@@ -109,19 +110,8 @@ export default function GovHeader() {
           {/* Left: Emblem + Title */}
           <div className="flex items-center gap-3 min-w-0">
             {/* National Emblem */}
-            <div className="w-11 h-11 bg-white/95 rounded-full flex items-center justify-center shadow-lg flex-shrink-0 ring-2 ring-white/24">
-              <svg className="w-9 h-9" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" suppressHydrationWarning>
-                <circle cx="32" cy="32" r="30" fill="#fff" stroke="#164e63" strokeWidth="2"/>
-                <g className="animate-spin-slow" style={{ transformOrigin: '32px 32px' }} suppressHydrationWarning>
-                  <circle cx="32" cy="32" r="14" fill="none" stroke="#25c9d0" strokeWidth="2"/>
-                  {Array.from({ length: 24 }).map((_, i) => {
-                    const angle = (i / 24) * 2 * Math.PI;
-                    const r = (n: number) => Math.round(n * 1000) / 1000;
-                    return <line key={i} x1={r(32 + 14 * Math.cos(angle))} y1={r(32 + 14 * Math.sin(angle))} x2={r(32 + 17 * Math.cos(angle))} y2={r(32 + 17 * Math.sin(angle))} stroke="#25c9d0" strokeWidth="1" suppressHydrationWarning />;
-                  })}
-                </g>
-                <text x="32" y="36" fontSize="12" fontWeight="bold" fill="#164e63" textAnchor="middle">अशोक</text>
-              </svg>
+            <div className="w-11 h-11 bg-white/95 rounded-full flex items-center justify-center shadow-lg flex-shrink-0 ring-2 ring-white/24 overflow-hidden">
+              <BrandLogo className="w-11 h-11 scale-[1.08]" />
             </div>
 
             <div className="min-w-0">

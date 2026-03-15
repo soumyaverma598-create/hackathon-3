@@ -16,6 +16,7 @@ import {
   MapPin,
   ChevronDown,
 } from 'lucide-react';
+import BrandLogo from '@/components/BrandLogo';
 import DynamicBackground from './DynamicBackground';
 import LanguageSelector from './LanguageSelector';
 
@@ -232,31 +233,9 @@ export default function LandingPage() {
           style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
         >
           {/* Emblem */}
-          <motion.div
-            className="w-24 h-24 bg-white/95 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl ring-4 ring-white/10"
-            initial={{ opacity: 0, scale: 0.5, filter: 'blur(20px)' }}
-            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <svg className="w-20 h-20" viewBox="0 0 64 64" fill="none" suppressHydrationWarning>
-              <circle cx="32" cy="32" r="30" fill="#fff" stroke="#164e63" strokeWidth="2"/>
-              <g className="animate-spin-slow" style={{ transformOrigin: '32px 32px' }} suppressHydrationWarning>
-                <circle cx="32" cy="32" r="14" fill="none" stroke="#25c9d0" strokeWidth="2"/>
-                {Array.from({ length: 24 }).map((_, i) => {
-                  const angle = (i / 24) * 2 * Math.PI;
-                  const r = (n: number) => Math.round(n * 1000) / 1000;
-                  return (
-                    <line key={i}
-                      x1={r(32 + 14 * Math.cos(angle))} y1={r(32 + 14 * Math.sin(angle))}
-                      x2={r(32 + 18 * Math.cos(angle))} y2={r(32 + 18 * Math.sin(angle))}
-                      stroke="#25c9d0" strokeWidth="1" suppressHydrationWarning
-                    />
-                  );
-                })}
-              </g>
-              <text x="32" y="36" fontSize="10" fontWeight="bold" fill="#164e63" textAnchor="middle">अशोक</text>
-            </svg>
-          </motion.div>
+          <div className="w-24 h-24 bg-white/95 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl ring-4 ring-white/10 overflow-hidden">
+            <BrandLogo className="w-24 h-24 scale-[1.08]" />
+          </div>
 
           {/* Title */}
           <motion.div
