@@ -11,10 +11,10 @@ import { getRoleText, getHeaderText, getCommonText } from '@/lib/translations';
 import BrandLogo from '@/components/BrandLogo';
 
 const roleBadgeColors: Record<UserRole, string> = {
-  admin: 'bg-red-600/80',
-  applicant: 'bg-blue-600/80',
-  scrutiny: 'bg-yellow-600/80',
-  mom: 'bg-indigo-600/80',
+  admin: 'bg-[#c4622d]/80',
+  applicant: 'bg-[#1e3a6f]/80',
+  scrutiny: 'bg-[#146b3a]/80',
+  mom: 'bg-[#5b3fb8]/80',
 };
 
 const QUICK_SWITCH_CREDENTIALS = [
@@ -92,38 +92,23 @@ export default function GovHeader() {
   return (
     <header className="sticky top-0 z-[120] pl-0 pr-0 pt-0">
       <div
-        className="glass-dark rounded-t-none rounded-bl-none rounded-br-2xl shadow-[0_16px_40px_rgba(4,18,34,0.35)] overflow-visible"
+        className="w-full border-b-2 border-[#c4622d] shadow-sm"
         style={{
-          background: 'linear-gradient(135deg, rgba(7,34,53,0.97), rgba(11,52,79,0.95))',
+          background: 'linear-gradient(135deg, rgba(30, 58, 111, 0.98), rgba(30, 58, 111, 0.96))',
         }}
       >
-        <div
-          className="h-[2px] w-full"
-          style={{
-            background: 'linear-gradient(90deg, rgba(37,201,208,0.25), rgba(122,232,239,0.75), rgba(37,201,208,0.25))',
-            backgroundSize: '200% 100%',
-            animation: 'shimmer 3.5s linear infinite',
-          }}
-        />
+        <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-[#c4622d]/40 to-transparent" />
 
-        <div className="flex items-center justify-between px-5 py-3">
-          {/* Left: Emblem + Title */}
-          <div className="flex items-center gap-3 min-w-0">
-            {/* National Emblem */}
-            <div className="w-11 h-11 bg-white/95 rounded-full flex items-center justify-center shadow-lg flex-shrink-0 ring-2 ring-white/24 overflow-hidden">
-              <BrandLogo className="w-11 h-11 scale-[1.08]" />
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 max-w-7xl mx-auto w-full">
+          {/* Left: Logo + Title */}
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="w-11 h-11 bg-white rounded-lg flex items-center justify-center shadow-md flex-shrink-0 border border-[#c4622d]/20">
+              <BrandLogo className="w-10 h-10" />
             </div>
 
             <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h1 className="text-white text-lg sm:text-xl font-bold tracking-wide truncate">PARIVESH 3.0</h1>
-                <Shield
-                  className="text-[#25c9d0] w-4 h-4 transition-all duration-300 hover:scale-125 hover:drop-shadow-[0_0_6px_rgba(37,201,208,0.9)]"
-                />
-              </div>
-              <p className="text-cyan-200/80 text-[11px] sm:text-xs truncate">
-                Ministry of Environment, Forest and Climate Change &bull; GoI
-              </p>
+              <h1 className="text-white text-lg sm:text-xl font-bold tracking-wider">PARIVESH 3.0</h1>
+              <p className="text-white/70 text-xs hidden sm:block">Environmental Clearance Portal</p>
             </div>
           </div>
 
@@ -134,27 +119,24 @@ export default function GovHeader() {
               <div className="relative z-[130]" ref={notifRef}>
                 <button
                   onClick={handleBellClick}
-                  className="relative p-2.5 rounded-xl bg-white/16 hover:bg-white/28 border border-white/24 transition-all duration-200 hover:scale-105"
+                  className="p-2 sm:p-2.5 rounded-lg bg-white/15 hover:bg-white/25 border border-white/20 transition-all duration-200"
                 >
-                  <Bell
-                    className="text-white/80 w-5 h-5 transition-transform"
-                    style={bellAnimating ? { animation: 'wiggle 0.5s ease-in-out' } : undefined}
-                  />
+                  <Bell className="text-white/80 w-5 h-5" />
                   {unread > 0 && (
-                    <span className="absolute top-1 right-1 bg-[#25c9d0] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse-soft shadow-lg shadow-cyan-500/30">
+                    <span className="absolute top-0 right-0 bg-[#c4622d] text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
                       {unread}
                     </span>
                   )}
                 </button>
 
                 {showNotifs && (
-                  <div className="absolute right-0 top-12 w-80 glass-card-strong rounded-xl shadow-2xl z-[140] animate-slide-down overflow-hidden">
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100/50">
-                      <span className="font-semibold text-gray-800 text-sm">{getHeaderText('notifications', language)}</span>
+                  <div className="absolute right-0 top-12 w-80 bg-white border border-[#1e3a6f]/10 rounded-lg shadow-lg z-[140] overflow-hidden">
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-[#1e3a6f]/10 bg-[#f0f5fb]">
+                      <span className="font-semibold text-[#1e3a6f] text-sm">{getHeaderText('notifications', language)}</span>
                       {unread > 0 && (
                         <button
                           onClick={() => { markAllRead(user.id); setShowNotifs(false); }}
-                          className="text-xs text-[#164e63] hover:underline transition-colors font-medium"
+                          className="text-xs text-[#1e3a6f] hover:underline transition-colors font-medium"
                         >
                           {getHeaderText('markAllRead', language)}
                         </button>
@@ -167,15 +149,14 @@ export default function GovHeader() {
                         notifications.map((n, idx) => (
                           <div
                             key={n.id}
-                            className={`px-4 py-3 border-b border-gray-50/50 hover:bg-[#164e63]/5 cursor-pointer transition-colors animate-fade-slide-up ${
-                              !n.isRead ? 'bg-cyan-50/50' : ''
+                            className={`px-4 py-3 border-b border-[#1e3a6f]/5 hover:bg-[#f9fafb] cursor-pointer transition-colors ${
+                              !n.isRead ? 'bg-[#f0f5fb]/50' : ''
                             }`}
-                            style={{ animationDelay: `${idx * 0.04}s` }}
                           >
-                            <p className={`text-sm font-medium ${!n.isRead ? 'text-gray-900' : 'text-gray-500'}`}>
+                            <p className={`text-sm font-medium ${!n.isRead ? 'text-[#1e3a6f]' : 'text-gray-600'}`}>
                               {n.title}
                             </p>
-                            <p className="text-xs text-gray-400 mt-0.5 line-clamp-2">{n.message}</p>
+                            <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{n.message}</p>
                           </div>
                         ))
                       )}
@@ -189,42 +170,44 @@ export default function GovHeader() {
                 <button
                   type="button"
                   onClick={() => { setShowProfileMenu((s) => !s); setShowNotifs(false); }}
-                  className="flex items-center gap-2 rounded-xl px-3 py-2 bg-white/16 hover:bg-white/28 border border-white/24 transition-all duration-200"
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 bg-white/15 hover:bg-white/25 border border-white/20 transition-all duration-200"
                 >
                   <div className="text-right hidden sm:block">
                     <p className="text-white text-sm font-semibold">{user.name}</p>
-                    <p className="text-cyan-200/60 text-xs">{user.designation}</p>
+                    <p className="text-white/70 text-xs">{user.designation}</p>
                   </div>
-                  <span className={`${roleBadgeColors[user.role]} backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 transition-all hover:scale-105 shadow-sm`}>
+                  <span className={`${roleBadgeColors[user.role]} text-white text-xs font-bold px-2.5 py-1 rounded-md flex items-center gap-1 transition-all`}>
                     {getRoleText(user.role as any, language)}
                   </span>
-                  <ChevronDown className={`text-cyan-200/75 w-4 h-4 transition-transform duration-300 ${showProfileMenu ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`text-white/80 w-4 h-4 transition-transform duration-300 ${showProfileMenu ? 'rotate-180' : ''}`} />
                 </button>
 
                 {showProfileMenu && (
-                  <div className="absolute right-0 top-14 w-[19rem] sm:w-[20rem] glass-card-strong rounded-xl shadow-2xl z-[140] animate-slide-down overflow-hidden">
-                    <div className="px-3.5 py-2.5 border-b border-[#164e63]/12 bg-gradient-to-r from-[#164e63]/13 via-[#25c9d0]/9 to-transparent">
-                      <p className="ui-panel-title">{user.name}</p>
-                      <p className="ui-panel-subtitle mt-0.5">{user.designation}</p>
+                  <div className="absolute right-0 top-14 w-[19rem] sm:w-[20rem] bg-white border border-[#1e3a6f]/10 rounded-lg shadow-lg z-[140] overflow-hidden">
+                    <div className="px-4 py-3 border-b border-[#1e3a6f]/10 bg-[#f0f5fb]">
+                      <p className="font-bold text-[#1e3a6f]">{user.name}</p>
+                      <p className="text-sm text-[#475569] mt-0.5">{user.designation}</p>
                     </div>
 
-                    <div className="px-3.5 py-2.5 border-b border-[#164e63]/10 bg-[#f3f9fd]">
-                      <div className="px-2 py-1.5 space-y-1.5">
-                        <p className="text-[0.7rem] uppercase tracking-[0.08em] font-semibold text-[#476b80]">{getCommonText('currentCredentials', language)}</p>
-                        <p className="ui-kv-row"><span className="ui-kv-label">{getCommonText('email', language)}:</span><span className="ui-kv-value break-all">{user.email}</span></p>
-                        <p className="ui-kv-row"><span className="ui-kv-label">{getCommonText('department', language)}:</span><span className="ui-kv-value">{user.department}</span></p>
-                        <p className="ui-kv-row"><span className="ui-kv-label">{getCommonText('role', language)}:</span><span className="ui-kv-value">{getRoleText(user.role as any, language)}</span></p>
+                    <div className="px-4 py-3 border-b border-[#1e3a6f]/10 bg-white">
+                      <div className="space-y-2">
+                        <p className="text-xs uppercase tracking-widest font-bold text-[#1e3a6f]">{getCommonText('currentCredentials', language)}</p>
+                        <div className="space-y-1 text-sm">
+                          <p className="text-gray-700"><span className="font-semibold text-[#475569]">{getCommonText('email', language)}:</span> {user.email}</p>
+                          <p className="text-gray-700"><span className="font-semibold text-[#475569]">{getCommonText('department', language)}:</span> {user.department}</p>
+                          <p className="text-gray-700"><span className="font-semibold text-[#475569]">{getCommonText('role', language)}:</span> {getRoleText(user.role as any, language)}</p>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="px-3.5 py-2.5 bg-[#ecf5fb]">
-                      <div className="px-2 py-1.5">
-                        <p className="text-[0.7rem] uppercase tracking-[0.08em] font-semibold text-[#476b80] mb-1.5">{getCommonText('quickSwitchCredentials', language)}</p>
+                    <div className="px-4 py-3 bg-[#f9fafb]">
+                      <div>
+                        <p className="text-xs uppercase tracking-widest font-bold text-[#1e3a6f] mb-2">{getCommonText('quickSwitchCredentials', language)}</p>
                         <div className="space-y-1.5">
                           {QUICK_SWITCH_CREDENTIALS.map((item) => (
                             <div
                               key={item.email}
-                              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-[#164e63]/10 bg-white/85 hover:bg-cyan-50/75 hover:border-[#164e63]/20 transition-all"
+                              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-[#1e3a6f]/15 bg-white hover:border-[#1e3a6f]/30 transition-all"
                             >
                               <button
                                 type="button"
@@ -232,14 +215,13 @@ export default function GovHeader() {
                                 disabled={switchingTo !== null}
                                 className="flex-1 text-left disabled:opacity-60"
                               >
-                                <p className="text-[0.87rem] leading-none font-semibold text-[#0f3650]">{item.label}</p>
-                                <p className="text-[0.8rem] text-[#527086] mt-1 leading-none">{item.email}</p>
+                                <p className="font-semibold text-[#1e3a6f] text-sm">{item.label}</p>
+                                <p className="text-xs text-[#475569] mt-0.5">{item.email}</p>
                               </button>
                               <button
                                 type="button"
                                 onClick={() => handleCopyEmail(item.email)}
-                                className="text-[0.8rem] font-semibold px-2.5 py-1 rounded-md border border-[#164e63]/16 text-[#355e75] hover:text-[#0f3650] hover:border-[#164e63]/35 hover:bg-white transition-colors"
-                                title={getCommonText('copy', language)}
+                                className="text-xs font-semibold px-2.5 py-1 rounded-md border border-[#1e3a6f]/20 text-[#1e3a6f] hover:border-[#1e3a6f]/40 hover:bg-[#f0f5fb] transition-colors"
                               >
                                 {copiedEmail === item.email ? getCommonText('copied', language) : getCommonText('copy', language)}
                               </button>
@@ -259,7 +241,7 @@ export default function GovHeader() {
               <button
                 onClick={() => logout()}
                 title={getHeaderText('notifications', language)}
-                className="flex items-center gap-1.5 bg-white/16 hover:bg-white/30 text-white/90 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 border border-white/24 hover:border-white/36 hover:scale-105"
+                className="flex items-center gap-1.5 bg-[#c4622d]/90 hover:bg-[#c4622d] text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 border border-[#c4622d]/30 hover:border-[#c4622d]/60"
               >
                 <LogOut className="w-4 h-4" />
                 <span className="hidden sm:inline text-xs">{getCommonText('logout', language)}</span>

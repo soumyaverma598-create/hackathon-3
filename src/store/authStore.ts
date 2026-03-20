@@ -26,7 +26,9 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true, error: null });
         try {
           const data = await loginUser(email, password);
-          localStorage.setItem('auth-token', data.token);
+          if (data.token) {
+            localStorage.setItem('auth-token', data.token);
+          }
           set({ user: data.user, isLoading: false });
         } catch (err) {
           const message =

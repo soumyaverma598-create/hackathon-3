@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import BrandLogo from '@/components/BrandLogo';
 import DynamicBackground from './DynamicBackground';
+import VideoBackground from './VideoBackground';
 import LanguageSelector from './LanguageSelector';
 
 /* ─── Animated counter hook ─────────────────────────── */
@@ -114,25 +115,25 @@ const FEATURES = [
     icon: <Zap className="w-6 h-6" />,
     title: 'Single Window Clearance',
     description: 'One unified portal for all Environmental, Forest, Wildlife and CRZ clearances. No more running between departments.',
-    gradient: 'from-cyan-500 to-teal-600',
+    gradient: 'from-[#1e3a6f] to-[#2d5fa8]',
   },
   {
     icon: <Clock className="w-6 h-6" />,
     title: 'Real-time Tracking',
     description: 'Track your application status at every stage. Get instant notifications on updates, queries, and approvals.',
-    gradient: 'from-sky-500 to-cyan-600',
+    gradient: 'from-[#146b3a] to-[#1d8a50]',
   },
   {
     icon: <FileCheck className="w-6 h-6" />,
     title: 'EDS Query Management',
     description: 'Streamlined Expert Data Stipulation queries. Respond to scrutiny observations directly through the portal.',
-    gradient: 'from-blue-500 to-indigo-600',
+    gradient: 'from-[#c4622d] to-[#d97706]',
   },
   {
     icon: <Shield className="w-6 h-6" />,
     title: 'Digital EC Certificates',
     description: 'Receive digitally signed Environmental Clearance certificates. Secure, verifiable, and instantly downloadable.',
-    gradient: 'from-purple-500 to-violet-600',
+    gradient: 'from-[#5b3fb8] to-[#7c3aed]',
   },
 ];
 
@@ -208,17 +209,17 @@ export default function LandingPage() {
   const statsInView = useInView(statsRef, { once: true, amount: 0.3 });
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative overflow-hidden">
       <LanguageSelector placement="public" />
-      {/* Dynamic background for landing */}
-      <DynamicBackground variant="landing" />
+      {/* Video Background for landing */}
+      <VideoBackground />
 
       <div className="fixed bottom-6 right-4 z-30 sm:hidden">
         <button
           onClick={() => router.push('/login')}
           className="group inline-flex items-center gap-2 px-5 py-3 rounded-full text-white font-semibold text-sm shadow-2xl border border-white/36 backdrop-blur-md transition-all duration-300 hover:scale-105"
           style={{
-            background: 'linear-gradient(135deg, rgba(37,201,208,0.95), rgba(29,184,196,0.95))',
+            background: 'linear-gradient(135deg, rgba(30, 58, 111, 0.95), rgba(42, 74, 143, 0.95))',
           }}
         >
           Login
@@ -229,12 +230,12 @@ export default function LandingPage() {
       {/* ─── HERO SECTION ─────────────────────────────── */}
       <section ref={heroRef} className="relative z-10 min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden">
         <motion.div
-          className="text-center max-w-4xl mx-auto rounded-[32px] border border-white/36 bg-slate-950/56 backdrop-blur-xl px-8 py-10 md:px-12 md:py-12 shadow-[0_24px_60px_rgba(2,14,28,0.52)]"
+          className="text-center max-w-4xl mx-auto rounded-xl border border-white/15 bg-black/20 shadow-2xl px-8 py-10 md:px-12 md:py-14 backdrop-blur-2xl"
           style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
         >
           {/* Emblem */}
-          <div className="w-24 h-24 bg-white/95 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl ring-4 ring-white/10 overflow-hidden">
-            <BrandLogo className="w-24 h-24 scale-[1.08]" />
+          <div className="w-20 h-20 bg-white/10 rounded-lg flex items-center justify-center mx-auto mb-8 shadow-lg border border-white/20 backdrop-blur-lg">
+            <BrandLogo className="w-16 h-16 text-white" />
           </div>
 
           {/* Title */}
@@ -243,13 +244,13 @@ export default function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
-            <h1 className="text-white text-6xl md:text-7xl font-extrabold tracking-tight mb-4 [text-shadow:0_8px_30px_rgba(0,0,0,0.45)]">
-              PARIVESH <span className="text-[#25c9d0]">3.0</span>
+            <h1 className="text-white text-5xl md:text-6xl font-bold tracking-wide mb-2">
+              PARIVESH <span className="text-[#fbbf24]">3.0</span>
             </h1>
           </motion.div>
 
           <motion.p
-            className="text-cyan-100 text-xl md:text-2xl font-semibold mb-3 [text-shadow:0_4px_20px_rgba(0,0,0,0.35)]"
+            className="text-white/90 text-lg md:text-xl font-semibold mb-2"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.5 }}
@@ -258,7 +259,7 @@ export default function LandingPage() {
           </motion.p>
 
           <motion.p
-            className="text-cyan-100/90 text-lg mb-2"
+            className="text-white/80 text-base mb-1"
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.6 }}
@@ -267,7 +268,7 @@ export default function LandingPage() {
           </motion.p>
 
           <motion.p
-            className="text-cyan-100/80 text-sm tracking-widest uppercase mb-10"
+            className="text-white/75 text-sm tracking-widest uppercase mb-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.7, delay: 0.7 }}
@@ -277,10 +278,9 @@ export default function LandingPage() {
 
           {/* Accent line */}
           <motion.div
-            className="mx-auto h-[2px] rounded-full mb-10"
-            style={{ background: 'linear-gradient(90deg, transparent, #25c9d0, transparent)' }}
+            className="mx-auto h-[2px] rounded-full mb-8 bg-gradient-to-r from-transparent via-white to-transparent"
             initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 120, opacity: 1 }}
+            animate={{ width: 140, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.8 }}
           />
 
@@ -293,20 +293,20 @@ export default function LandingPage() {
           >
             <button
               onClick={() => router.push('/login')}
-              className="group flex items-center gap-2 px-8 py-4 rounded-2xl text-white font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl shadow-lg"
+              className="group flex items-center gap-2 px-8 py-3 rounded-lg text-white font-bold text-base transition-all duration-300 hover:shadow-xl hover:scale-105"
               style={{
-                background: 'linear-gradient(135deg, #25c9d0, #1db8c4)',
-                boxShadow: '0 8px 32px rgba(37, 201, 208, 0.34)',
+                background: 'linear-gradient(135deg, #c4622d, #d47a3f)',
+                boxShadow: '0 10px 25px rgba(196, 98, 45, 0.3)',
               }}
             >
               Get Started
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
             <button
               onClick={() => {
                 document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="flex items-center gap-2 px-8 py-4 rounded-2xl text-white/95 font-semibold text-lg border border-white/36 hover:bg-white/30 hover:border-white/36 transition-all duration-300 backdrop-blur-sm"
+              className="flex items-center gap-2 px-8 py-3 rounded-lg font-semibold text-base border-2 border-white/80 text-white hover:bg-white/10 backdrop-blur-sm transition-all duration-300"
             >
               Learn More
             </button>
@@ -320,19 +320,19 @@ export default function LandingPage() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5 }}
         >
-          <span className="text-white/30 text-xs tracking-widest uppercase">Scroll</span>
+          <span className="text-white/70 text-xs tracking-widest uppercase">Scroll</span>
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <ChevronDown className="w-5 h-5 text-white/30" />
+            <ChevronDown className="w-5 h-5 text-white/40" />
           </motion.div>
         </motion.div>
 
       </section>
 
       {/* ─── FEATURES SECTION ─────────────────────────── */}
-      <section id="features" ref={featuresRef} className="relative z-10 py-28 px-6">
+      <section id="features" ref={featuresRef} className="relative z-10 py-28 px-6 bg-transparent">
         <div className="max-w-6xl mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -340,14 +340,14 @@ export default function LandingPage() {
             animate={featuresInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7 }}
           >
-            <span className="inline-block text-[#25c9d0] text-xs font-bold tracking-[0.3em] uppercase mb-4 px-4 py-1.5 rounded-full border border-[#25c9d0]/20 bg-[#25c9d0]/5">
+            <span className="inline-block text-[#fbbf24] text-xs font-bold tracking-widest uppercase mb-4 px-4 py-2 rounded-md border border-white/30 bg-white/10 backdrop-blur-sm">
               Platform Features
             </span>
-            <h2 className="text-white text-4xl md:text-5xl font-extrabold mb-4">
+            <h2 className="text-white text-4xl md:text-5xl font-bold mb-4">
               Everything you need,<br />
-              <span className="text-[#25c9d0]">in one place</span>
+              <span className="text-[#fbbf24]">in one place</span>
             </h2>
-            <p className="text-cyan-100/92 text-lg max-w-2xl mx-auto">
+            <p className="text-white/80 text-lg max-w-2xl mx-auto">
               PARIVESH 3.0 digitizes the entire Environmental Clearance workflow, making it faster, transparent, and accessible.
             </p>
           </motion.div>
@@ -362,23 +362,20 @@ export default function LandingPage() {
               <motion.div
                 key={idx}
                 variants={itemVariants}
-                className="group relative p-8 rounded-2xl border border-white/36 transition-all duration-500 hover:border-white/30 overflow-hidden"
+                className="group relative p-8 rounded-xl border border-white/20 transition-all duration-300 hover:border-white/40 hover:shadow-xl overflow-hidden backdrop-blur-md"
                 style={{
-                  background: 'rgba(255,255,255,0.16)',
-                  backdropFilter: 'blur(8px)',
+                  background: 'rgba(0, 0, 0, 0.15)',
                 }}
               >
                 {/* Hover gradient overlay */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"
-                  style={{ background: 'linear-gradient(135deg, rgba(22,78,99,0.16), rgba(37,201,208,0.12))' }}
-                />
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl bg-gradient-to-br from-white/10 to-transparent" />
 
                 <div className="relative z-10">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-5 text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-4 text-white group-hover:scale-110 transition-transform duration-300`}>
                     {feature.icon}
                   </div>
-                  <h3 className="text-white text-xl font-bold mb-3">{feature.title}</h3>
-                  <p className="text-cyan-100/92 text-sm leading-relaxed">{feature.description}</p>
+                  <h3 className="text-white text-lg font-bold mb-2">{feature.title}</h3>
+                  <p className="text-white/75 text-sm leading-relaxed">{feature.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -387,7 +384,7 @@ export default function LandingPage() {
       </section>
 
       {/* ─── WORKFLOW SECTION ─────────────────────────── */}
-      <section ref={workflowRef} className="relative z-10 py-28 px-6">
+      <section ref={workflowRef} className="relative z-10 py-28 px-6 bg-transparent">
         <div className="max-w-5xl mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -395,13 +392,13 @@ export default function LandingPage() {
             animate={workflowInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7 }}
           >
-            <span className="inline-block text-cyan-400 text-xs font-bold tracking-[0.3em] uppercase mb-4 px-4 py-1.5 rounded-full border border-emerald-400/20 bg-cyan-400/5">
+            <span className="inline-block text-[#fbbf24] text-xs font-bold tracking-widest uppercase mb-4 px-4 py-2 rounded-md border border-white/30 bg-white/10 backdrop-blur-sm">
               How It Works
             </span>
-            <h2 className="text-white text-4xl md:text-5xl font-extrabold mb-4">
-              Simple. Transparent. <span className="text-cyan-400">Efficient.</span>
+            <h2 className="text-white text-4xl md:text-5xl font-bold mb-4">
+              Simple. Transparent. <span className="text-[#fbbf24]">Efficient.</span>
             </h2>
-            <p className="text-cyan-100/90 text-lg max-w-xl mx-auto">
+            <p className="text-white/80 text-lg max-w-xl mx-auto">
               From application submission to EC certificate — a streamlined 4-step process.
             </p>
           </motion.div>
@@ -409,8 +406,7 @@ export default function LandingPage() {
           <div className="relative">
             {/* Connecting line */}
             <motion.div
-              className="absolute top-1/2 left-0 right-0 h-[2px] -translate-y-1/2 hidden md:block"
-              style={{ background: 'linear-gradient(90deg, transparent, rgba(37,201,208,0.35), rgba(56,172,221,0.35), transparent)' }}
+              className="absolute top-1/2 left-0 right-0 h-[2px] -translate-y-1/2 hidden md:block bg-gradient-to-r from-transparent via-white/30 to-transparent"
               initial={{ scaleX: 0 }}
               animate={workflowInView ? { scaleX: 1 } : {}}
               transition={{ duration: 1.2, delay: 0.3 }}
@@ -431,25 +427,22 @@ export default function LandingPage() {
                   {/* Step number ring */}
                   <div className="relative mb-5">
                     <motion.div
-                      className="w-20 h-20 rounded-full flex items-center justify-center text-white border-2 transition-all duration-300 group-hover:scale-110"
+                      className="w-16 h-16 rounded-lg flex items-center justify-center text-white border-2 transition-all duration-300 group-hover:scale-110 border-white/30 backdrop-blur-md"
                       style={{
-                        background: 'rgba(255,255,255,0.18)',
-                        borderColor: 'rgba(255,255,255,0.34)',
-                        backdropFilter: 'blur(8px)',
+                        background: 'rgba(0, 0, 0, 0.2)',
                       }}
                       whileHover={{
-                        borderColor: 'rgba(37,201,208,0.55)',
-                        boxShadow: '0 0 30px rgba(37,201,208,0.22)',
+                        boxShadow: '0 0 20px rgba(255, 255, 255, 0.2)',
                       }}
                     >
                       {step.icon}
                     </motion.div>
-                    <span className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-[#25c9d0] text-white text-xs font-bold flex items-center justify-center shadow-lg">
+                    <span className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#fbbf24] text-gray-900 text-xs font-bold flex items-center justify-center shadow-md">
                       {idx + 1}
                     </span>
                   </div>
                   <h3 className="text-white font-bold mb-1.5">{step.label}</h3>
-                  <p className="text-cyan-100/88 text-xs leading-relaxed">{step.desc}</p>
+                  <p className="text-white/70 text-xs leading-relaxed">{step.desc}</p>
                 </motion.div>
               ))}
             </motion.div>
@@ -458,7 +451,7 @@ export default function LandingPage() {
       </section>
 
       {/* ─── STATS SECTION ────────────────────────────── */}
-      <section ref={statsRef} className="relative z-10 py-28 px-6">
+      <section ref={statsRef} className="relative z-10 py-28 px-6 bg-[#1e3a6f]">
         <div className="max-w-5xl mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -466,12 +459,12 @@ export default function LandingPage() {
             animate={statsInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7 }}
           >
-            <span className="inline-block text-white/50 text-xs font-bold tracking-[0.3em] uppercase mb-4 px-4 py-1.5 rounded-full border border-white/24 bg-white/14">
+            <span className="inline-block text-white text-xs font-bold tracking-widest uppercase mb-4 px-4 py-2 rounded-md border border-white/20 bg-white/10 backdrop-blur-sm">
               Impact & Scale
             </span>
             <h2 className="text-white text-4xl md:text-5xl font-extrabold mb-4">
               Trusted by{' '}
-              <span className="bg-gradient-to-r from-[#25c9d0] to-cyan-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#fbbf24] to-amber-300 bg-clip-text text-transparent">
                 thousands
               </span>
             </h2>
@@ -493,13 +486,109 @@ export default function LandingPage() {
                   backdropFilter: 'blur(8px)',
                 }}
               >
-                <div className="text-[#25c9d0]/60 mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 w-fit">
+                <div className="text-[#fbbf24]/70 mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 w-fit">
                   {stat.icon}
                 </div>
                 <p className="text-white text-3xl md:text-4xl font-extrabold mb-1">
                   <AnimatedCounter target={stat.value} suffix={stat.suffix} />
                 </p>
-                <p className="text-cyan-100/88 text-xs font-medium">{stat.label}</p>
+                <p className="text-white/80 text-xs font-medium">{stat.label}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ─── CLEARANCE TYPES SECTION ─────────────────────── */}
+      <section className="relative z-10 py-28 px-6 bg-gradient-to-b from-transparent via-blue-50/5 to-transparent">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.7 }}
+          >
+            <h2 className="text-white text-4xl md:text-5xl font-bold mb-4">
+              Green <span className="text-[#fbbf24]">Clearance</span>
+            </h2>
+            <p className="text-white/80 text-lg max-w-2xl mx-auto">
+              Select the type of Environmental Clearance your project requires
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8, staggerChildren: 0.1 }}
+          >
+            {[
+              {
+                title: 'Environmental Clearance',
+                icon: '🏭',
+                color: 'from-blue-600 to-blue-400',
+                desc: 'For industrial & infrastructure projects'
+              },
+              {
+                title: 'Forest Clearance',
+                icon: '🌳',
+                color: 'from-green-600 to-green-400',
+                desc: 'For forest land diversion'
+              },
+              {
+                title: 'Wildlife Clearance',
+                icon: '🐅',
+                color: 'from-orange-600 to-orange-400',
+                desc: 'For wildlife sanctuary impact'
+              },
+              {
+                title: 'CRZ Clearance',
+                icon: '🌊',
+                color: 'from-cyan-600 to-cyan-400',
+                desc: 'For coastal regulation zone'
+              },
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: idx * 0.1 }}
+                whileHover={{ scale: 1.05, y: -5 }}
+                className="group relative h-64 rounded-xl overflow-hidden cursor-pointer"
+              >
+                {/* Card background with gradient */}
+                <div
+                  className="absolute inset-0 rounded-xl"
+                  style={{
+                    background: `linear-gradient(135deg, ${item.color === 'from-blue-600 to-blue-400' ? '#1e40af' : item.color === 'from-green-600 to-green-400' ? '#166534' : item.color === 'from-orange-600 to-orange-400' ? '#b45309' : '#0e7490'}, transparent)`,
+                    opacity: 0.8,
+                  }}
+                />
+
+                {/* Dark overlay for content readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent rounded-xl" />
+
+                {/* Content */}
+                <div className="absolute inset-0 flex flex-col justify-end p-6 rounded-xl group-hover:backdrop-blur-sm transition-all duration-300">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + idx * 0.1 }}
+                  >
+                    <div className="text-4xl mb-3">{item.icon}</div>
+                    <h3 className="text-white text-lg font-bold mb-1">{item.title}</h3>
+                    <p className="text-white/85 text-sm">{item.desc}</p>
+                    <div className="flex items-center gap-2 mt-3 text-white text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      Apply <ArrowRight className="w-4 h-4" />
+                    </div>
+                  </motion.div>
+                </div>
+
+                {/* Hover border effect */}
+                <div className="absolute inset-0 rounded-xl border border-white/20 group-hover:border-white/50 transition-all duration-300" />
               </motion.div>
             ))}
           </motion.div>
@@ -518,7 +607,7 @@ export default function LandingPage() {
           <h2 className="text-white text-4xl md:text-5xl font-extrabold mb-6">
             Ready to get started?
           </h2>
-          <p className="text-cyan-100/90 text-lg mb-10 max-w-lg mx-auto">
+          <p className="text-white/85 text-lg mb-10 max-w-lg mx-auto">
             Join thousands of proponents and government officers using PARIVESH 3.0 for faster, transparent environmental clearances.
           </p>
 
@@ -526,8 +615,8 @@ export default function LandingPage() {
             onClick={() => router.push('/login')}
             className="group inline-flex items-center gap-2 px-10 py-4 rounded-2xl text-white font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl shadow-lg"
             style={{
-              background: 'linear-gradient(135deg, #25c9d0, #1db8c4)',
-              boxShadow: '0 8px 32px rgba(37, 201, 208, 0.34)',
+              background: 'linear-gradient(135deg, #c4622d, #d47a3f)',
+              boxShadow: '0 8px 32px rgba(196, 98, 45, 0.4)',
             }}
           >
             Sign In to Portal
@@ -537,10 +626,10 @@ export default function LandingPage() {
 
         {/* Footer */}
         <div className="mt-20 pt-8 border-t border-white/34 text-center">
-          <p className="text-cyan-100/86 text-xs">
+          <p className="text-white/75 text-xs">
             &copy; 2026 Ministry of Environment, Forest and Climate Change, Government of India. All rights reserved.
           </p>
-          <p className="text-cyan-100/80 text-xs mt-1">
+          <p className="text-white/70 text-xs mt-1">
             PARIVESH 3.0 — Pro Active and Responsive facilitation by Interactive and Virtuous Environmental Single-window Hub
           </p>
         </div>

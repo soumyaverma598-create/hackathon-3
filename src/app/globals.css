@@ -1,28 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  --color-primary: #164e63;
-  --color-primary-dark: #0f3650;
-  --color-primary-soft: #dff3fb;
-  --color-primary-softer: #edf8fd;
-  --color-accent: #25c9d0;
-  --color-accent-light: #7ae8ef;
-  --color-ink: #082236;
-  --color-ink-soft: #31546a;
-  --color-surface: #f4fbff;
-  --color-surface-soft: #eaf8ff;
+  /* Government Official Colors */
+  --color-primary: #1e3a6f;                /* Deep Government Blue */
+  --color-primary-dark: #0f1e3d;           /* Darker Blue */
+  --color-primary-soft: #e8eff8;           /* Light Blue Background */
+  --color-primary-softer: #f0f5fb;         /* Lighter Blue Background */
+  --color-accent: #c4622d;                 /* Government Saffron */
+  --color-accent-light: #d97706;           /* Lighter Saffron */
+  --color-success: #146b3a;                /* Ashoka Green */
+  --color-ink: #1f2937;                    /* Formal Dark Gray */
+  --color-ink-soft: #4b5563;               /* Medium Gray */
+  --color-surface: #f9fafb;                /* Off-white Surface */
+  --color-surface-soft: #f3f4f6;           /* Light Gray Surface */
   --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
 
-  /* Glassmorphism tokens */
-  --glass-bg: rgba(244, 251, 255, 0.92);
-  --glass-bg-strong: rgba(250, 254, 255, 0.97);
-  --glass-border: rgba(80, 163, 196, 0.36);
-  --glass-shadow: 0 14px 34px rgba(10, 34, 52, 0.18);
-  --glass-blur: 16px;
+  /* Government Styling Tokens */
+  --glass-bg: rgba(249, 250, 251, 0.95);
+  --glass-bg-strong: rgba(255, 255, 255, 0.98);
+  --glass-border: rgba(30, 58, 111, 0.12);
+  --glass-shadow: 0 2px 8px rgba(31, 41, 55, 0.10);
+  --glass-blur: 8px;
 
-  /* Dark glass (for header/sidebar) */
-  --glass-dark-bg: rgba(8, 35, 55, 0.95);
-  --glass-dark-border: rgba(122, 232, 239, 0.28);
+  /* Header Styling */
+  --glass-dark-bg: rgba(30, 58, 111, 0.98);
+  --glass-dark-border: rgba(196, 98, 45, 0.15);
 
 }
 
@@ -34,8 +36,8 @@ html {
 body {
   font-family: var(--font-sans);
   color: var(--color-ink);
-  background: radial-gradient(circle at 10% 10%, rgba(122, 232, 239, 0.2), transparent 38%),
-              linear-gradient(165deg, var(--color-surface) 0%, var(--color-surface-soft) 60%, #f8fdff 100%);
+  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-primary-soft) 50%, var(--color-surface) 100%);
+  min-height: 100vh;
 }
 
 /* ─── Reusable UI hierarchy ──────────────────────────────── */
@@ -43,106 +45,115 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  font-size: 0.61rem;
-  letter-spacing: 0.06em;
+  font-size: 0.67rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   font-weight: 700;
-  color: #2f6076;
-  background: rgba(238, 248, 253, 0.8);
-  border: 1px solid rgba(22, 78, 99, 0.14);
+  color: #c4622d;
+  background: rgba(254, 250, 245, 0.9);
+  border: 1px solid rgba(196, 98, 45, 0.20);
   border-radius: 9999px;
-  padding: 0.16rem 0.45rem;
+  padding: 0.20rem 0.50rem;
 }
 
 .ui-section-block {
-  border: 1px solid rgba(22, 78, 99, 0.1);
-  border-radius: 0.75rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(241, 250, 255, 0.85));
+  border: 1px solid rgba(30, 58, 111, 0.08);
+  border-radius: 0.5rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(248, 252, 255, 0.90));
+  box-shadow: 0 1px 3px rgba(31, 41, 55, 0.05);
 }
 
 .ui-section-block-muted {
-  border: 1px solid rgba(22, 78, 99, 0.09);
-  border-radius: 0.75rem;
-  background: linear-gradient(180deg, rgba(248, 252, 255, 0.95), rgba(236, 247, 253, 0.88));
+  border: 1px solid rgba(30, 58, 111, 0.06);
+  border-radius: 0.5rem;
+  background: linear-gradient(180deg, rgba(249, 250, 251, 0.98), rgba(243, 244, 246, 0.95));
+  box-shadow: 0 1px 2px rgba(31, 41, 55, 0.03);
 }
 
 .ui-kv-row {
   display: grid;
-  grid-template-columns: 88px minmax(0, 1fr);
+  grid-template-columns: 100px minmax(0, 1fr);
   align-items: baseline;
-  column-gap: 0.35rem;
-  font-size: 0.74rem;
-  line-height: 1.35;
+  column-gap: 0.75rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  border-bottom: 1px solid rgba(30, 58, 111, 0.05);
+  padding: 0.75rem 0;
 }
 
 .ui-kv-label {
   font-weight: 600;
-  color: #4b697d;
+  color: #475569;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
 }
 
 .ui-kv-value {
-  font-weight: 600;
-  color: #0f2f45;
+  font-weight: 500;
+  color: #1f2937;
+  font-size: 0.9rem;
 }
 
 .ui-panel-title {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  color: #0f2f45;
-  line-height: 1.25;
+  color: #1e3a6f;
+  line-height: 1.3;
+  text-transform: capitalize;
 }
 
 .ui-panel-subtitle {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: var(--color-ink-soft);
 }
 
 .ui-label {
   display: block;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #4f6e81;
-  margin-bottom: 0.38rem;
-}
-
-.ui-section-title-text {
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #476b80;
-}
-
-.ui-section-strip {
-  background: #f3f9fd;
-  border-top: 1px solid rgba(22, 78, 99, 0.08);
-  border-bottom: 1px solid rgba(22, 78, 99, 0.08);
-}
-
-.ui-section-strip-muted {
-  background: #ecf5fb;
-  border-top: 1px solid rgba(22, 78, 99, 0.07);
-  border-bottom: 1px solid rgba(22, 78, 99, 0.07);
-}
-
-.ui-table-head {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #5d7788;
-  background: rgba(243, 249, 253, 0.9);
+  color: #5a6b77;
+  margin-bottom: 0.40rem;
+}
+
+.ui-section-title-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: #1e3a6f;
+}
+
+.ui-section-strip {
+  background: #f0f5fb;
+  border-top: 1px solid rgba(30, 58, 111, 0.06);
+  border-bottom: 1px solid rgba(30, 58, 111, 0.06);
+}
+
+.ui-section-strip-muted {
+  background: #f9fafb;
+  border-top: 1px solid rgba(30, 58, 111, 0.04);
+  border-bottom: 1px solid rgba(30, 58, 111, 0.04);
+}
+
+.ui-table-head {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #1e3a6f;
+  background: #f0f5fb;
 }
 
 .ui-col-a {
-  background: rgba(236, 246, 252, 0.72);
+  background: rgba(240, 245, 251, 0.6);
 }
 
 .ui-col-b {
-  background: rgba(228, 241, 250, 0.74);
+  background: rgba(248, 252, 255, 0.8);
 }
 
 .ui-row-hover:hover > td {
