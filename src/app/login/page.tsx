@@ -6,9 +6,11 @@ import { useAuthStore } from '@/store/authStore';
 import { useLanguageStore } from '@/store/languageStore';
 import { Eye, EyeOff, LogIn, Shield } from 'lucide-react';
 import DynamicBackground from '@/components/DynamicBackground';
+import BackgroundAnimationComponent from '@/components/BackgroundAnimationComponent';
 import LanguageSelector from '@/components/LanguageSelector';
 import BrandLogo from '@/components/BrandLogo';
 import { getText } from '@/lib/translations';
+import { PrimaryButton, SecondaryButton, SocialButton, DemoCredentialButton, TabButton, BackButton } from '@/components/NeumorphicButtons';
 
 const ROLE_HINTS = [
   { email: 'admin@moef.gov.in', password: 'admin123', role: 'Admin' },
@@ -98,43 +100,86 @@ export default function LoginPage() {
 
   return (
     <>
-    <LanguageSelector />
-    <div className="min-h-screen flex relative" style={{ background: 'linear-gradient(135deg, #0f3650 0%, #164e63 50%, #0c2e44 100%)' }}>
+    <div className="relative z-20">
+      <LanguageSelector />
+    </div>
+    <style>{`
+      @keyframes glow {
+        0%, 100% { box-shadow: 0 0 20px rgba(37, 201, 208, 0.3); }
+        50% { box-shadow: 0 0 40px rgba(37, 201, 208, 0.6); }
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+      }
+      @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      @keyframes shimmerBorder {
+        0% { background-position: -1000px 0; }
+        100% { background-position: 1000px 0; }
+      }
+      @keyframes pulseGlow {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+      }
+      .glow-effect { animation: glow 3s ease-in-out infinite; }
+      .float-effect { animation: float 3s ease-in-out infinite; }
+      .gradient-shift { animation: gradientShift 8s ease infinite; background-size: 200% 200%; }
+      .shimmer-border { animation: shimmerBorder 2s linear infinite; }
+      .pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
+    `}</style>
+    <div className="min-h-screen flex relative overflow-hidden" style={{ background: 'linear-gradient(-45deg, #1a5a7a, #0f3650, #164e63, #2b8fa3, #1a5a7a)', backgroundSize: '400% 400%', animation: 'gradientShift 15s ease infinite' }}>
+      {/* Enterprise Background Animation */}
+      <BackgroundAnimationComponent />
+      
       <DynamicBackground variant="login" />
+      
+      {/* Floating orbs for visual interest */}
+      <div className="absolute top-20 left-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-0 right-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+
       {/* Left branding panel */}
-      <div className="hidden lg:flex flex-col justify-center items-center w-1/2 p-12 relative overflow-hidden">
+      <div className="hidden lg:flex flex-col justify-center items-center w-1/2 p-12 relative overflow-hidden z-10">
 
         {/* ── Branding content (staggered entrance) ── */}
-        <div className="relative z-10 text-center rounded-[30px] border border-white/36 bg-slate-950/56 px-10 py-10 backdrop-blur-lg shadow-[0_24px_60px_rgba(2,14,28,0.52)]">
+        <div className="relative z-10 text-center rounded-3xl border border-white/20 bg-gradient-to-br from-slate-900/70 via-slate-950/70 to-slate-900/70 px-12 py-14 backdrop-blur-2xl shadow-[0_32px_80px_rgba(0,0,0,0.6)] glow-effect">
+          
+          {/* Decorative corner accents */}
+          <div className="absolute top-0 left-0 w-24 h-24 border-t-2 border-l-2 border-cyan-400/40 rounded-tl-2xl"></div>
+          <div className="absolute bottom-0 right-0 w-24 h-24 border-b-2 border-r-2 border-cyan-400/40 rounded-br-2xl"></div>
 
-          {/* Logo with pulse + slow-spin on the spokes */}
+          {/* Logo with enhanced styling */}
           <div
-            className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl overflow-hidden"
+            className="w-28 h-28 bg-gradient-to-br from-white to-cyan-100 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl overflow-hidden border-4 border-white/30 float-effect glow-effect"
             style={{ animationDelay: `${d + 0}s` }}
           >
-            <BrandLogo className="w-24 h-24 scale-[1.08]" />
+            <BrandLogo className="w-28 h-28 scale-[1.1]" />
           </div>
 
           <h1
-            className="text-white text-4xl font-extrabold mb-2 tracking-wide animate-fade-slide-up [text-shadow:0_8px_24px_rgba(0,0,0,0.45)]"
+            className="text-white text-5xl font-black mb-3 tracking-tight animate-fade-slide-up bg-gradient-to-r from-cyan-200 via-white to-cyan-100 bg-clip-text text-transparent"
             style={{ animationDelay: `${d + 0.1}s` }}
           >
             {getText('title', language)}
           </h1>
+          <div className="h-1 w-16 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full mx-auto mb-4"></div>
           <p
-            className="text-cyan-100 text-lg font-semibold mb-1 animate-fade-slide-up"
+            className="text-cyan-100 text-xl font-bold mb-2 animate-fade-slide-up"
             style={{ animationDelay: `${d + 0.2}s` }}
           >
             {getText('subtitle', language)}
           </p>
           <p
-            className="text-cyan-100/95 text-sm mb-6 animate-fade-slide-up"
+            className="text-cyan-100/90 text-base mb-8 animate-fade-slide-up max-w-sm"
             style={{ animationDelay: `${d + 0.28}s` }}
           >
             {getText('description', language)}
           </p>
           <p
-            className="text-cyan-100/90 text-xs max-w-xs leading-relaxed animate-fade-slide-up text-center mx-auto"
+            className="text-cyan-100/80 text-sm max-w-xs leading-relaxed animate-fade-slide-up text-center mx-auto mb-8 font-medium"
             style={{ animationDelay: `${d + 0.34}s` }}
           >
             {getText('ministry', language)}<br />
@@ -142,18 +187,18 @@ export default function LoginPage() {
           </p>
 
           <div
-            className="mt-8 bg-white/26 rounded-xl p-4 backdrop-blur-sm border border-white/36 animate-fade-slide-up mx-auto max-w-xs text-center"
+            className="mt-8 bg-gradient-to-br from-white/20 to-white/10 rounded-2xl p-6 backdrop-blur-md border border-white/30 animate-fade-slide-up mx-auto max-w-xs text-center shadow-lg hover:shadow-xl hover:from-white/25 hover:to-white/15 transition-all duration-300"
             style={{ animationDelay: `${d + 0.44}s` }}
           >
-            <p className="text-white text-xs font-semibold mb-2 flex items-center justify-center gap-1">
+            <p className="text-white text-sm font-bold mb-3 flex items-center justify-center gap-2">
               <Shield
-                size={12}
-                className="inline-block"
-                style={{ animation: 'pulseSoft 3s ease-in-out infinite' }}
+                size={16}
+                className="inline-block text-cyan-300"
+                style={{ animation: 'pulseGlow 2s ease-in-out infinite' }}
               />
               {getText('eiaNotification', language)}
             </p>
-            <p className="text-cyan-200 text-xs leading-relaxed">
+            <p className="text-cyan-100/95 text-xs leading-relaxed font-medium">
               {getText('eiaDescription', language)}
             </p>
           </div>
@@ -161,62 +206,65 @@ export default function LoginPage() {
       </div>
 
       {/* Right login panel */}
-      <div className="flex-1 flex items-center justify-center p-6">
+      <div className="flex-1 flex items-center justify-center p-6 relative z-10">
         <div className="w-full max-w-lg">
           {/* Card with entrance animation */}
           <div
-            className="bg-white rounded-2xl shadow-2xl overflow-hidden animate-fade-slide-up"
+            className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden animate-fade-slide-up border border-white/80 relative group hover:shadow-3xl transition-shadow duration-500"
             style={{ animationDelay: `${d + 0.05}s` }}
           >
-            {/* Top shimmer accent bar */}
+            {/* Top gradient bar with animation */}
             <div
-              className="h-1.5 w-full"
+              className="h-2 w-full"
               style={{
-                background: 'linear-gradient(90deg, #164e63, #25c9d0, #164e63)',
+                background: 'linear-gradient(90deg, #164e63, #25c9d0, #1f7ea4, #164e63)',
                 backgroundSize: '200% 100%',
-                animation: 'shimmer 3s linear infinite',
+                animation: 'shimmer 4s linear infinite',
               }}
             />
+            
+            {/* Subtle glow on hover */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none"
+              style={{ background: 'radial-gradient(circle at center, #25c9d0, transparent)' }}></div>
 
-            <div className="p-8">
+            <div className="p-10">
               {/* Mobile title */}
               <div
-                className="lg:hidden text-center mb-6 animate-fade-slide-up"
+                className="lg:hidden text-center mb-8 animate-fade-slide-up"
                 style={{ animationDelay: `${d + 0.1}s` }}
               >
-                <h1 className="text-2xl font-extrabold text-[#164e63]">{getText('title', language)}</h1>
-                <p className="text-gray-500 text-sm">{getText('description', language)}</p>
+                <h1 className="text-3xl font-black text-transparent bg-gradient-to-r from-[#164e63] to-[#1f7ea4] bg-clip-text mb-2">{getText('title', language)}</h1>
+                <div className="h-1 w-12 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full mx-auto mb-3"></div>
+                <p className="text-gray-500 text-sm font-medium">{getText('description', language)}</p>
               </div>
 
-              {/* Mode Tab Switcher */}
+              {/* Mode Tab Switcher with enhanced styling */}
               <div
-                className="flex bg-gray-100 rounded-xl p-1 mb-5 animate-fade-slide-up"
+                className="flex gap-2 bg-gradient-to-r from-gray-100 to-gray-50 rounded-2xl p-1.5 mb-8 animate-fade-slide-up shadow-sm"
                 style={{ animationDelay: `${d + 0.11}s` }}
               >
-                <button
-                  type="button"
+                <TabButton
+                  active={loginMode === 'official'}
                   onClick={() => { setLoginMode('official'); setOtpMode(false); clearError(); }}
-                  className={`flex-1 text-xs font-semibold py-2 px-2 rounded-lg transition-all ${loginMode === 'official' ? 'bg-white text-[#164e63] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                 >
                   {getText('governmentOfficials', language)}
-                </button>
-                <button
-                  type="button"
+                </TabButton>
+                <TabButton
+                  active={loginMode === 'applicant'}
                   onClick={() => { setLoginMode('applicant'); clearError(); }}
-                  className={`flex-1 text-xs font-semibold py-2 px-2 rounded-lg transition-all ${loginMode === 'applicant' ? 'bg-white text-[#164e63] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                 >
                   {getText('applicantsConsultants', language)}
-                </button>
+                </TabButton>
               </div>
 
               <h2
-                className="text-xl font-bold text-gray-800 mb-1 animate-fade-slide-up"
+                className="text-2xl font-black text-[#164e63] mb-2 animate-fade-slide-up"
                 style={{ animationDelay: `${d + 0.12}s` }}
               >
                 {loginMode === 'official' ? getText('signInOfficials', language) : getText('signInApplicants', language)}
               </h2>
               <p
-                className="text-gray-400 text-sm mb-6 animate-fade-slide-up"
+                className="text-gray-500 text-sm mb-6 font-medium animate-fade-slide-up"
                 style={{ animationDelay: `${d + 0.18}s` }}
               >
                 {loginMode === 'official'
@@ -226,23 +274,23 @@ export default function LoginPage() {
 
               {error && (
                 error.startsWith('Access to the') ? (
-                  <div className="mb-4 rounded-lg border border-cyan-300 bg-cyan-50 px-4 py-3 animate-fade-slide-up">
-                    <div className="flex items-start gap-2.5">
-                      <span className="text-cyan-500 text-lg leading-none mt-0.5">⚠</span>
+                  <div className="mb-6 rounded-2xl border border-cyan-300/50 bg-gradient-to-br from-cyan-50 to-blue-50 px-5 py-4 animate-fade-slide-up shadow-md hover:shadow-lg transition-shadow duration-300">
+                    <div className="flex items-start gap-3">
+                      <span className="text-cyan-600 text-xl leading-none mt-0.5 font-bold">⚠️</span>
                       <div>
-                        <p className="text-sm font-semibold text-cyan-800">{getText('portalAccessRestricted', language)}</p>
-                        <p className="mt-0.5 text-xs text-cyan-700">{error}</p>
+                        <p className="text-sm font-bold text-cyan-900">{getText('portalAccessRestricted', language)}</p>
+                        <p className="mt-1 text-xs text-cyan-800 font-medium">{error}</p>
                         <a
                           href="mailto:admin@moef.gov.in"
-                          className="mt-1.5 inline-block text-xs font-semibold text-cyan-800 underline underline-offset-2 hover:text-cyan-900"
+                          className="mt-2 inline-block text-xs font-bold text-cyan-700 hover:text-cyan-900 underline underline-offset-2 transition-colors duration-200"
                         >
-                          {getText('contactAdmin', language)}
+                          {getText('contactAdmin', language)} →
                         </a>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="mb-4 bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-2.5 text-sm font-medium animate-fade-slide-up">
+                  <div className="mb-6 bg-gradient-to-br from-red-50 to-rose-50 border border-red-300/50 text-red-800 rounded-2xl px-5 py-4 text-sm font-semibold animate-fade-slide-up shadow-md hover:shadow-lg transition-shadow duration-300">
                     {error}
                   </div>
                 )
@@ -250,68 +298,62 @@ export default function LoginPage() {
 
               {/* ── Applicant Social / SSO Auth ── */}
               {loginMode === 'applicant' && !otpMode && (
-                <div className="mb-2 animate-fade-slide-up" style={{ animationDelay: `${d + 0.2}s` }}>
-                  <div className="space-y-2.5">
+                <div className="mb-3 animate-fade-slide-up" style={{ animationDelay: `${d + 0.2}s` }}>
+                  <div className="space-y-3">
                     {/* Google */}
-                    <button
-                      type="button"
+                    <SocialButton
                       disabled={!!socialAuthLoading}
                       onClick={() => handleSocialAuth('Google')}
-                      className="w-full flex items-center gap-3 border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all disabled:opacity-60 hover:scale-[1.01]"
-                    >
-                      {socialAuthLoading === 'Google' ? (
-                        <svg className="animate-spin w-4 h-4 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+                      icon={socialAuthLoading === 'Google' ? (
+                        <svg className="animate-spin w-5 h-5 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
                       ) : (
-                        <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                        <svg viewBox="0 0 24 24" className="w-5 h-5 shrink-0" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
                       )}
-                      <span>{socialAuthLoading === 'Google' ? getText('connectingGoogle', language) : getText('continueGoogle', language)}</span>
-                    </button>
+                    >
+                      {socialAuthLoading === 'Google' ? getText('connectingGoogle', language) : getText('continueGoogle', language)}
+                    </SocialButton>
 
                     {/* Microsoft */}
-                    <button
-                      type="button"
+                    <SocialButton
                       disabled={!!socialAuthLoading}
                       onClick={() => handleSocialAuth('Microsoft')}
-                      className="w-full flex items-center gap-3 border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all disabled:opacity-60 hover:scale-[1.01]"
-                    >
-                      {socialAuthLoading === 'Microsoft' ? (
-                        <svg className="animate-spin w-4 h-4 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+                      icon={socialAuthLoading === 'Microsoft' ? (
+                        <svg className="animate-spin w-5 h-5 text-sky-500 shrink-0" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
                       ) : (
-                        <svg viewBox="0 0 23 23" className="w-4 h-4 shrink-0"><path fill="#f35325" d="M1 1h10v10H1z"/><path fill="#81bc06" d="M12 1h10v10H12z"/><path fill="#05a6f0" d="M1 12h10v10H1z"/><path fill="#ffba08" d="M12 12h10v10H12z"/></svg>
+                        <svg viewBox="0 0 23 23" className="w-5 h-5 shrink-0"><path fill="#f35325" d="M1 1h10v10H1z"/><path fill="#81bc06" d="M12 1h10v10H12z"/><path fill="#05a6f0" d="M1 12h10v10H1z"/><path fill="#ffba08" d="M12 12h10v10H12z"/></svg>
                       )}
-                      <span>{socialAuthLoading === 'Microsoft' ? getText('connectingMicrosoft', language) : getText('continueMicrosoft', language)}</span>
-                    </button>
+                    >
+                      {socialAuthLoading === 'Microsoft' ? getText('connectingMicrosoft', language) : getText('continueMicrosoft', language)}
+                    </SocialButton>
 
-                    {/* DigiLocker — opens official portal in new tab */}
+                    {/* DigiLocker */}
                     <a
                       href="https://digilocker.gov.in"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full flex items-center gap-3 border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-cyan-50 hover:border-[#164e63]/40 transition-all hover:scale-[1.01] no-underline"
+                      className="w-full flex items-center gap-3 border-2 border-gray-200 rounded-xl px-5 py-3 text-sm font-bold text-gray-700 hover:bg-gradient-to-r hover:from-teal-50 hover:to-teal-50/50 hover:border-teal-300 transition-all hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] no-underline"
                     >
-                      <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none" stroke="#164e63" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      <svg viewBox="0 0 24 24" className="w-5 h-5 shrink-0" fill="none" stroke="#164e63" strokeWidth="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                       <span className="flex-1">{getText('digiLocker', language)}</span>
-                      <svg viewBox="0 0 24 24" className="w-3 h-3 text-gray-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                     </a>
 
                     {/* OTP */}
-                    <button
-                      type="button"
+                    <SocialButton
                       disabled={!!socialAuthLoading}
                       onClick={() => { setOtpMode(true); clearError(); }}
-                      className="w-full flex items-center gap-3 border border-gray-200 rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all disabled:opacity-60 hover:scale-[1.01]"
+                      icon={<svg viewBox="0 0 24 24" className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.56 3.57 2 2 0 0 1 3.53 1.5h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6 6l1.77-1.77a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>}
                     >
-                      <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.56 3.57 2 2 0 0 1 3.53 1.5h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6 6l1.77-1.77a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                      <span>{getText('otp', language)}</span>
-                    </button>
+                      {getText('otp', language)}
+                    </SocialButton>
                   </div>
 
-                  <div className="relative my-4">
+                  <div className="relative my-6">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-200" />
+                      <div className="w-full border-t-2 border-gray-200" />
                     </div>
                     <div className="relative flex justify-center">
-                      <span className="bg-white px-3 text-xs text-gray-400">{getText('orContinue', language)}</span>
+                      <span className="bg-white/95 px-4 text-xs font-bold text-gray-400 uppercase tracking-wider">{getText('orContinue', language)}</span>
                     </div>
                   </div>
                 </div>
@@ -319,69 +361,61 @@ export default function LoginPage() {
 
               {/* ── OTP Flow ── */}
               {loginMode === 'applicant' && otpMode && (
-                <div className="mb-5 animate-fade-slide-up" style={{ animationDelay: `${d + 0.2}s` }}>
-                  <div className="flex items-center gap-2 mb-4">
-                    <button
-                      type="button"
+                <div className="mb-6 animate-fade-slide-up" style={{ animationDelay: `${d + 0.2}s` }}>
+                  <div className="flex items-center gap-3 mb-6">
+                    <BackButton
                       onClick={() => { setOtpMode(false); setOtpSent(false); setOtpCode(''); setOtpContact(''); setOtpError(''); }}
-                      className="text-[#164e63] hover:text-[#0f3650] text-xs font-medium transition-colors"
                     >
-                      {getText('back', language)}
-                    </button>
-                    <span className="text-sm font-semibold text-gray-700">{getText('signInOTP', language)}</span>
+                      ← {getText('back', language)}
+                    </BackButton>
+                    <span className="text-lg font-black text-gray-800">{getText('signInOTP', language)}</span>
                   </div>
                   {!otpSent ? (
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       <input
                         type="text"
                         value={otpContact}
                         onChange={e => setOtpContact(e.target.value)}
                         placeholder={getText('mobileOrEmail', language)}
-                        className="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] focus:border-transparent transition-all"
+                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#164e63] focus:border-[#164e63] transition-all hover:border-[#164e63]/40 focus:shadow-lg"
                       />
-                      <button
-                        type="button"
+                      <PrimaryButton
                         onClick={handleSendOTP}
                         disabled={!otpContact.trim()}
-                        className="w-full py-2.5 rounded-lg text-sm font-semibold text-white disabled:opacity-50 transition-all hover:scale-[1.02]"
-                        style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}
                       >
                         {getText('sendOTP', language)}
-                      </button>
+                      </PrimaryButton>
                     </div>
                   ) : (
-                    <div className="space-y-3">
-                      <p className="text-xs text-gray-500">{getText('otpSent', language)} <strong>{otpContact}</strong></p>
-                      <p className="text-xs text-blue-600 bg-blue-50 border border-blue-100 rounded px-3 py-1.5">{getText('demoHint', language)} <strong>123456</strong></p>
+                    <div className="space-y-4">
+                      <p className="text-sm font-semibold text-gray-700">{getText('otpSent', language)} <span className="font-bold text-[#164e63]">{otpContact}</span></p>
+                      <p className="text-xs font-bold text-blue-700 bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl px-4 py-3">{getText('demoHint', language)} <span className="font-mono text-blue-900 text-sm">123456</span></p>
                       <input
                         type="text"
                         value={otpCode}
                         onChange={e => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                         placeholder={getText('enter6Digit', language)}
                         maxLength={6}
-                        className="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] focus:border-transparent transition-all tracking-[0.6em] text-center font-mono"
+                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 text-3xl focus:outline-none focus:ring-2 focus:ring-[#164e63] focus:border-[#164e63] transition-all hover:border-[#164e63]/40 focus:shadow-lg tracking-[1.5em] text-center font-bold font-mono"
                       />
-                      {otpError && <p className="text-xs text-red-600">{otpError}</p>}
-                      <button
-                        type="button"
+                      {otpError && <p className="text-xs font-bold text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{otpError}</p>}
+                      <PrimaryButton
                         onClick={handleVerifyOTP}
                         disabled={otpCode.length < 6 || isLoading}
-                        className="w-full py-2.5 rounded-lg text-sm font-semibold text-white disabled:opacity-50 transition-all hover:scale-[1.02]"
-                        style={{ background: 'linear-gradient(135deg, #164e63, #1f7ea4)' }}
                       >
                         {isLoading ? getText('verifying', language) : getText('verifySignIn', language)}
-                      </button>
+                      </PrimaryButton>
                     </div>
                   )}
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className={`space-y-4${loginMode === 'applicant' && otpMode ? ' hidden' : ''}`}>
+              <form onSubmit={handleSubmit} className={`space-y-5${loginMode === 'applicant' && otpMode ? ' hidden' : ''}`}>
                 <div
                   className="animate-fade-slide-up"
                   style={{ animationDelay: `${d + 0.22}s` }}
                 >
-                  <label className="ui-label">
+                  <label className="block text-sm font-black text-gray-800 mb-2">
                     {loginMode === 'official' ? getText('emailLabel', language) : getText('workEmailLabel', language)}
                   </label>
                   <input
@@ -391,7 +425,7 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     placeholder={loginMode === 'official' ? getText('emailPlaceholder', language) : getText('workEmailPlaceholder', language)}
-                    className="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#164e63] focus:border-transparent transition-all hover:border-[#164e63]/40"
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#164e63] focus:border-[#164e63] transition-all hover:border-[#164e63]/40 focus:shadow-lg bg-gradient-to-r from-white via-white to-cyan-50"
                   />
                 </div>
 
@@ -399,7 +433,7 @@ export default function LoginPage() {
                   className="animate-fade-slide-up"
                   style={{ animationDelay: `${d + 0.28}s` }}
                 >
-                  <label className="ui-label">
+                  <label className="block text-sm font-black text-gray-800 mb-2">
                     {getText('passwordLabel', language)}
                   </label>
                   <div className="relative">
@@ -410,79 +444,60 @@ export default function LoginPage() {
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       placeholder={getText('passwordPlaceholder', language)}
-                      className="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-sm pr-10 focus:outline-none focus:ring-2 focus:ring-[#164e63] focus:border-transparent transition-all hover:border-[#164e63]/40"
+                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm font-medium pr-12 focus:outline-none focus:ring-2 focus:ring-[#164e63] focus:border-[#164e63] transition-all hover:border-[#164e63]/40 focus:shadow-lg bg-gradient-to-r from-white via-white to-cyan-50"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPwd(!showPwd)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#164e63] transition-colors icon-btn-hover"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#164e63] transition-colors font-bold hover:scale-125"
                     >
-                      {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
+                      {showPwd ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>
 
-                <button
-                  type="submit"
+                <PrimaryButton
                   disabled={isLoading}
-                  id="login-btn"
-                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-semibold text-sm text-white transition-all disabled:opacity-60 disabled:cursor-not-allowed hover:scale-[1.02] hover:shadow-lg active:scale-[0.99] animate-fade-slide-up"
-                  style={{
-                    background: isLoading ? '#6b7280' : 'linear-gradient(135deg, #164e63, #1f7ea4)',
-                    animationDelay: `${d + 0.34}s`,
-                  }}
+                  onClick={handleSubmit}
+                  className="w-full animate-fade-slide-up"
+                  style={{ animationDelay: `${d + 0.34}s` }}
                 >
-                  {isLoading ? (
-                    <span className="flex items-center gap-2">
-                      <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
-                      </svg>
-                      {getText('verifying', language)}
-                    </span>
-                  ) : (
-                    <>
-                      <LogIn size={16} /> {getText('signIn', language)}
-                    </>
-                  )}
-                </button>
+                  {isLoading ? getText('verifying', language) : getText('signIn', language)}
+                </PrimaryButton>
               </form>
 
               {/* Demo credentials */}
               <div
-                className="mt-6 border-t border-gray-100 pt-5 animate-fade-slide-up"
+                className="mt-8 border-t-2 border-gray-200 pt-7 animate-fade-slide-up"
                 style={{ animationDelay: `${d + 0.42}s` }}
               >
-                <p className="ui-eyebrow mb-3 text-center justify-center">
+                <p className="text-sm font-black text-gray-800 mb-4 text-center uppercase tracking-wider">
                   {loginMode === 'applicant' ? getText('demoAccount', language) : getText('demoCredentials', language)}
                 </p>
                 <div className="grid grid-cols-2 gap-3">
                   {ROLE_HINTS.filter(h => loginMode === 'applicant' ? h.role === 'Applicant' : h.role !== 'Applicant').map((hint, idx) => (
-                    <button
+                    <DemoCredentialButton
                       key={hint.email}
                       onClick={() => fillDemo(hint)}
-                      className="text-left bg-gradient-to-b from-white to-[#eef8fc] hover:bg-cyan-50 border border-[#164e63]/15 hover:border-[#164e63]/35 rounded-lg px-4 py-3 transition-all group hover:scale-[1.03] hover:shadow-sm animate-fade-slide-up"
+                      role={hint.role === 'Admin' ? getText('admin', language) : 
+                             hint.role === 'Applicant' ? getText('applicant', language) :
+                             hint.role === 'Scrutiny' ? getText('scrutiny', language) :
+                             getText('momSecretary', language)}
+                      email={hint.email}
                       style={{ animationDelay: `${d + 0.48 + idx * 0.06}s` }}
-                    >
-                      <p className="text-[11px] uppercase tracking-wide font-extrabold text-[#3a6a80]">
-                        {hint.role === 'Admin' ? getText('admin', language) : 
-                         hint.role === 'Applicant' ? getText('applicant', language) :
-                         hint.role === 'Scrutiny' ? getText('scrutiny', language) :
-                         getText('momSecretary', language)}
-                      </p>
-                      <p className="text-xs font-semibold text-[#164e63] truncate mt-1">{hint.email}</p>
-                    </button>
+                    />
                   ))}
                 </div>
               </div>
             </div>
           </div>
 
+
           <p
-            className="text-center text-cyan-200 text-[11px] mt-4 animate-fade-slide-up"
+            className="text-center text-cyan-200/80 text-xs mt-6 font-semibold animate-fade-slide-up"
             style={{ animationDelay: `${d + 0.72}s` }}
           >
-            {getText('copyright', language)}
+            © 2026 {getText('copyright', language)}
           </p>
         </div>
       </div>
